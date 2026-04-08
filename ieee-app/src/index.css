@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #f9f9f9;
+  --color-on-error-container: #93000a;
+  --color-error-container: #ffdad6;
+  --color-surface-container-lowest: #ffffff;
+  --color-tertiary-container: #00686f;
+  --color-on-tertiary-fixed-variant: #004f54;
+  --color-tertiary-fixed: #81f4fe;
+  --color-surface-bright: #f9f9f9;
+  --color-secondary-fixed-dim: #5cd4ff;
+  --color-inverse-surface: #303030;
+  --color-on-primary-container: #badbff;
+  --color-error: #ba1a1a;
+  --color-surface: #f9f9f9;
+  --color-on-secondary-fixed-variant: #004d62;
+  --color-primary: #004976;
+  --color-tertiary: #004e54;
+  --color-on-surface: #1b1b1b;
+  --color-on-secondary-fixed: #001f29;
+  --color-surface-container-low: #f3f3f3;
+  --color-surface-container-high: #e8e8e8;
+  --color-primary-fixed-dim: #98cbff;
+  --color-secondary: #006782;
+  --color-inverse-on-surface: #f1f1f1;
+  --color-outline: #717881;
+  --color-on-surface-variant: #414750;
+  --color-on-tertiary: #ffffff;
+  --color-surface-container: #eeeeee;
+  --color-secondary-container: #42d0fe;
+  --color-on-primary: #ffffff;
+  --color-on-primary-fixed: #001d33;
+  --color-on-tertiary-container: #75e8f3;
+  --color-tertiary-fixed-dim: #63d7e1;
+  --color-secondary-fixed: #baeaff;
+  --color-on-error: #ffffff;
+  --color-on-background: #1b1b1b;
+  --color-surface-container-highest: #e2e2e2;
+  --color-outline-variant: #c0c7d1;
+  --color-on-primary-fixed-variant: #004a77;
+  --color-inverse-primary: #98cbff;
+  --color-on-secondary-container: #00566d;
+  --color-on-secondary: #ffffff;
+  --color-surface-variant: #e2e2e2;
+  --color-primary-fixed: #cee5ff;
+  --color-surface-dim: #dadada;
+  --color-surface-tint: #02639c;
+  --color-on-tertiary-fixed: #002022;
+  --color-primary-container: #00629b;
+
+  --font-family-headline: 'Inter', sans-serif;
+  --font-family-body: 'Inter', sans-serif;
+  --font-family-label: 'Inter', sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f9f9f9;
+  color: #1b1b1b;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.wedge-bg {
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+}
+
+.wedge-accent {
+  clip-path: polygon(100% 0, 0% 100%, 100% 100%);
+}
+
+.btn-wedge {
+  clip-path: polygon(0 0, 92% 0, 100% 25%, 100% 100%, 0 100%);
+}
