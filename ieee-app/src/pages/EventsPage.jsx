@@ -1,18 +1,42 @@
-import { useState, useMemo } from 'react';
-import { eventCategories, eventCategoryLabels, events } from '../data/events';
+import { useState, useEffect } from 'react';
+import { fetchEvents } from '../data/eventsSource';
 import EventCard from '../components/EventCard';
 
 const ALL_CATEGORY = 'all';
 
 export default function EventsPage() {
+  const [events, setEvents] = useState([]);
   const [activeCategory, setActiveCategory] = useState(ALL_CATEGORY);
+  const [loading, setLoading] = useState(true);
 
-  const filteredEvents = useMemo(() => {
-    if (activeCategory === ALL_CATEGORY) return events;
-    return events.filter((e) => e.category === activeCategory);
-  }, [activeCategory]);
+  useEffect(() => {
+    fetchEvents().then((data) => {
+      setEvents(data);
+      setLoading(false);
+    });
+  }, []);
+
+  const filteredEvents =
+    activeCategory === ALL_CATEGORY
+      ? events
+      : events.filter((e) => e.category === activeCategory);
 
   const upcomingCount = events.filter((e) => e.status === 'upcoming').length;
+
+  const eventCategories = [...new Set(events.map((e) => e.category))];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-surface flex items-center justify-center">
+        <div className="text-center">
+          <span className="material-symbols-outlined text-5xl text-primary animate-spin mb-4 block">
+            progress_activity
+          </span>
+          <p className="text-on-surface-variant">Loading events...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-surface">
@@ -79,7 +103,7 @@ export default function EventsPage() {
                 }`}
                 onClick={() => setActiveCategory(cat)}
               >
-                {eventCategoryLabels[cat]}
+                {cat.charAt(0).toUpperCase() + cat.slice(1)}
               </button>
             ))}
           </div>

@@ -1,6 +1,9 @@
 import logo from '../assets/logo.png';
+import { useTheme } from '../theme/useTheme';
 
 export default function Hero() {
+  const { theme } = useTheme();
+
   return (
     <section className="relative min-h-[870px] flex items-center overflow-hidden bg-surface-container-lowest ">
       <div className="absolute inset-0 z-0 opacity-5 pointer-events-none">
@@ -14,7 +17,7 @@ export default function Hero() {
               <img
                 src={logo}
                 alt="IEEE HITU Student Branch logo"
-                className="h-24 w-auto md:h-32"
+                className={`h-24 w-auto transition-[filter] duration-200 md:h-32 ${theme === 'dark' ? 'brightness-0 invert' : ''}`}
               />
             </div>
           </div>

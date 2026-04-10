@@ -1,5 +1,6 @@
+import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { getEventBySlug } from '../data/events';
+import { fetchEventBySlug } from '../data/eventsSource';
 import MasonryGallery from '../components/MasonryGallery';
 
 function formatDate(dateStr) {
@@ -25,7 +26,28 @@ function StatCard({ icon, label, value }) {
 
 export default function EventDetailPage() {
   const { slug } = useParams();
-  const event = getEventBySlug(slug);
+  const [event, setEvent] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchEventBySlug(slug).then((data) => {
+      setEvent(data);
+      setLoading(false);
+    });
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-surface flex items-center justify-center">
+        <div className="text-center">
+          <span className="material-symbols-outlined text-5xl text-primary animate-spin mb-4 block">
+            progress_activity
+          </span>
+          <p className="text-on-surface-variant">Loading event...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!event) {
     return (
