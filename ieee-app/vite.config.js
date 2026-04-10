@@ -1,16 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
-import { sanityVite } from 'sanity'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [
-    react(),
-    tailwindcss(),
-    sanityVite({
-      projectId: '4agihomt',
-      dataset: 'production',
-    }),
-  ],
+  plugins: [react(), tailwindcss()],
 })
