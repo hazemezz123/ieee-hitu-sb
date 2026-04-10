@@ -1,0 +1,196 @@
+import { useState } from 'react';
+
+const initialForm = {
+  name: '',
+  email: '',
+  phone: '',
+  interest: '',
+  message: '',
+};
+
+export default function JoinUsPage() {
+  const [formData, setFormData] = useState(initialForm);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  function handleChange(event) {
+    const { name, value } = event.target;
+    setFormData((current) => ({ ...current, [name]: value }));
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    setIsSubmitted(true);
+    setFormData(initialForm);
+  }
+
+  return (
+    <div className="min-h-screen bg-surface">
+      <section className="relative py-32 bg-surface-container-lowest overflow-hidden">
+        <div className="absolute inset-0 z-0 opacity-5 pointer-events-none">
+          <div
+            className="absolute top-0 right-0 w-1/2 h-full bg-primary wedge-accent"
+            style={{ transform: 'rotate(0deg) scale(1.5)' }}
+          ></div>
+          <div
+            className="absolute bottom-0 left-0 w-1/3 h-2/3 bg-secondary-container wedge-accent"
+            style={{ transform: 'rotate(180deg) scale(1.2)' }}
+          ></div>
+        </div>
+
+        <div className="container mx-auto px-12 relative z-10 max-w-6xl">
+          <div className="max-w-4xl">
+            <span className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase text-primary block mb-4">
+              Join Us
+            </span>
+            <h1 className="text-5xl md:text-6xl font-black tracking-tight text-on-surface leading-tight mb-6">
+              Start Your Journey With <span className="text-primary">IEEE HITU SB</span>
+            </h1>
+            <p className="text-xl text-on-surface-variant leading-relaxed mb-8 max-w-2xl">
+              Tell us a little about yourself and the areas you want to explore.
+              We&apos;ll use this simple form for initial contact until the full joining
+              flow is ready.
+            </p>
+
+            <div className="grid gap-6 sm:grid-cols-3">
+              <div className="bg-surface-container-low p-6">
+                <div className="text-3xl font-bold text-primary mb-2">11</div>
+                <div className="text-sm uppercase tracking-wider text-on-surface-variant">
+                  Committees
+                </div>
+              </div>
+              <div className="bg-surface-container-low p-6">
+                <div className="text-3xl font-bold text-primary mb-2">2</div>
+                <div className="text-sm uppercase tracking-wider text-on-surface-variant">
+                  Main Tracks
+                </div>
+              </div>
+              <div className="bg-surface-container-low p-6">
+                <div className="text-3xl font-bold text-primary mb-2">1</div>
+                <div className="text-sm uppercase tracking-wider text-on-surface-variant">
+                  First Step
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-24 bg-surface">
+        <div className="container mx-auto px-12">
+          <div className="max-w-3xl mx-auto bg-surface-container-lowest p-8 md:p-10 shadow-sm border border-outline-variant/20">
+            <div className="mb-8">
+              <span className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase text-primary block mb-4">
+                Contact Form
+              </span>
+              <h2 className="text-3xl font-black tracking-tight mb-3">Quick Contact Form</h2>
+              <p className="text-on-surface-variant leading-relaxed">
+                Fill in your details and we&apos;ll reach out with the next steps.
+              </p>
+            </div>
+
+            {isSubmitted ? (
+              <div className="bg-primary/5 border border-primary/20 p-6 mb-8">
+                <h3 className="text-lg font-bold text-primary mb-2">Form submitted</h3>
+                <p className="text-on-surface-variant leading-relaxed">
+                  Your message was recorded locally for now. Replace this placeholder
+                  behavior with a real backend when the application flow is ready.
+                </p>
+              </div>
+            ) : null}
+
+            <form className="space-y-5 flex flex-col" onSubmit={handleSubmit}>
+              <div>
+                <label className="block text-sm font-semibold mb-2" htmlFor="name">
+                  Full Name
+                </label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  className="w-full border border-outline-variant/40 bg-surface px-4 py-3 outline-none focus:border-primary"
+                  placeholder="Enter your full name"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-2" htmlFor="email">
+                  Email Address
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  className="w-full border border-outline-variant/40 bg-surface px-4 py-3 outline-none focus:border-primary"
+                  placeholder="Enter your email"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-2" htmlFor="phone">
+                  Phone Number
+                </label>
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="w-full border border-outline-variant/40 bg-surface px-4 py-3 outline-none focus:border-primary"
+                  placeholder="Enter your phone number"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-2" htmlFor="interest">
+                  Area of Interest
+                </label>
+                <select
+                  id="interest"
+                  name="interest"
+                  value={formData.interest}
+                  onChange={handleChange}
+                  required
+                  className="w-full border border-outline-variant/40 bg-surface px-4 py-3 outline-none focus:border-primary"
+                >
+                  <option value="">Select an option</option>
+                  <option value="technical">Technical Committees</option>
+                  <option value="non-technical">Non-Technical Committees</option>
+                  <option value="membership">General Membership</option>
+                  <option value="volunteering">Volunteering</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-2" htmlFor="message">
+                  Message
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  rows="5"
+                  value={formData.message}
+                  onChange={handleChange}
+                  className="w-full border border-outline-variant/40 bg-surface px-4 py-3 outline-none focus:border-primary resize-none"
+                  placeholder="Tell us what you want to join or learn more about"
+                ></textarea>
+              </div>
+
+              <button
+                type="submit"
+                className="btn-wedge self-start bg-primary text-on-primary px-8 py-4 font-bold tracking-wide uppercase hover:bg-primary-container transition-all"
+              >
+                Submit Interest
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}

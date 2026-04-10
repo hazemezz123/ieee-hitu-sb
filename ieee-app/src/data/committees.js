@@ -23,15 +23,7 @@ const categoryLabelMap = {
   'non-technical': 'Non-Technical',
 };
 
-const createLeader = (committeeName, role) => ({
-  name: `${committeeName} ${role}`,
-  role,
-  bio: `Placeholder profile for the ${role.toLowerCase()} of the ${committeeName} committee until the official branch leadership information is added.`,
-  image: leaderPlaceholder,
-  githubUrl: '#',
-  linkedinUrl: '#',
-  email: 'placeholder@ieeehitu.org',
-});
+const webHeadImage = 'https://res.cloudinary.com/dweqigxnz/image/upload/f_auto,q_auto,w_800/v1775792545/web-head_kd8plg.png';
 
 const createCommittee = ({
   name,
@@ -41,6 +33,8 @@ const createCommittee = ({
   icon,
   shortDescription,
   slogan,
+  headImage = null,
+  viceHead = undefined,
 }) => ({
   name,
   slug,
@@ -53,8 +47,29 @@ const createCommittee = ({
   goals: placeholderGoals,
   roles: placeholderRoles,
   activities: placeholderActivities,
-  head: createLeader(name, 'Head'),
-  viceHead: createLeader(name, 'Vice Head'),
+  head: {
+    name: name === 'Web' ? 'Khaled Nasser' : `${name} Head`,
+    role: 'Head',
+    bio: name === 'Web' 
+      ? 'Third-year Computer Engineering student at HITU. Passionate about full-stack development and building scalable web applications. Leading the Web committee to create impactful projects.'
+      : `Placeholder profile for the Head of the ${name} committee until the official branch leadership information is added.`,
+    image: headImage || leaderPlaceholder,
+    githubUrl: 'https://github.com',
+    linkedinUrl: 'https://linkedin.com',
+    email: 'web@ieeehitu.org',
+  },
+  viceHead:
+    viceHead === undefined
+      ? {
+          name: `${name} Vice Head`,
+          role: 'Vice Head',
+          bio: `Placeholder profile for the Vice Head of the ${name} committee until the official branch leadership information is added.`,
+          image: leaderPlaceholder,
+          githubUrl: 'https://github.com',
+          linkedinUrl: 'https://linkedin.com',
+          email: `${slug}@ieeehitu.org`,
+        }
+      : viceHead,
 });
 
 export const committees = [
@@ -93,6 +108,8 @@ export const committees = [
     icon: 'language',
     shortDescription: 'Creates modern web experiences and sharpens frontend and full-stack delivery skills.',
     slogan: 'Design, build, and ship for the web.',
+    headImage: webHeadImage,
+    viceHead: null,
   }),
   createCommittee({
     name: 'Automations',

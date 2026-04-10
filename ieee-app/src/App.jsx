@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import MembershipPage from './pages/MembershipPage'
 import CommitteesPage from './pages/CommitteesPage'
 import CommitteeDetailPage from './pages/CommitteeDetailPage'
+import JoinUsPage from './pages/JoinUsPage'
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/join-us" element={<JoinUsPage />} />
           <Route path="/committees" element={<CommitteesPage />} />
           <Route path="/committees/:slug" element={<CommitteeDetailPage />} />
           <Route path="/membership" element={<MembershipPage />} />

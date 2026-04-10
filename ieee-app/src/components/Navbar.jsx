@@ -7,10 +7,8 @@ export default function Navbar() {
   const location = useLocation();
 
   const navLinks = [
-    { name: 'Standards', href: '#' },
-    { name: 'Publications', href: '#' },
-    { name: 'Education', href: '#' },
     { name: 'Committees', href: '/committees' },
+    { name: 'Join Us', href: '/join-us' },
     { name: 'Membership', href: '/membership' },
   ];
 

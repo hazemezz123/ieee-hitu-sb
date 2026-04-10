@@ -32,35 +32,39 @@ function EmailIcon() {
 
 function LeaderCard({ leader }) {
   return (
-    <article className="bg-surface-container-low p-8">
-      <img
-        src={leader.image}
-        alt={leader.name}
-        className="w-full h-72 object-cover mb-6 bg-surface-container"
-      />
-      <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-3">
-        {leader.role}
-      </p>
-      <h3 className="text-2xl font-bold mb-3">{leader.name}</h3>
-      <p className="text-on-surface-variant mb-6 leading-relaxed">{leader.bio}</p>
-      <div className="flex items-center gap-4">
-        {leaderLinks.map((link) => (
+    <article className="bg-surface-container-low overflow-hidden md:grid md:grid-cols-[260px_minmax(0,1fr)] md:items-stretch">
+      <div className="md:h-full">
+        <img
+          src={leader.image}
+          alt={leader.name}
+          className="h-72 w-full object-cover bg-surface-container md:h-full md:min-h-[320px]"
+        />
+      </div>
+      <div className="p-8 md:px-12 md:py-10 flex flex-col justify-center md:border-l md:border-outline-variant/20">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-3">
+          {leader.role}
+        </p>
+        <h3 className="text-2xl font-bold mb-3">{leader.name}</h3>
+        <p className="text-on-surface-variant mb-6 leading-relaxed">{leader.bio}</p>
+        <div className="flex items-center gap-4">
+          {leaderLinks.map((link) => (
+            <a
+              key={link.key}
+              href={leader[link.key]}
+              aria-label={`${leader.name} ${link.label}`}
+              className="text-primary hover:text-primary-container transition-colors"
+            >
+              <link.Icon />
+            </a>
+          ))}
           <a
-            key={link.key}
-            href={leader[link.key]}
-            aria-label={`${leader.name} ${link.label}`}
+            href={`mailto:${leader.email}`}
+            aria-label={`${leader.name} email`}
             className="text-primary hover:text-primary-container transition-colors"
           >
-            <link.Icon />
+            <EmailIcon />
           </a>
-        ))}
-        <a
-          href={`mailto:${leader.email}`}
-          aria-label={`${leader.name} email`}
-          className="text-primary hover:text-primary-container transition-colors"
-        >
-          <EmailIcon />
-        </a>
+        </div>
       </div>
     </article>
   );
@@ -176,12 +180,12 @@ export default function CommitteeDetailPage() {
             <span className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase text-primary block mb-4">
               Leadership
             </span>
-            <h2 className="text-4xl font-extrabold tracking-tight">Committee Leads</h2>
+            <h2 className="text-4xl font-extrabold tracking-tight">Committee Leadership</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className={`grid grid-cols-1 ${committee.viceHead ? 'gap-8' : 'max-w-4xl mx-auto'}`}>
             <LeaderCard leader={committee.head} />
-            <LeaderCard leader={committee.viceHead} />
+            {committee.viceHead ? <LeaderCard leader={committee.viceHead} /> : null}
           </div>
         </div>
       </section>
