@@ -72,32 +72,26 @@ function mapSanityEvent(doc) {
   };
 }
 
-/**
- * Fetch all events. Currently returns static data.
- * Future: swap to sanityClient.fetch('*[_type == "event"]')
- */
 export async function fetchEvents() {
   if (!USE_SANITY) return staticEvents;
 
   try {
     const docs = await client.fetch(eventsGROQ);
     return docs.map(mapSanityEvent);
-  } catch {
+  } catch (err) {
+    console.warn('Sanity fetch failed, falling back to static:', err.message);
     return staticEvents;
   }
 }
 
-/**
- * Fetch a single event by slug. Currently returns static data.
- * Future: swap to sanityClient.fetch('*[_type == "event" && slug.current == $slug][0]')
- */
 export async function fetchEventBySlug(slug) {
   if (!USE_SANITY) return getStaticEventBySlug(slug);
 
   try {
     const doc = await client.fetch(eventBySlugGROQ, { slug });
     return doc ? mapSanityEvent(doc) : null;
-  } catch {
+  } catch (err) {
+    console.warn('Sanity fetch failed, falling back to static:', err.message);
     return getStaticEventBySlug(slug);
   }
 }
