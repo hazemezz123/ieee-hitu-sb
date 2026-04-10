@@ -10,6 +10,7 @@ export default function Navbar() {
     { name: 'Standards', href: '#' },
     { name: 'Publications', href: '#' },
     { name: 'Education', href: '#' },
+    { name: 'Committees', href: '/committees' },
     { name: 'Membership', href: '/membership' },
   ];
 

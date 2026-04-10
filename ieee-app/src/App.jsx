@@ -3,6 +3,8 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Home from './pages/Home'
 import MembershipPage from './pages/MembershipPage'
+import CommitteesPage from './pages/CommitteesPage'
+import CommitteeDetailPage from './pages/CommitteeDetailPage'
 
 function App() {
   return (
@@ -11,6 +13,8 @@ function App() {
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/committees" element={<CommitteesPage />} />
+          <Route path="/committees/:slug" element={<CommitteeDetailPage />} />
           <Route path="/membership" element={<MembershipPage />} />
         </Routes>
       </main>

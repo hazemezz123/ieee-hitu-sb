@@ -1,12 +1,23 @@
+import logo from '../assets/logo.png';
+
 export default function Hero() {
   return (
-    <section className="relative min-h-[870px] flex items-center overflow-hidden bg-surface-container-lowest pt-20">
+    <section className="relative min-h-[870px] flex items-center overflow-hidden bg-surface-container-lowest ">
       <div className="absolute inset-0 z-0 opacity-5 pointer-events-none">
         <div className="absolute top-0 right-0 w-1/2 h-full bg-primary wedge-accent" style={{ transform: 'rotate(0deg) scale(1.5)' }}></div>
         <div className="absolute bottom-0 left-0 w-1/3 h-2/3 bg-secondary-container wedge-accent" style={{ transform: 'rotate(180deg) scale(1.2)' }}></div>
       </div>
       <div className="container mx-auto px-12 relative z-10 max-w-4xl text-center">
         <div className="space-y-8">
+          <div className="flex justify-center">
+            <div className="  px-5 py-4  md:px-6">
+              <img
+                src={logo}
+                alt="IEEE HITU Student Branch logo"
+                className="h-24 w-auto md:h-32"
+              />
+            </div>
+          </div>
           <h1 className="text-6xl md:text-7xl font-black tracking-tight text-on-surface leading-[1.05]">
             Beyond Labels. <br />
             <span className="text-primary">Beyond Limits.</span>
