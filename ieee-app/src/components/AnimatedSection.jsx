@@ -26,7 +26,7 @@ function AnimatedSection({
     <motion.div
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: '-50px', amount: 0.2 }}
+      viewport={{ once: true, margin: '-100px', amount: 0.1 }}
       custom={delay}
       variants={variants}
       className={className}
