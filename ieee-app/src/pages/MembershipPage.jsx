@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import PageTransition from '../components/PageTransition'
+import AnimatedSection from '../components/AnimatedSection'
 
 const membershipTiers = [
   {
@@ -124,49 +126,53 @@ export default function MembershipPage() {
   const [openFaq, setOpenFaq] = useState(null);
 
   return (
+    <PageTransition>
     <div className="min-h-screen bg-surface">
       {/* Hero Section */}
-      <section className="relative py-32 bg-surface-container-lowest overflow-hidden">
+      <AnimatedSection>
+      <section className="relative py-16 md:py-24 lg:py-32 bg-surface-container-lowest overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-5 pointer-events-none">
           <div className="absolute top-0 right-0 w-1/2 h-full bg-primary wedge-accent" style={{ transform: 'rotate(0deg) scale(1.5)' }}></div>
         </div>
-        <div className="container mx-auto px-12 relative z-10 max-w-4xl text-center">
-          <h1 className="text-5xl md:text-6xl font-black tracking-tight text-on-surface leading-tight mb-6">
+        <div className="container mx-auto px-6 sm:px-8 md:px-12 relative z-10 max-w-4xl text-center">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-on-surface leading-tight mb-6">
             Become Part of Something <span className="text-primary">Bigger</span>
           </h1>
-          <p className="text-xl text-on-surface-variant leading-relaxed mb-8">
-            Join the world's largest technical professional organization and connect with 
+          <p className="text-base md:text-lg lg:text-xl text-on-surface-variant leading-relaxed mb-8">
+            Join the world's largest technical professional organization and connect with
             over 420,000 engineers, researchers, and innovators worldwide.
           </p>
-          <div className="flex gap-8 justify-center text-on-surface-variant">
+          <div className="flex gap-4 md:gap-6 lg:gap-8 justify-center text-on-surface-variant">
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary">420K+</div>
+              <div className="text-2xl md:text-3xl font-bold text-primary">420K+</div>
               <div className="text-sm uppercase tracking-wider">Members</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary">160+</div>
+              <div className="text-2xl md:text-3xl font-bold text-primary">160+</div>
               <div className="text-sm uppercase tracking-wider">Countries</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary">39</div>
+              <div className="text-2xl md:text-3xl font-bold text-primary">39</div>
               <div className="text-sm uppercase tracking-wider">Societies</div>
             </div>
           </div>
         </div>
       </section>
+      </AnimatedSection>
 
       {/* Membership Tiers */}
-      <section className="py-24 bg-surface">
-        <div className="container mx-auto px-12">
-          <div className="text-center mb-16">
+      <AnimatedSection delay={1}>
+      <section className="py-20 md:py-24 lg:py-32 bg-surface">
+        <div className="container mx-auto px-6 sm:px-8 md:px-12">
+          <div className="text-center mb-8 md:mb-12 lg:mb-16">
             <span className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase text-primary block mb-4">Choose Your Path</span>
-            <h2 className="text-4xl font-extrabold tracking-tight">Membership Levels</h2>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight">Membership Levels</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
             {membershipTiers.map((tier, index) => (
-              <div 
-                key={index} 
-                className={`relative bg-surface-container-low p-8 transition-all duration-300 hover:bg-surface-container-lowest ${tier.popular ? 'ring-2 ring-primary' : ''}`}
+              <div
+                key={index}
+                className={`relative bg-surface-container-low p-5 md:p-6 lg:p-8 transition-all duration-300 hover:bg-surface-container-lowest ${tier.popular ? 'ring-2 ring-primary' : ''}`}
               >
                 {tier.popular && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-on-primary text-xs font-bold uppercase tracking-widest px-4 py-1">
@@ -174,7 +180,7 @@ export default function MembershipPage() {
                   </div>
                 )}
                 <h3 className="text-xl font-bold mb-2">{tier.title}</h3>
-                <div className="text-3xl font-black text-primary mb-2">{tier.price}</div>
+                <div className="text-2xl md:text-3xl font-black text-primary mb-2">{tier.price}</div>
                 <p className="text-sm text-on-surface-variant mb-6">{tier.description}</p>
                 <ul className="space-y-3 mb-8">
                   {tier.features.map((feature, i) => (
@@ -185,8 +191,8 @@ export default function MembershipPage() {
                   ))}
                 </ul>
                 <button className={`w-full py-3 font-bold tracking-wide uppercase transition-all ${
-                  tier.popular 
-                    ? 'bg-primary text-on-primary hover:bg-primary-container' 
+                  tier.popular
+                    ? 'bg-primary text-on-primary hover:bg-primary-container'
                     : 'bg-surface-container-lowest text-primary border border-primary hover:bg-primary/5'
                 }`}>
                   {tier.cta}
@@ -196,17 +202,19 @@ export default function MembershipPage() {
           </div>
         </div>
       </section>
+      </AnimatedSection>
 
       {/* Benefits */}
-      <section className="py-24 bg-surface-container-lowest">
-        <div className="container mx-auto px-12">
-          <div className="text-center mb-16">
+      <AnimatedSection delay={2}>
+      <section className="py-20 md:py-24 lg:py-32 bg-surface-container-lowest">
+        <div className="container mx-auto px-6 sm:px-8 md:px-12">
+          <div className="text-center mb-8 md:mb-12 lg:mb-16">
             <span className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase text-primary block mb-4">Why Join IEEE</span>
-            <h2 className="text-4xl font-extrabold tracking-tight">Member Benefits</h2>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight">Member Benefits</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
             {benefits.map((benefit, index) => (
-              <div key={index} className="bg-surface-container-low p-8 hover:bg-surface-container-lowest transition-all duration-300">
+              <div key={index} className="bg-surface-container-low p-5 md:p-6 lg:p-8 hover:bg-surface-container-lowest transition-all duration-300">
                 <span className="material-symbols-outlined text-primary text-4xl mb-4">{benefit.icon}</span>
                 <h3 className="text-lg font-bold mb-2">{benefit.title}</h3>
                 <p className="text-sm text-on-surface-variant">{benefit.description}</p>
@@ -215,17 +223,19 @@ export default function MembershipPage() {
           </div>
         </div>
       </section>
+      </AnimatedSection>
 
       {/* Testimonials */}
-      <section className="py-24 bg-surface">
-        <div className="container mx-auto px-12">
-          <div className="text-center mb-16">
+      <AnimatedSection delay={3}>
+      <section className="py-20 md:py-24 lg:py-32 bg-surface">
+        <div className="container mx-auto px-6 sm:px-8 md:px-12">
+          <div className="text-center mb-8 md:mb-12 lg:mb-16">
             <span className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase text-primary block mb-4">Success Stories</span>
-            <h2 className="text-4xl font-extrabold tracking-tight">What Our Members Say</h2>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight">What Our Members Say</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
             {testimonials.map((testimonial, index) => (
-              <div key={index} className="bg-surface-container-low p-8">
+              <div key={index} className="bg-surface-container-low p-5 md:p-6 lg:p-8">
                 <span className="material-symbols-outlined text-primary text-3xl mb-4">format_quote</span>
                 <p className="text-on-surface-variant mb-6 italic">"{testimonial.quote}"</p>
                 <div>
@@ -238,13 +248,15 @@ export default function MembershipPage() {
           </div>
         </div>
       </section>
+      </AnimatedSection>
 
       {/* FAQ */}
-      <section className="py-24 bg-surface-container-lowest">
-        <div className="container mx-auto px-12 max-w-3xl">
-          <div className="text-center mb-16">
+      <AnimatedSection delay={4}>
+      <section className="py-20 md:py-24 lg:py-32 bg-surface-container-lowest">
+        <div className="container mx-auto px-6 sm:px-8 md:px-12 max-w-3xl">
+          <div className="text-center mb-8 md:mb-12 lg:mb-16">
             <span className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase text-primary block mb-4">Questions</span>
-            <h2 className="text-4xl font-extrabold tracking-tight">Frequently Asked Questions</h2>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight">Frequently Asked Questions</h2>
           </div>
           <div className="space-y-4">
             {faqs.map((faq, index) => (
@@ -268,20 +280,24 @@ export default function MembershipPage() {
           </div>
         </div>
       </section>
+      </AnimatedSection>
 
       {/* CTA */}
-      <section className="py-24 bg-primary text-on-primary">
-        <div className="container mx-auto px-12 text-center">
-          <h2 className="text-4xl font-black tracking-tight mb-4">Ready to Join?</h2>
-          <p className="text-xl opacity-80 mb-8 max-w-2xl mx-auto">
-            Take your career to the next level. Join IEEE today and become part of 
+      <AnimatedSection delay={5}>
+      <section className="py-20 md:py-24 lg:py-32 bg-primary text-on-primary">
+        <div className="container mx-auto px-6 sm:px-8 md:px-12 text-center">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tight mb-4">Ready to Join?</h2>
+          <p className="text-base md:text-lg lg:text-xl opacity-80 mb-8 max-w-2xl mx-auto">
+            Take your career to the next level. Join IEEE today and become part of
             the global technology community.
           </p>
-          <button className="bg-surface-container-lowest text-primary px-10 py-4 font-bold tracking-widest uppercase hover:bg-secondary-fixed transition-all">
+          <button className="bg-surface-container-lowest text-primary px-6 py-3 md:px-10 md:py-4 font-bold tracking-widest uppercase hover:bg-secondary-fixed transition-all">
             Join IEEE Today
           </button>
         </div>
       </section>
+      </AnimatedSection>
     </div>
+    </PageTransition>
   );
 }

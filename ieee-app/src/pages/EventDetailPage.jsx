@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import PageTransition from '../components/PageTransition'
+import AnimatedSection from '../components/AnimatedSection'
 import { fetchEventBySlug } from '../data/eventsSource';
 import MasonryGallery from '../components/MasonryGallery';
 
@@ -69,8 +71,10 @@ export default function EventDetailPage() {
   }
 
   return (
+    <PageTransition>
     <div className="min-h-screen bg-surface">
       {/* Hero Header */}
+      <AnimatedSection>
       <section className="relative bg-surface-container-lowest overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-5 pointer-events-none">
           <div
@@ -78,10 +82,10 @@ export default function EventDetailPage() {
             style={{ transform: 'rotate(0deg) scale(1.5)' }}
           ></div>
         </div>
-        <div className="container mx-auto px-12 relative z-10 max-w-5xl">
+        <div className="container mx-auto px-6 sm:px-8 md:px-12 relative z-10 max-w-5xl">
           <Link
             to="/events"
-            className="inline-flex items-center gap-2 text-primary text-xs font-bold tracking-widest uppercase mb-8 pt-32"
+            className="inline-flex items-center gap-2 text-primary text-xs font-bold tracking-widest uppercase mb-5 md:mb-8 pt-8"
           >
             <span className="material-symbols-outlined text-sm">arrow_back</span>
             All Events
@@ -114,10 +118,12 @@ export default function EventDetailPage() {
           </div>
         </div>
       </section>
+      </AnimatedSection>
 
       {/* Key Info Cards */}
-      <section className="py-16 bg-surface">
-        <div className="container mx-auto px-12 max-w-5xl">
+      <AnimatedSection delay={1}>
+      <section className="py-12 md:py-16 bg-surface">
+        <div className="container mx-auto px-6 sm:px-8 md:px-12 max-w-5xl">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <StatCard
               icon="calendar_today"
@@ -142,11 +148,13 @@ export default function EventDetailPage() {
           </div>
         </div>
       </section>
+      </AnimatedSection>
 
       {/* Description */}
       {event.description && (
-        <section className="py-24 bg-surface-container-lowest">
-          <div className="container mx-auto px-12 max-w-4xl">
+        <AnimatedSection delay={2}>
+        <section className="py-20 md:py-24 lg:py-32 bg-surface-container-lowest">
+          <div className="container mx-auto px-6 sm:px-8 md:px-12 max-w-4xl">
             <span className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase text-primary block mb-6">
               About the Event
             </span>
@@ -161,11 +169,13 @@ export default function EventDetailPage() {
             </div>
           </div>
         </section>
+        </AnimatedSection>
       )}
 
       {/* Masonry Gallery */}
-      <section className="py-24 bg-surface">
-        <div className="container mx-auto px-12 max-w-6xl">
+      <AnimatedSection delay={3}>
+      <section className="py-20 md:py-24 lg:py-32 bg-surface">
+        <div className="container mx-auto px-6 sm:px-8 md:px-12 max-w-6xl">
           <div className="text-center mb-16">
             <span className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase text-primary block mb-4">
               Gallery
@@ -177,10 +187,12 @@ export default function EventDetailPage() {
           <MasonryGallery images={event.gallery} />
         </div>
       </section>
+      </AnimatedSection>
 
       {/* CTA Section */}
-      <section className="py-24 bg-surface-container-lowest">
-        <div className="container mx-auto px-12 text-center max-w-2xl">
+      <AnimatedSection delay={4}>
+      <section className="py-20 md:py-24 lg:py-32 bg-surface-container-lowest">
+        <div className="container mx-auto px-6 sm:px-8 md:px-12 text-center max-w-2xl">
           <h2 className="text-4xl font-extrabold tracking-tight text-on-surface mb-4">
             Want to Join Our Next Event?
           </h2>
@@ -195,6 +207,8 @@ export default function EventDetailPage() {
           </a>
         </div>
       </section>
+      </AnimatedSection>
     </div>
+    </PageTransition>
   );
 }

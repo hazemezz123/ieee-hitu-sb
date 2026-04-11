@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useTheme } from '../theme/useTheme';
 import logo from '../assets/logo.png';
 
@@ -6,9 +7,12 @@ export default function Footer() {
   const { theme } = useTheme();
 
   return (
-    <footer
+    <motion.footer
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-50px' }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
       className="w-full border-t-4 border-primary bg-surface-container-highest pt-16 pb-8 text-on-surface"
-      style={{ clipPath: 'polygon(0 0, 100% 15%, 100% 100%, 0 100%)' }}
     >
       <div className="mx-auto flex max-w-7xl flex-col items-center gap-12 px-12 md:flex-row md:justify-between">
         <div className="flex items-center gap-4">
@@ -39,6 +43,6 @@ export default function Footer() {
           © 2024 IEEE HITU Student Branch
         </p>
       </div>
-    </footer>
+    </motion.footer>
   );
 }
