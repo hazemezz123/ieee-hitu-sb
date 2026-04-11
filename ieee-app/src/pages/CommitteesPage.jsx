@@ -72,7 +72,6 @@ export default function CommitteesPage() {
       </section>
       </AnimatedSection>
 
-      <AnimatedSection delay={1}>
       <section className="py-20 md:py-24 lg:py-32 bg-surface">
         <div className="container mx-auto px-6 sm:px-8 md:px-12 space-y-12 md:space-y-16 lg:space-y-20">
           <div>
@@ -108,7 +107,6 @@ export default function CommitteesPage() {
           </div>
         </div>
       </section>
-      </AnimatedSection>
     </div>
     </PageTransition>
   );
