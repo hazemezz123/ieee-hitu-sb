@@ -39,7 +39,7 @@ function LeaderCard({ leader }) {
         <img
           src={leader.image}
           alt={leader.name}
-          className="h-48 sm:h-56 md:h-72 w-full object-contain bg-surface-container md:h-full md:min-h-[320px]"
+          className="h-full sm:h-56 md:h-72 w-full object-contain bg-surface-container md:h-full md:min-h-[320px]"
         />
       </div>
       <div className="p-5 md:px-8 md:py-10 flex flex-col justify-center md:border-l md:border-outline-variant/20">
@@ -116,7 +116,7 @@ export default function CommitteeDetailPage() {
   return (
     <PageTransition>
     <div className="min-h-screen bg-surface">
-      <AnimatedSection>
+      <AnimatedSection trigger="load">
       <section className="relative py-16 md:py-24 lg:py-32 bg-surface-container-lowest overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-5 pointer-events-none">
           <div

@@ -21,12 +21,20 @@ function AnimatedSection({
   variants = defaultVariants,
   delay = 0,
   className = '',
+  trigger = 'inView',
 }) {
+  const visibilityProps =
+    trigger === 'load'
+      ? { animate: 'visible' }
+      : {
+          whileInView: 'visible',
+          viewport: { once: true, margin: '-100px', amount: 0.1 },
+        }
+
   return (
     <motion.div
       initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: '-100px', amount: 0.1 }}
+      {...visibilityProps}
       custom={delay}
       variants={variants}
       className={className}
