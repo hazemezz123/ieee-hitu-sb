@@ -4,6 +4,7 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ScrollToTop from './components/ScrollToTop'
 import Home from './pages/Home'
+import LenisProvider from './lib/LenisProvider'
 import MembershipPage from './pages/MembershipPage'
 import CommitteesPage from './pages/CommitteesPage'
 import CommitteeDetailPage from './pages/CommitteeDetailPage'
@@ -11,6 +12,8 @@ import JoinUsPage from './pages/JoinUsPage'
 import AboutPage from './pages/AboutPage'
 import EventsPage from './pages/EventsPage'
 import EventDetailPage from './pages/EventDetailPage'
+import GalleryPage from './pages/GalleryPage'
+import ContactPage from './pages/ContactPage'
 
 function AnimatedRoutes() {
   const location = useLocation()
@@ -26,6 +29,8 @@ function AnimatedRoutes() {
         <Route path="/membership" element={<MembershipPage />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/events/:slug" element={<EventDetailPage />} />
+        <Route path="/gallery" element={<GalleryPage />} />
+        <Route path="/contact" element={<ContactPage />} />
       </Routes>
     </AnimatePresence>
   )
@@ -34,12 +39,14 @@ function AnimatedRoutes() {
 function App() {
   return (
     <Router>
-      <ScrollToTop />
-      <Navbar />
-      <main>
-        <AnimatedRoutes />
-      </main>
-      <Footer />
+      <LenisProvider>
+        <ScrollToTop />
+        <Navbar />
+        <main>
+          <AnimatedRoutes />
+        </main>
+        <Footer />
+      </LenisProvider>
     </Router>
   )
 }

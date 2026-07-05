@@ -1,0 +1,33 @@
+Timestamp	Name	Email	Address	Phone number	University 	Position	Your Committee	Clear Personal Photo
+2/10/2026 20:07:26	abdelrhman saleh Amin 	abdulrhman00saleh@gmail.com	Giza - Faisal 	01147955602	HITU	Head	CS	???
+2/13/2026 22:58:25	Shahd Rady El-sayed 	shahdrelsayed@gmail.com	الاميريه - شارع الترعة 	01225270652	HITU	Head	PR	https://drive.google.com/file/d/1QmVsBmVtyZOuFEH1XJ4Q4pZSP4XlGuIn/view?usp=sharing
+3/14/2026 14:54:08	Omar Raafat Hamed Abdelaziz 	oraafat04@gmail.com	Cairo - mataria (From Alexandria)	01145562033	HITU	Head	Automation	https://drive.google.com/open?id=1VnSDXYnMDE8FFKwnE1pkH10-1GQlG7Ep
+2/13/2026 23:21:05	Basel Khaled Matter	basel84matter@gmail.com	القاهره . كبلات 	01024567591	HITU	Vice Head	T&D	https://drive.google.com/file/d/1wHztBssb1ak5exLB5Ls6I-KQ0V5DbMmE/view?usp=drivesdk
+3/10/2026 17:22:43	Hana Germy 	hanagermy2@gmail.com	Elmadii	01157281033	القاهرة 	Manager 	quality control 	https://drive.google.com/open?id=1vh38arrTftAh8Ui-CAWEoZUfbhUSNQoQ
+2/11/2026 15:00:40	Ahmed Hamdy	alshabmido2007@gmail.com	 عزبة النخل 	01018248527	HITU	Head	Robotic	https://drive.google.com/file/d/1RyzfxFZuLfRYaLXj-_KHrPjAnKuVFmap/view?usp=sharing
+3/11/2026 16:12:13	flopater samir danial	felosamir611@gmail.com	new cairo	01207572972	Sadat Academy for Management Sciences	Head	CS	https://drive.google.com/open?id=1vKBbh8uucLeBPJrQClxizn0g3iSAqHf_
+2/11/2026 23:20:49	Mohammed Basem Abdul Momen 	medomix777@gmail.com	عزبة النخل الشرقية الاندلس 	01211446323	HITU	Vice Head	T&D	https://drive.google.com/drive/folders/11Dx8JHm3grpy3Czbu3_0S2dt88nWQmwe
+2/11/2026 23:26:08	Menna Allah Mohamed	mennaallahmohammad8@gmail.com	فيصل	01112157214	HITU	Head	Multi Media	https://drive.google.com/file/d/1GB8vSUjsAJd5R_2EwbaKfivxee_1DcuK/view?usp=sharing
+3/12/2026 17:26:09	Kareem Mohammed Sayed 	km3271762@gmail.com	Maadi - cairo	01212832454	HITU	Vice Head	AI	https://drive.google.com/open?id=1DuGUtEeFbX-quxwXPQeW-pdcojcDFnht
+2/12/2026 2:50:51	Yahia ahmed saad 	yahiasaad2424@gmail.com	الطوابق - فيصل - الجيزة 	01152723330	HITU	Vice Head	Multi Media	https://drive.google.com/file/d/1Urwboxgx0OzUL15QOQBi9STzPZMc3XZc/view?usp=drivesdk
+3/14/2026 22:46:55	Mariam Ahmed El-Neblawy 	mariamelneblawey@gmail.com	Cairo, Amiriya 	01229330443	HITU	Vice Head	HR	https://drive.google.com/open?id=1fT_g39YOiuQ4UDotePAF84i4RB5mOTsx
+3/17/2026 23:32:05	Hazem Mohammed 	hazemezz988@gmail.com	السويس، السلام 2	+20 1005291205	HITU	Head	Web	https://drive.google.com/open?id=1Y7kiPpKUnOJz9ACWt-klfJ5kUm8Yz0y0
+2/12/2026 14:34:06	Ramez kamal 	ramezkmal3@gmail.com	Cairo 	01002160012	HITU	Vice Head	AI	https://drive.google.com/file/d/1cSziwWozZQTP5zivJLOxbgW12QzrxG1X/view?usp=drivesdk
+2/13/2026 19:34:22	Moustafa Maher	mustfa.maheer@gamil.com	Elmarg ,cairo	01129115112	HITU	Head	Ds	https://drive.google.com/file/d/1BNxXPLZtZUb0Z5Bb0wqNR01E2YF5uiAR/view?usp=sharing
+2/14/2026 7:11:15	Adham Ahmad Hosny Mohammad	adham.ahmad.hosny@gmail.com	10th of Ramadaan city	+201026777688	HITU	Head	T&D	https://drive.google.com/file/d/1jIun4Wkhq4ZNF6IbevdBK1v6VfWCGFsR/view?usp=sharing
+3/11/2026 3:19:22	Bassam Hossam 	bassam.hossam69@gmail.com	5 elhosany street warak elarab	01025100470	HITU	Vice Head	CS	https://drive.google.com/open?id=1yIno3Rx1jKbI8on7Vg9cUZHp24Ao2Ax8
+2/13/2026 22:52:58	Samer muharram	samermuharram5@gmail.com	الجيز - ارض اللواء 	01111496560	HITU	Vice Head	AI	https://drive.google.com/file/d/1DnpsTJdJ24kfwTMHhfl1ej3CPEGs5glv/view?usp=drivesdk
+2/14/2026 1:17:04	زياد محمود محمد	ZiadAbdelghany296@gmail.com	عين شمس	01094680629	HITU	Vice Head	Marketing	ارفع صوره ازاي ده طالب تيكست🤡
+2/14/2026 1:36:27	Ziad Mohamed Fathy 	zizo.alprnc.90@gmail.com	Elobour 	01126596120	HITU	Head	Embedded	https://drive.google.com/file/d/15wNUP-DNhMwKPDOr0yLoFi3-SGILM_1_/view?usp=drivesdk
+2/14/2026 1:56:12	Seif Allah Hany	seifh3755@gmail.com	18 refaat abo elkheer kaabish faisel	01013603524	HITU	Head	OC	https://share.icloud.com/photos/038Idz0vrVELtSm_dH8Qu3fIA
+3/10/2026 3:41:58	Habiba Hamdy Aly Hassan	habiba7amdy3li@gmail.com	Moharram Bek Alexandria	01554009093	HITU	Technical Software Manager	AI, CS, Web	https://drive.google.com/open?id=1CywoTY5GochCfzHnTBPBpVjaQnUO_xBB
+2/17/2026 0:55:01	Mohamed osama Mohamed 	mo228710@gmail.com	6-mohamed noor eldin - omrania 	01110634455	HITU	Head	AI	https://drive.google.com/file/d/1k5blt8XXjw8HJI2cEMMtdHIgxQd3xXR3/view?usp=drivesdk
+3/10/2026 14:51:11	Omnia Osama Mohammed Mohammed 	omnyhsmh@gmail.com	Shubra El Kheima	01015179400	HITU	Vice Head	CS	https://drive.google.com/open?id=1AUmhW9wmgYk5K-Mla3bo9sdpbbWmqXY_
+3/17/2026 23:30:35	Abdelrahman Mahmoud Zakaria	abdelrahman.mahmoud.20.7.2002@gmail.com	Ain shams 	1558568852	HITU	Vice Head	Automation	https://drive.google.com/open?id=1WMq8iJp-hvvL8y-wzUcuwNVP8sCmtndf
+3/10/2026 17:28:25	Basel Khaled Matter 	basel84matter@gmail.com	المنوفيه.؛ القاهرة (الكبلات) 	01024567591	HITU	Vice Head	T&D	https://drive.google.com/open?id=1NnSh89-A_5SS3cJUgc4yKFgiZ8Lnl4w-
+3/18/2026 3:55:12	Mariam Mohamed Khedr 	mariamkhedr49@gmail.com	Hada'iq elqoba, Cairo Governorate 	01010691805	HITU	Vice Head	Robotic	https://drive.google.com/open?id=1AnTWQKuSEHQpEs-BW1c_Rn3N-RxF01qB
+3/17/2026 23:48:53	Seif Ayman Abdelmoniem	seif.abdelmoniem.ahmed@gmail.com	Giza	01145580163	HITU		Automation	https://drive.google.com/open?id=1pruiB2OqzJLYBrsooyvB3u8tc59DkG4y
+4/14/2026 1:57:08	Youssef Ahmed Ali Gamal 	khalifaayossef@gmail.com	El Obour City 	01151255210	HITU	Vice Head	Multi Media	https://drive.google.com/open?id=1VIvzeChTunY_WOnwAEB9azBqdgyM_2YN
+4/14/2026 2:21:50	Omar Farouk | عمر فاروق	omarmfarok.47@gmail.com	السويس - بورتوفيق 	01147825907	HITU	Vice Head	HR	https://drive.google.com/open?id=1oa8GdVC74QCpjF2tAY7TY_61q4B9eAd9
+4/14/2026 10:00:58	Abdelrahman Abdelaziz 	abdelrahmanabdelazizaboelala@gmail.com	Giza	01149215111	Cairo university 	Head	HR	https://drive.google.com/open?id=1L-gDbge4MUF3S0lNMr-o9FaFq_12Auos
+	Seif Ayman Abdelmoniem Ahmed 	seif.abdelmoniem.ahmed@gmail.com‏	Elmoneib-Giza	1145580163	HITU	Technical Manager		https://drive.google.com/file/d/1yAR6CaV3w_BNSJ4R5xE3OCpJn1mExidi/view?usp=drive_link
