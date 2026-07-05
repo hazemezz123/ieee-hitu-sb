@@ -9,8 +9,7 @@ const communityItems = [
 
 export default function Membership() {
   return (
-    <section className="py-20 md:py-24 lg:py-32 bg-surface-container-lowest relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-1/3 h-full bg-surface-container opacity-50" style={{ clipPath: 'polygon(30% 0, 100% 0, 100% 100%, 0% 100%)' }}></div>
+    <section className="py-20 md:py-24 lg:py-32 relative overflow-hidden">
       <div className="container mx-auto px-6 sm:px-8 md:px-12 relative z-10">
         <div className="max-w-3xl mb-8 sm:mb-12 md:mb-16">
           <span className="section-label mb-4">Connect with Excellence</span>
@@ -26,12 +25,12 @@ export default function Membership() {
             </div>
           ))}
         </div>
-        <div className="mt-10 sm:mt-14 md:mt-20 p-6 sm:p-8 md:p-12 bg-primary text-on-primary flex flex-col md:flex-row justify-between items-center gap-6 sm:gap-8" style={{ clipPath: 'polygon(0 0, 98% 0, 100% 15%, 100% 100%, 2% 100%, 0 85%)' }}>
+        <div className="mt-10 sm:mt-14 md:mt-20 p-6 sm:p-8 md:p-12 flex flex-col md:flex-row justify-between items-center gap-6 sm:gap-8" style={{ clipPath: 'polygon(0 0, 98% 0, 100% 15%, 100% 100%, 2% 100%, 0 85%)' }}>
           <div className="text-center md:text-left">
             <h3 className="text-xl sm:text-2xl font-bold mb-2">Ready to advance your career?</h3>
             <p className="text-sm sm:text-base opacity-80">IEEE membership provides resources and opportunities you can't find anywhere else.</p>
           </div>
-          <Link to="/membership" className="bg-surface-container-lowest text-primary px-6 sm:px-8 md:px-10 py-3 sm:py-4 text-sm md:text-base font-bold tracking-widest uppercase hover:bg-secondary-fixed transition-all inline-block">
+          <Link to="/membership" className="text-primary px-6 sm:px-8 md:px-10 py-3 sm:py-4 text-sm md:text-base font-bold tracking-widest uppercase hover:bg-secondary-fixed transition-all inline-block">
             Join IEEE Today
           </Link>
         </div>

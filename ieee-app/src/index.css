@@ -10,9 +10,7 @@
    Raw design values (the foundation)
    ============================================ */
 :root {
-  color-scheme: light;
-  --theme-transition-duration: 220ms;
-  --theme-transition-easing: cubic-bezier(0.25, 1, 0.5, 1);
+  color-scheme: dark;
 
   /* ── Spacing scale (4px base) ── */
   --space-0:   0;
@@ -52,14 +50,14 @@
   --radius-3xl:     1.5rem;
   --radius-full:    9999px;
 
-  /* ── Shadows (soft, layered) ── */
+  /* ── Shadows (dark mode) ── */
   --shadow-none: none;
-  --shadow-sm:   0 1px 2px 0 rgb(0 0 0 / 0.04);
-  --shadow-md:   0 2px 8px -2px rgb(0 0 0 / 0.06), 0 1px 3px -1px rgb(0 0 0 / 0.04);
-  --shadow-lg:   0 4px 16px -4px rgb(0 0 0 / 0.08), 0 1px 4px -1px rgb(0 0 0 / 0.04);
-  --shadow-xl:   0 8px 24px -6px rgb(0 0 0 / 0.10), 0 2px 6px -2px rgb(0 0 0 / 0.04);
-  --shadow-2xl:  0 12px 32px -8px rgb(0 0 0 / 0.12), 0 3px 8px -3px rgb(0 0 0 / 0.04);
-  --shadow-inner: inset 0 1px 3px 0 rgb(0 0 0 / 0.04);
+  --shadow-sm:   0 1px 2px 0 rgb(0 0 0 / 0.15);
+  --shadow-md:   0 2px 8px -2px rgb(0 0 0 / 0.2), 0 1px 3px -1px rgb(0 0 0 / 0.15);
+  --shadow-lg:   0 4px 16px -4px rgb(0 0 0 / 0.25), 0 1px 4px -1px rgb(0 0 0 / 0.15);
+  --shadow-xl:   0 8px 24px -6px rgb(0 0 0 / 0.3), 0 2px 6px -2px rgb(0 0 0 / 0.15);
+  --shadow-2xl:  0 12px 32px -8px rgb(0 0 0 / 0.35), 0 3px 8px -3px rgb(0 0 0 / 0.15);
+  --shadow-inner: inset 0 1px 3px 0 rgb(0 0 0 / 0.15);
 
   /* ── Duration / motion ── */
   --duration-75:   75ms;
@@ -79,54 +77,54 @@
   --ease-out-cubic: cubic-bezier(0.33, 1, 0.68, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 
-  /* ── Color primitives (MD3-based) ── */
-  --color-background: #f9f9f9;
-  --color-on-error-container: #93000a;
-  --color-error-container: #ffdad6;
-  --color-surface-container-lowest: #ffffff;
-  --color-tertiary-container: #00686f;
-  --color-on-tertiary-fixed-variant: #004f54;
+  /* ── Color primitives (dark, MD3-based) ── */
+  --color-background: #0d141c;
+  --color-on-error-container: #ffb4ab;
+  --color-error-container: #93000a;
+  --color-surface-container-lowest: #101820;
+  --color-tertiary-container: #164e57;
+  --color-on-tertiary-fixed-variant: #a3eef7;
   --color-tertiary-fixed: #81f4fe;
-  --color-surface-bright: #f9f9f9;
-  --color-secondary-fixed-dim: #5cd4ff;
-  --color-inverse-surface: #303030;
-  --color-on-primary-container: #badbff;
-  --color-error: #ba1a1a;
-  --color-surface: #f9f9f9;
-  --color-on-secondary-fixed-variant: #004d62;
-  --color-primary: #004976;
-  --color-tertiary: #004e54;
-  --color-on-surface: #1b1b1b;
+  --color-surface-bright: #36414d;
+  --color-secondary-fixed-dim: #86d2eb;
+  --color-inverse-surface: #dfe3ea;
+  --color-on-primary-container: #cee5ff;
+  --color-error: #ffb4ab;
+  --color-surface: #0d141c;
+  --color-on-secondary-fixed-variant: #baeaff;
+  --color-primary: #7BAED4;
+  --color-tertiary: #8fdbe4;
+  --color-on-surface: #e3e9f1;
   --color-on-secondary-fixed: #001f29;
-  --color-surface-container-low: #f3f3f3;
-  --color-surface-container-high: #e8e8e8;
-  --color-primary-fixed-dim: #98cbff;
-  --color-secondary: #006782;
-  --color-inverse-on-surface: #f1f1f1;
-  --color-outline: #717881;
-  --color-on-surface-variant: #414750;
-  --color-on-tertiary: #ffffff;
-  --color-surface-container: #eeeeee;
-  --color-secondary-container: #42d0fe;
-  --color-on-primary: #ffffff;
+  --color-surface-container-low: #151d25;
+  --color-surface-container-high: #202a34;
+  --color-primary-fixed-dim: #7BAED4;
+  --color-secondary: #86d2eb;
+  --color-inverse-on-surface: #1b1b1b;
+  --color-outline: #8b95a1;
+  --color-on-surface-variant: #b8c2ce;
+  --color-on-tertiary: #002b30;
+  --color-surface-container: #1a232c;
+  --color-secondary-container: #0b495c;
+  --color-on-primary: #003352;
   --color-on-primary-fixed: #001d33;
-  --color-on-tertiary-container: #75e8f3;
+  --color-on-tertiary-container: #a8eef7;
   --color-tertiary-fixed-dim: #63d7e1;
   --color-secondary-fixed: #baeaff;
-  --color-on-error: #ffffff;
-  --color-on-background: #1b1b1b;
-  --color-surface-container-highest: #e2e2e2;
-  --color-outline-variant: #c0c7d1;
-  --color-on-primary-fixed-variant: #004a77;
-  --color-inverse-primary: #98cbff;
-  --color-on-secondary-container: #00566d;
-  --color-on-secondary: #ffffff;
-  --color-surface-variant: #e2e2e2;
+  --color-on-error: #690005;
+  --color-on-background: #e3e9f1;
+  --color-surface-container-highest: #2a343f;
+  --color-outline-variant: #404b56;
+  --color-on-primary-fixed-variant: #badbff;
+  --color-inverse-primary: #004976;
+  --color-on-secondary-container: #baeaff;
+  --color-on-secondary: #003545;
+  --color-surface-variant: #404b56;
   --color-primary-fixed: #cee5ff;
-  --color-surface-dim: #dadada;
-  --color-surface-tint: #02639c;
+  --color-surface-dim: #0d141c;
+  --color-surface-tint: #7BAED4;
   --color-on-tertiary-fixed: #002022;
-  --color-primary-container: #00629b;
+  --color-primary-container: #004a77;
 
   --font-family-headline: 'Inter', sans-serif;
   --font-family-body: 'Inter', sans-serif;
@@ -230,66 +228,7 @@
   --input-border-width: 1px;
 }
 
-/* ============================================
-   DARK THEME — Override semantic tokens
-   ============================================ */
-:root[data-theme='dark'] {
-  color-scheme: dark;
-  --color-background: #0d141c;
-  --color-on-error-container: #ffb4ab;
-  --color-error-container: #93000a;
-  --color-surface-container-lowest: #101820;
-  --color-tertiary-container: #164e57;
-  --color-on-tertiary-fixed-variant: #a3eef7;
-  --color-tertiary-fixed: #81f4fe;
-  --color-surface-bright: #36414d;
-  --color-secondary-fixed-dim: #86d2eb;
-  --color-inverse-surface: #dfe3ea;
-  --color-on-primary-container: #cee5ff;
-  --color-error: #ffb4ab;
-  --color-surface: #0d141c;
-  --color-on-secondary-fixed-variant: #baeaff;
-  --color-primary: #7BAED4;
-  --color-tertiary: #8fdbe4;
-  --color-on-surface: #e3e9f1;
-  --color-on-secondary-fixed: #001f29;
-  --color-surface-container-low: #151d25;
-  --color-surface-container-high: #202a34;
-  --color-primary-fixed-dim: #7BAED4;
-  --color-secondary: #86d2eb;
-  --color-inverse-on-surface: #1b1b1b;
-  --color-outline: #8b95a1;
-  --color-on-surface-variant: #b8c2ce;
-  --color-on-tertiary: #002b30;
-  --color-surface-container: #1a232c;
-  --color-secondary-container: #0b495c;
-  --color-on-primary: #003352;
-  --color-on-primary-fixed: #001d33;
-  --color-on-tertiary-container: #a8eef7;
-  --color-tertiary-fixed-dim: #63d7e1;
-  --color-secondary-fixed: #baeaff;
-  --color-on-error: #690005;
-  --color-on-background: #e3e9f1;
-  --color-surface-container-highest: #2a343f;
-  --color-outline-variant: #404b56;
-  --color-on-primary-fixed-variant: #badbff;
-  --color-inverse-primary: #004976;
-  --color-on-secondary-container: #baeaff;
-  --color-on-secondary: #003545;
-  --color-surface-variant: #404b56;
-  --color-primary-fixed: #cee5ff;
-  --color-surface-dim: #0d141c;
-  --color-surface-tint: #7BAED4;
-  --color-on-tertiary-fixed: #002022;
-  --color-primary-container: #004a77;
 
-  /* ── Shadow adjustments for dark ── */
-  --shadow-sm:  0 1px 2px 0 rgb(0 0 0 / 0.15);
-  --shadow-md:  0 2px 8px -2px rgb(0 0 0 / 0.2), 0 1px 3px -1px rgb(0 0 0 / 0.15);
-  --shadow-lg:  0 4px 16px -4px rgb(0 0 0 / 0.25), 0 1px 4px -1px rgb(0 0 0 / 0.15);
-  --shadow-xl:  0 8px 24px -6px rgb(0 0 0 / 0.3), 0 2px 6px -2px rgb(0 0 0 / 0.15);
-  --shadow-2xl: 0 12px 32px -8px rgb(0 0 0 / 0.35), 0 3px 8px -3px rgb(0 0 0 / 0.15);
-}
 
 /* ============================================
    TAILWIND v4 THEME MAPPING
@@ -399,53 +338,7 @@ body {
   }
 }
 
-/* ============================================
-   THEME TRANSITIONS
-   ============================================ */
-.theme-transitioning body,
-.theme-transitioning nav,
-.theme-transitioning footer,
-.theme-transitioning section,
-.theme-transitioning article,
-.theme-transitioning div,
-.theme-transitioning a,
-.theme-transitioning button,
-.theme-transitioning input,
-.theme-transitioning textarea,
-.theme-transitioning select,
-.theme-transitioning svg,
-.theme-transitioning path {
-  transition:
-    background-color var(--theme-transition-duration) var(--theme-transition-easing),
-    border-color var(--theme-transition-duration) var(--theme-transition-easing),
-    color var(--theme-transition-duration) var(--theme-transition-easing),
-    fill var(--theme-transition-duration) var(--theme-transition-easing),
-    stroke var(--theme-transition-duration) var(--theme-transition-easing),
-    box-shadow var(--theme-transition-duration) var(--theme-transition-easing);
-}
 
-.theme-toggle-icon {
-  transition: transform 180ms var(--theme-transition-easing);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .theme-transitioning body,
-  .theme-transitioning nav,
-  .theme-transitioning footer,
-  .theme-transitioning section,
-  .theme-transitioning article,
-  .theme-transitioning div,
-  .theme-transitioning a,
-  .theme-transitioning button,
-  .theme-transitioning input,
-  .theme-transitioning textarea,
-  .theme-transitioning select,
-  .theme-transitioning svg,
-  .theme-transitioning path,
-  .theme-toggle-icon {
-    transition: none;
-  }
-}
 
 /* ============================================
    UTILITY CLASSES — Geometric accents

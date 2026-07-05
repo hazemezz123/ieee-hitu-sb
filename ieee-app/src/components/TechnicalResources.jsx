@@ -21,7 +21,7 @@ const resources = [
 
 export default function TechnicalResources() {
   return (
-    <section className="py-20 md:py-24 lg:py-32 bg-surface relative">
+    <section className="py-20 md:py-24 lg:py-32 relative">
       <div className="container mx-auto px-6 sm:px-8 md:px-12">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-8 sm:mb-12 md:mb-16 gap-4 sm:gap-0">
           <div>

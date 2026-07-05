@@ -6,7 +6,7 @@ export default function MasonryGallery({ images }) {
 
   if (!images || images.length === 0) {
     return (
-      <div className="text-center py-12 bg-surface-container-low">
+      <div className="text-center py-12">
         <span className="material-symbols-outlined text-4xl text-on-surface-variant mb-3">
           photo_library
         </span>

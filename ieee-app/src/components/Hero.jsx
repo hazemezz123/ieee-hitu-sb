@@ -1,6 +1,4 @@
 import logo from "../assets/logo.png";
-import { useTheme } from "../theme/useTheme";
-import DotField from "./DotField";
 import ScrollIndicator from "./ScrollIndicator";
 import { motion, useScroll, useTransform } from "framer-motion";
 
@@ -23,58 +21,20 @@ const fadeUp = {
   },
 }
 
-function DecorativeShapes() {
-  return (
-    <div className="absolute inset-0 z-[1] pointer-events-none overflow-hidden" aria-hidden="true">
-      <div
-        className="absolute top-[15%] right-[8%] w-16 h-16 rounded-full border border-primary/10 animate-[shape-drift-1_20s_ease-in-out_infinite]"
-      />
-      <div
-        className="absolute bottom-[25%] left-[5%] w-8 h-8 rotate-45 border border-primary/8 animate-[shape-drift-2_25s_ease-in-out_infinite]"
-      />
-      <div
-        className="absolute top-[40%] right-[3%] w-px h-20 bg-primary/8 animate-[shape-drift-3_18s_ease-in-out_infinite]"
-      />
-      <div
-        className="absolute bottom-[15%] right-[20%] w-3 h-3 rounded-full bg-primary/6 animate-[shape-drift-1_22s_ease-in-out_infinite_1s]"
-      />
-      <div
-        className="absolute top-[60%] left-[10%] w-24 h-px bg-primary/6 animate-[shape-drift-2_28s_ease-in-out_infinite_2s]"
-      />
-    </div>
-  )
-}
-
 export default function Hero() {
-  const { theme } = useTheme();
   const { scrollY } = useScroll()
   const Motion = motion
 
-  const bgY = useTransform(scrollY, [0, 600], [0, -80])
   const contentY = useTransform(scrollY, [0, 600], [0, 30])
-  const shapesY = useTransform(scrollY, [0, 600], [0, -120])
   const fadeOut = useTransform(scrollY, [0, 400], [1, 0])
 
   return (
-    <section className="relative min-h-screen flex flex-col overflow-hidden bg-surface-container-lowest">
-      <Motion.div className="absolute inset-0 z-0" style={{ y: bgY }}>
-        <DotField />
-      </Motion.div>
-      <Motion.div className="absolute inset-0 z-[1]" style={{ y: shapesY }} aria-hidden="true">
-        <DecorativeShapes />
-      </Motion.div>
-      <div className="absolute inset-0 z-0 opacity-5 pointer-events-none">
-        <div
-          className="absolute top-0 right-0 w-1/2 h-full bg-primary wedge-accent"
-          style={{ transform: "rotate(0deg) scale(1.5)" }}
-        />
-        <div
-          className="absolute bottom-0 left-0 w-1/3 h-2/3 bg-secondary-container wedge-accent"
-          style={{ transform: "rotate(180deg) scale(1.2)" }}
-        />
-      </div>
+    <section className="relative min-h-screen flex flex-col overflow-hidden">
 
-      <Motion.div className="flex-1 flex items-center justify-center w-full relative z-10 pt-16 sm:pt-20 md:pt-24 lg:pt-28 pb-16" style={{ y: contentY, opacity: fadeOut }}>
+      <div
+        className="flex-1 flex items-center justify-center w-full relative z-10 pt-16 sm:pt-20 md:pt-24 lg:pt-28 pb-16"
+        style={{ y: contentY, opacity: fadeOut }}
+      >
         <div className="container mx-auto px-6 sm:px-8 md:px-12 max-w-4xl text-center">
           <Motion.div
             variants={container}
@@ -87,34 +47,43 @@ export default function Hero() {
                 <img
                   src={logo}
                   alt="IEEE HITU Student Branch logo"
-                  className={`h-20 sm:h-24 md:h-28 lg:h-32 w-auto animate-[logo-float_8s_ease-in-out_infinite] transition-[filter] duration-200 ${theme === "dark" ? "brightness-0 invert" : ""}`}
+                  className="h-20 sm:h-24 md:h-28 lg:h-32 w-auto animate-[logo-float_8s_ease-in-out_infinite] brightness-0 invert"
                 />
               </div>
             </Motion.div>
 
             <Motion.h1
               variants={fadeUp}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight text-on-surface leading-[1.05]"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight text-[#F0F4F8] leading-[1.05]"
             >
               Beyond Labels. <br />
-              <span className="text-primary">Beyond Limits.</span>
+              <span className="text-[#7BAED4]">Beyond Limits.</span>
             </Motion.h1>
+
+            <Motion.p
+              variants={fadeUp}
+              className="text-sm sm:text-base md:text-lg text-[#9BA9B4] max-w-2xl mx-auto leading-relaxed"
+            >
+              The official student branch of IEEE at Heliopolis International
+              Technological University — connecting students to a global community
+              of engineers, innovators, and problem-solvers.
+            </Motion.p>
 
             <Motion.div
               variants={fadeUp}
               className="flex flex-col sm:flex-row gap-4 sm:gap-5 justify-center"
             >
-              <button className="btn btn-primary animate-[button-float_10s_ease-in-out_infinite]">
+              <button className="inline-flex items-center justify-center h-11 px-6 rounded-2xl font-bold text-sm uppercase tracking-wide bg-[#7BAED4] text-[#05070B] transition-all duration-250 hover:bg-[#98CBFF] cursor-pointer select-none whitespace-nowrap border-none no-underline leading-none animate-[button-float_10s_ease-in-out_infinite]">
                 Explore Standards
               </button>
-              <button className="btn btn-secondary animate-[button-float_12s_ease-in-out_infinite_1s]">
+              <button className="inline-flex items-center justify-center h-11 px-6 rounded-2xl font-bold text-sm uppercase tracking-wide bg-transparent text-[#7BAED4] border border-[#7BAED4]/30 transition-all duration-250 hover:border-[#7BAED4] cursor-pointer select-none whitespace-nowrap no-underline leading-none animate-[button-float_12s_ease-in-out_infinite_1s]">
                 Learn More
               </button>
             </Motion.div>
 
           </Motion.div>
         </div>
-      </Motion.div>
+      </div>
 
       <Motion.div style={{ opacity: fadeOut }}>
         <ScrollIndicator />

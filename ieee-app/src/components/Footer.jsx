@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { useTheme } from '../theme/useTheme'
 import logo from '../assets/logo.png'
 
 const socialLinks = [
@@ -74,7 +73,6 @@ function SocialIconSvg({ icon }) {
 }
 
 export default function Footer() {
-  const { theme } = useTheme()
   const [showScrollTop, setShowScrollTop] = useState(false)
 
   useEffect(() => {
@@ -103,7 +101,7 @@ export default function Footer() {
         <span className="material-symbols-outlined text-lg">arrow_upward</span>
       </motion.button>
 
-      <footer className="relative overflow-hidden border-t border-outline-variant/15 bg-surface-container-highest bg-line-pattern">
+      <footer className="relative overflow-hidden border-t border-outline-variant/15">
         <div className="relative section-content mx-auto max-w-7xl px-6 sm:px-8 md:px-12 pt-16 pb-10">
           <motion.div
             variants={containerVariants}
@@ -116,7 +114,7 @@ export default function Footer() {
               <img
                 src={logo}
                 alt="IEEE HITU Student Branch"
-                className={`h-10 w-auto mb-4 transition-[filter] duration-200 ${theme === 'dark' ? 'brightness-0 invert' : ''}`}
+                className="h-10 w-auto mb-4 brightness-0 invert"
               />
               <p className="text-sm leading-relaxed text-on-surface-variant mb-5 max-w-xs">
                 IEEE HITU Student Branch at Heliopolis International Technological University — building a community of engineers, innovators, and problem-solvers.

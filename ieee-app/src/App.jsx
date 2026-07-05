@@ -4,6 +4,7 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ScrollToTop from './components/ScrollToTop'
 import Home from './pages/Home'
+import HeroBackground from './components/HeroBackground'
 import LenisProvider from './lib/LenisProvider'
 import MembershipPage from './pages/MembershipPage'
 import CommitteesPage from './pages/CommitteesPage'
@@ -47,7 +48,8 @@ function App() {
       <LenisProvider>
         <ScrollToTop />
         <Navbar />
-        <main>
+        <HeroBackground />
+        <main className="relative z-10">
           <AnimatedRoutes />
         </main>
         <Footer />

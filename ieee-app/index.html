@@ -16,29 +16,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script>
-      (() => {
-        const storageKey = 'ieee-theme'
-
-        function getTheme() {
-          try {
-            const stored = window.localStorage.getItem(storageKey)
-
-            if (stored === 'light' || stored === 'dark') {
-              return stored
-            }
-          } catch {
-            // Ignore storage access failures.
-          }
-
-          if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            return 'dark'
-          }
-
-          return 'light'
-        }
-
-        document.documentElement.dataset.theme = getTheme()
-      })()
+      document.documentElement.dataset.theme = 'dark'
     </script>
     <title>IEEE - Advancing Technology for Humanity</title>
     <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />

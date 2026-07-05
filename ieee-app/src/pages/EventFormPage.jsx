@@ -73,7 +73,7 @@ export default function EventFormPage() {
   }
 
   return (
-    <div className="min-h-screen bg-surface" style={{ paddingTop: 'var(--navbar-height)' }}>
+    <div className="min-h-screen" style={{ paddingTop: 'var(--navbar-height)' }}>
       <div className="max-w-2xl mx-auto px-6 py-16 md:py-24">
         <button onClick={() => navigate('/admin')} className="text-sm text-primary hover:underline mb-6 inline-block">&larr; Back to Admin</button>
 
