@@ -53,9 +53,7 @@ export default function EventsPage() {
           ></div>
         </div>
         <div className="container mx-auto px-6 sm:px-8 md:px-12 relative z-10 max-w-5xl text-center">
-          <span className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase text-primary block mb-4">
-            Events
-          </span>
+          <span className="section-label mb-4">Events</span>
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-on-surface leading-tight mb-6">
             Where Ideas Come <span className="text-primary">Alive</span>
           </h1>
@@ -147,7 +145,7 @@ export default function EventsPage() {
           </p>
           <a
             href="/join-us"
-            className="btn-wedge inline-block bg-primary text-on-primary px-6 py-2.5 md:px-8 md:py-3 font-bold tracking-wide uppercase"
+            className="btn btn-primary"
           >
             Join Us
           </a>

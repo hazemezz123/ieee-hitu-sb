@@ -1,30 +1,28 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PageTransition from '../components/PageTransition'
 import AnimatedSection from '../components/AnimatedSection'
+import SectionDecorations from '../components/SectionDecorations'
+import { fetchEvents } from '../data/eventsSource';
+import EventCard from '../components/EventCard';
+import { totalCommittees, committeeCategories } from '../data/committees';
 
-const branchHighlights = [
+const ieeeResources = [
   {
-    value: 'Student-Led',
-    label: 'Community',
-    description: 'A branch shaped by students who learn, organize, and grow together.',
+    icon: 'menu_book',
+    title: 'IEEE Xplore®',
+    description: "Access more than 5 million documents from some of the world most highly cited publications in electrical engineering and computer science.",
   },
   {
-    value: 'Technical',
-    label: 'Development',
-    description: 'Workshops, committees, and projects that strengthen practical skills.',
+    icon: 'settings_input_component',
+    title: 'Standards',
+    description: 'Developing technology standards that provide the basis for new products and services in areas such as smart grid, IoT, and telecommunications.',
   },
   {
-    value: 'Professional',
-    label: 'Exposure',
-    description: 'A structured environment that connects academic learning with IEEE culture.',
+    icon: 'groups',
+    title: 'Conferences',
+    description: 'Bringing together technical professionals from around the world to share the latest research and network with industry leaders.',
   },
-];
-
-const practiceHighlights = [
-  'Organizing workshops and technical activities for students.',
-  'Collaborating through committees that support both operations and learning.',
-  'Building leadership, teamwork, and communication through branch work.',
-  'Creating a campus community connected to the wider IEEE network.',
 ];
 
 const ieeeHighlights = [
@@ -46,6 +44,14 @@ const ieeeHighlights = [
 ];
 
 export default function AboutPage() {
+  const [events, setEvents] = useState([]);
+
+  useEffect(() => {
+    fetchEvents().then((data) => {
+      setEvents(data.slice(0, 3));
+    });
+  }, []);
+
   return (
     <PageTransition>
     <div className="min-h-screen bg-surface">
@@ -64,9 +70,7 @@ export default function AboutPage() {
 
         <div className="container relative z-10 mx-auto max-w-6xl px-6 md:px-12">
           <div className="max-w-4xl">
-            <span className="mb-3 md:mb-4 block text-[0.6875rem] font-bold uppercase tracking-[0.2em] text-primary">
-              About Us
-            </span>
+            <span className="section-label mb-4">About Us</span>
             <h1 className="mb-4 md:mb-6 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight tracking-tight text-on-surface">
               Who Are We at <span className="text-primary">IEEE HITU SB</span>?
             </h1>
@@ -82,17 +86,33 @@ export default function AboutPage() {
             </p>
 
             <div className="grid gap-4 md:gap-6 md:grid-cols-3">
-              {branchHighlights.map((item) => (
-                <div key={item.label} className="bg-surface-container-low p-4 md:p-6">
-                  <div className="mb-2 text-xl md:text-2xl font-black text-primary">{item.value}</div>
-                  <div className="mb-2 md:mb-3 text-xs md:text-sm font-bold uppercase tracking-[0.18em] text-on-surface">
-                    {item.label}
-                  </div>
-                  <p className="text-xs md:text-sm leading-relaxed text-on-surface-variant">
-                    {item.description}
-                  </p>
+              <div className="card-hover p-4 md:p-6">
+                <div className="mb-2 text-xl md:text-2xl font-black text-primary">Student-Led</div>
+                <div className="mb-2 md:mb-3 text-xs md:text-sm font-bold uppercase tracking-[0.18em] text-on-surface">
+                  Community
                 </div>
-              ))}
+                <p className="text-xs md:text-sm leading-relaxed text-on-surface-variant">
+                  A branch shaped by students who learn, organize, and grow together.
+                </p>
+              </div>
+              <div className="card-hover p-4 md:p-6">
+                <div className="mb-2 text-xl md:text-2xl font-black text-primary">Technical</div>
+                <div className="mb-2 md:mb-3 text-xs md:text-sm font-bold uppercase tracking-[0.18em] text-on-surface">
+                  Development
+                </div>
+                <p className="text-xs md:text-sm leading-relaxed text-on-surface-variant">
+                  Workshops, committees, and projects that strengthen practical skills.
+                </p>
+              </div>
+              <div className="card-hover p-4 md:p-6">
+                <div className="mb-2 text-xl md:text-2xl font-black text-primary">Professional</div>
+                <div className="mb-2 md:mb-3 text-xs md:text-sm font-bold uppercase tracking-[0.18em] text-on-surface">
+                  Exposure
+                </div>
+                <p className="text-xs md:text-sm leading-relaxed text-on-surface-variant">
+                  A structured environment that connects academic learning with IEEE culture.
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -100,51 +120,66 @@ export default function AboutPage() {
       </AnimatedSection>
 
       <AnimatedSection delay={1}>
-      <section className="bg-surface py-20 md:py-24 lg:py-32">
-        <div className="container mx-auto max-w-6xl px-6 md:px-12">
+      <section className="bg-surface-container-low relative bg-dot-pattern py-20 md:py-24 lg:py-32">
+        <SectionDecorations variant="dots" />
+        <div className="container mx-auto max-w-6xl px-6 md:px-12 relative section-content">
           <div className="grid gap-8 md:gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
             <div>
-              <span className="mb-3 md:mb-4 block text-[0.6875rem] font-bold uppercase tracking-[0.2em] text-primary">
-                Branch Activity
-              </span>
+              <span className="section-label mb-4">Our Structure</span>
               <h2 className="mb-4 md:mb-6 text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-on-surface">
-                Who We Are in Practice
+                Committee Introduction
               </h2>
               <p className="mb-4 text-sm md:text-base leading-relaxed text-on-surface-variant md:text-lg">
-                The branch is not only an identity on campus. It is an active student space
-                where members contribute to events, support committee work, and grow through
-                practical involvement.
+                The branch operates through {totalCommittees} specialized committees across
+                two main tracks: Technical and Non-Technical. Each committee focuses on a
+                specific domain, giving members the chance to dive deep into what interests
+                them most.
               </p>
               <p className="text-sm md:text-base leading-relaxed text-on-surface-variant md:text-lg">
-                Its purpose is to help students move beyond passive participation and become
-                part of a structured environment shaped by teamwork, learning, and continuity.
+                Technical committees cover fields like AI, web development, cybersecurity,
+                robotics, and embedded systems. Non-technical committees handle PR, media,
+                marketing, and people development — all essential to running a strong branch.
               </p>
             </div>
 
             <div className="grid gap-3 md:gap-4">
-              {practiceHighlights.map((item) => (
-                <div
-                  key={item}
-                  className="border border-outline-variant/25 bg-surface-container-lowest px-4 md:px-6 py-4 md:py-5"
-                >
-                  <p className="leading-relaxed text-sm md:text-base text-on-surface">{item}</p>
-                </div>
-              ))}
+              <div className="card px-4 md:px-6 py-4 md:py-5">
+                <p className="leading-relaxed text-sm md:text-base text-on-surface">
+                  <span className="font-bold text-primary">{totalCommittees}</span> committees across 2 categories
+                </p>
+              </div>
+              <div className="card px-4 md:px-6 py-4 md:py-5">
+                <p className="leading-relaxed text-sm md:text-base text-on-surface">
+                  <span className="font-bold text-primary">{committeeCategories.technical}</span> — hands-on, technology-focused teams
+                </p>
+              </div>
+              <div className="card px-4 md:px-6 py-4 md:py-5">
+                <p className="leading-relaxed text-sm md:text-base text-on-surface">
+                  <span className="font-bold text-primary">{committeeCategories.nonTechnical}</span> — operations, media, and growth
+                </p>
+              </div>
             </div>
+          </div>
+
+          <div className="mt-8 md:mt-12 lg:mt-16">
+            <Link
+              to="/committees"
+              className="btn btn-primary"
+            >
+              Explore All Committees
+            </Link>
           </div>
         </div>
       </section>
       </AnimatedSection>
 
       <AnimatedSection delay={2}>
-      <section className="bg-surface-container-lowest py-20 md:py-24 lg:py-32">
+      <section className="bg-surface py-20 md:py-24 lg:py-32 relative">
         <div className="container mx-auto max-w-6xl px-6 md:px-12">
-          <div className="mb-8 md:mb-12 max-w-3xl">
-            <span className="mb-3 md:mb-4 block text-[0.6875rem] font-bold uppercase tracking-[0.2em] text-primary">
-              Global Organization
-            </span>
+          <div className="mb-8 md:mb-12 lg:mb-16 max-w-3xl">
+            <span className="section-label mb-4">Global Organization</span>
             <h2 className="mb-4 md:mb-6 text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-on-surface">
-              What Is IEEE?
+              What Is <span className="text-primary">IEEE</span>?
             </h2>
             <p className="text-sm md:text-base leading-relaxed text-on-surface-variant md:text-lg">
               IEEE is a global professional organization that supports the advancement of
@@ -154,13 +189,25 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="grid gap-4 md:gap-6 md:grid-cols-3">
+          <div className="grid gap-4 md:gap-6 md:grid-cols-3 mb-12 md:mb-16">
             {ieeeHighlights.map((item) => (
-              <div key={item.title} className="bg-surface px-4 md:px-6 py-5 md:py-7">
+              <div key={item.title} className="card-hover px-4 md:px-6 py-5 md:py-7">
                 <h3 className="mb-2 md:mb-3 text-base md:text-xl font-bold tracking-tight text-on-surface">
                   {item.title}
                 </h3>
                 <p className="leading-relaxed text-sm md:text-base text-on-surface-variant">{item.description}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {ieeeResources.map((item, index) => (
+              <div key={index} className="card-hover p-6 sm:p-8 md:p-10 group relative overflow-hidden">
+                <div className="mb-6 sm:mb-8 text-primary">
+                  <span className="material-symbols-outlined text-3xl sm:text-4xl">{item.icon}</span>
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4">{item.title}</h3>
+                <p className="text-on-surface-variant text-sm leading-relaxed mb-4 sm:mb-6">{item.description}</p>
               </div>
             ))}
           </div>
@@ -169,48 +216,50 @@ export default function AboutPage() {
       </AnimatedSection>
 
       <AnimatedSection delay={3}>
-      <section className="bg-surface py-20 md:py-24 lg:py-32">
-        <div className="container mx-auto max-w-6xl px-6 md:px-12">
-          <div className="grid gap-6 md:gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-            <div className="bg-primary px-5 py-6 md:px-8 md:py-10 text-on-primary">
-              <span className="mb-3 md:mb-4 block text-[0.6875rem] font-bold uppercase tracking-[0.2em] text-on-primary/80">
-                Regional Network
-              </span>
-              <h2 className="mb-3 md:mb-4 text-xl md:text-2xl lg:text-3xl font-extrabold tracking-tight">
-                IEEE Egypt Section
-              </h2>
-              <p className="leading-relaxed text-sm md:text-base text-on-primary/85">
-                IEEE HITU SB exists within the broader IEEE structure in Egypt, giving the
-                branch a regional context that connects student activity to a larger
-                professional network.
-              </p>
-            </div>
-
+      <section className="bg-surface-container-low relative bg-line-pattern py-20 md:py-24 lg:py-32">
+        <SectionDecorations variant="grid" />
+        <div className="container mx-auto max-w-6xl px-6 md:px-12 relative section-content">
+          <div className="mb-8 md:mb-12 lg:mb-16 flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
             <div>
-              <p className="mb-4 text-sm md:text-base leading-relaxed text-on-surface-variant md:text-lg">
-                This connection helps place local branch work within the wider IEEE presence
-                across the country. It reinforces that student branch activity is part of a
-                broader organizational ecosystem rather than an isolated campus effort.
-              </p>
-              <p className="text-sm md:text-base leading-relaxed text-on-surface-variant md:text-lg">
-                For visitors, this makes the branch easier to understand: local in daily
-                activity, global in identity, and regionally connected through IEEE Egypt
-                Section.
-              </p>
+              <span className="section-label mb-4">Activities</span>
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-on-surface">
+                Our Events
+              </h2>
             </div>
+            <Link
+              to="/events"
+              className="inline-flex items-center gap-2 text-primary font-bold text-xs tracking-widest uppercase hover:gap-3 transition-all"
+            >
+              View All Events
+              <span className="material-symbols-outlined text-sm">arrow_forward</span>
+            </Link>
           </div>
+
+          {events.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+              {events.map((event) => (
+                <EventCard key={event.slug} event={event} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-10 md:py-16 bg-surface-container-low">
+              <span className="material-symbols-outlined text-4xl md:text-5xl text-on-surface-variant mb-4">
+                event_busy
+              </span>
+              <h3 className="text-lg md:text-xl font-bold text-on-surface mb-2">No events available yet</h3>
+              <p className="text-on-surface-variant">Events will appear here once they are organized.</p>
+            </div>
+          )}
         </div>
       </section>
       </AnimatedSection>
 
       <AnimatedSection delay={4}>
-      <section className="bg-surface-container-lowest py-16 md:py-20 lg:py-28">
+      <section className="bg-surface py-20 md:py-24 lg:py-32">
         <div className="container mx-auto max-w-5xl px-6 md:px-12">
-          <div className="flex flex-col gap-4 md:gap-6 border border-outline-variant/20 bg-surface px-5 py-6 md:px-8 md:py-10 md:flex-row md:items-end md:justify-between">
+          <div className="card-hover border border-outline-variant/20 px-5 py-6 md:px-8 md:py-10 md:flex-row md:items-end md:justify-between">
             <div className="max-w-2xl">
-              <span className="mb-3 md:mb-4 block text-[0.6875rem] font-bold uppercase tracking-[0.2em] text-primary">
-                Next Step
-              </span>
+              <span className="section-label mb-4">Next Step</span>
               <h2 className="mb-2 md:mb-3 text-xl md:text-2xl font-extrabold tracking-tight text-on-surface">
                 Explore Your Place In The Branch
               </h2>
@@ -222,16 +271,16 @@ export default function AboutPage() {
 
             <div className="flex flex-wrap gap-3 md:gap-4">
               <Link
-                className="btn-wedge bg-primary px-6 py-3 md:px-8 md:py-4 text-xs md:text-sm font-bold uppercase tracking-wide text-on-primary transition-all hover:bg-primary-container"
-                to="/join-us"
-              >
-                Join Us
-              </Link>
-              <Link
-                className="border border-outline-variant/40 px-6 py-3 md:px-8 md:py-4 text-xs md:text-sm font-bold uppercase tracking-wide text-on-surface transition-colors hover:border-primary hover:text-primary"
+                className="btn btn-primary"
                 to="/membership"
               >
-                Membership
+                Join IEEE
+              </Link>
+              <Link
+                className="btn btn-secondary"
+                to="/contact"
+              >
+                Contact Us
               </Link>
             </div>
           </div>

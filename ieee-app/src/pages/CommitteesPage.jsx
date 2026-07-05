@@ -11,7 +11,7 @@ import {
 const renderCommitteeCard = (committee) => (
   <article
     key={committee.slug}
-    className="bg-surface-container-low p-5 md:p-6 lg:p-8 transition-all duration-300 hover:bg-surface-container-lowest"
+    className="card-hover"
   >
     <span className="material-symbols-outlined text-primary text-3xl md:text-4xl mb-3 md:mb-4">
       {committee.icon}
@@ -48,9 +48,7 @@ export default function CommitteesPage() {
           ></div>
         </div>
         <div className="container mx-auto px-6 sm:px-8 md:px-12 relative z-10 max-w-5xl text-center">
-          <span className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase text-primary block mb-3 md:mb-4">
-            Committees
-          </span>
+          <span className="section-label mb-4">Committees</span>
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-on-surface leading-tight mb-4 md:mb-6">
             The Teams That Power Our <span className="text-primary">Branch</span>
           </h1>
@@ -77,9 +75,7 @@ export default function CommitteesPage() {
           <div>
             <div className="flex justify-between items-end mb-6 md:mb-8 lg:mb-10">
               <div>
-                <span className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase text-primary block mb-3 md:mb-4">
-                  Category
-                </span>
+                <span className="section-label mb-4">Category</span>
                 <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight">
                   {committeeCategories.technical}
                 </h2>
@@ -93,9 +89,7 @@ export default function CommitteesPage() {
           <div>
             <div className="flex justify-between items-end mb-6 md:mb-8 lg:mb-10">
               <div>
-                <span className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase text-primary block mb-3 md:mb-4">
-                  Category
-                </span>
+                <span className="section-label mb-4">Category</span>
                 <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight">
                   {committeeCategories.nonTechnical}
                 </h2>

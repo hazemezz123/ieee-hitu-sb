@@ -165,14 +165,14 @@ export default function MembershipPage() {
       <section className="py-20 md:py-24 lg:py-32 bg-surface">
         <div className="container mx-auto px-6 sm:px-8 md:px-12">
           <div className="text-center mb-8 md:mb-12 lg:mb-16">
-            <span className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase text-primary block mb-4">Choose Your Path</span>
+            <span className="section-label mb-4">Choose Your Path</span>
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight">Membership Levels</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
             {membershipTiers.map((tier, index) => (
               <div
                 key={index}
-                className={`relative bg-surface-container-low p-5 md:p-6 lg:p-8 transition-all duration-300 hover:bg-surface-container-lowest ${tier.popular ? 'ring-2 ring-primary' : ''}`}
+                className={`card-hover relative ${tier.popular ? 'ring-2 ring-primary' : ''}`}
               >
                 {tier.popular && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-on-primary text-xs font-bold uppercase tracking-widest px-4 py-1">
@@ -190,11 +190,7 @@ export default function MembershipPage() {
                     </li>
                   ))}
                 </ul>
-                <button className={`w-full py-3 font-bold tracking-wide uppercase transition-all ${
-                  tier.popular
-                    ? 'bg-primary text-on-primary hover:bg-primary-container'
-                    : 'bg-surface-container-lowest text-primary border border-primary hover:bg-primary/5'
-                }`}>
+                <button className={`btn w-full ${tier.popular ? 'btn-primary' : 'btn-secondary'}`}>
                   {tier.cta}
                 </button>
               </div>
@@ -209,12 +205,12 @@ export default function MembershipPage() {
       <section className="py-20 md:py-24 lg:py-32 bg-surface-container-lowest">
         <div className="container mx-auto px-6 sm:px-8 md:px-12">
           <div className="text-center mb-8 md:mb-12 lg:mb-16">
-            <span className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase text-primary block mb-4">Why Join IEEE</span>
+            <span className="section-label mb-4">Why Join IEEE</span>
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight">Member Benefits</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
             {benefits.map((benefit, index) => (
-              <div key={index} className="bg-surface-container-low p-5 md:p-6 lg:p-8 hover:bg-surface-container-lowest transition-all duration-300">
+              <div key={index} className="card-hover">
                 <span className="material-symbols-outlined text-primary text-4xl mb-4">{benefit.icon}</span>
                 <h3 className="text-lg font-bold mb-2">{benefit.title}</h3>
                 <p className="text-sm text-on-surface-variant">{benefit.description}</p>
@@ -230,12 +226,12 @@ export default function MembershipPage() {
       <section className="py-20 md:py-24 lg:py-32 bg-surface">
         <div className="container mx-auto px-6 sm:px-8 md:px-12">
           <div className="text-center mb-8 md:mb-12 lg:mb-16">
-            <span className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase text-primary block mb-4">Success Stories</span>
+            <span className="section-label mb-4">Success Stories</span>
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight">What Our Members Say</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
             {testimonials.map((testimonial, index) => (
-              <div key={index} className="bg-surface-container-low p-5 md:p-6 lg:p-8">
+              <div key={index} className="card-hover">
                 <span className="material-symbols-outlined text-primary text-3xl mb-4">format_quote</span>
                 <p className="text-on-surface-variant mb-6 italic">"{testimonial.quote}"</p>
                 <div>
@@ -255,12 +251,12 @@ export default function MembershipPage() {
       <section className="py-20 md:py-24 lg:py-32 bg-surface-container-lowest">
         <div className="container mx-auto px-6 sm:px-8 md:px-12 max-w-3xl">
           <div className="text-center mb-8 md:mb-12 lg:mb-16">
-            <span className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase text-primary block mb-4">Questions</span>
+            <span className="section-label mb-4">Questions</span>
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight">Frequently Asked Questions</h2>
           </div>
           <div className="space-y-4">
             {faqs.map((faq, index) => (
-              <div key={index} className="bg-surface-container-low">
+              <div key={index} className="card">
                 <button 
                   className="w-full p-6 text-left flex justify-between items-center"
                   onClick={() => setOpenFaq(openFaq === index ? null : index)}
@@ -291,7 +287,7 @@ export default function MembershipPage() {
             Take your career to the next level. Join IEEE today and become part of
             the global technology community.
           </p>
-          <button className="bg-surface-container-lowest text-primary px-6 py-3 md:px-10 md:py-4 font-bold tracking-widest uppercase hover:bg-secondary-fixed transition-all">
+          <button className="btn btn-primary">
             Join IEEE Today
           </button>
         </div>

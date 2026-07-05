@@ -16,7 +16,7 @@ function formatDate(dateStr) {
 
 function StatCard({ icon, label, value }) {
   return (
-    <div className="bg-surface-container-low p-6">
+    <div className="card p-6">
       <div className="flex items-center gap-2 mb-2">
         <span className="material-symbols-outlined text-primary text-xl">{icon}</span>
         <span className="text-xs uppercase tracking-wider text-on-surface-variant">{label}</span>
@@ -61,7 +61,7 @@ export default function EventDetailPage() {
           </p>
           <Link
             to="/events"
-            className="btn-wedge inline-block bg-primary text-on-primary px-6 py-3 font-bold tracking-wide uppercase"
+            className="btn btn-primary"
           >
             Back to Events
           </Link>
@@ -101,9 +101,7 @@ export default function EventDetailPage() {
           </div>
 
           <div className="max-w-3xl pb-16">
-            <span className="text-[0.625rem] font-bold uppercase tracking-[0.15em] text-primary block mb-3">
-              {event.categoryLabel}
-            </span>
+            <span className="section-label mb-4">{event.categoryLabel}</span>
             <h1 className="text-5xl md:text-6xl font-black tracking-tight text-on-surface leading-tight mb-4">
               {event.title}
             </h1>
@@ -155,9 +153,7 @@ export default function EventDetailPage() {
         <AnimatedSection delay={2}>
         <section className="py-20 md:py-24 lg:py-32 bg-surface-container-lowest">
           <div className="container mx-auto px-6 sm:px-8 md:px-12 max-w-4xl">
-            <span className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase text-primary block mb-6">
-              About the Event
-            </span>
+            <span className="section-label mb-4">About the Event</span>
             <div className="prose prose-lg max-w-none">
               {event.description.split('\n').map((paragraph, i) =>
                 paragraph.trim() ? (
@@ -177,9 +173,7 @@ export default function EventDetailPage() {
       <section className="py-20 md:py-24 lg:py-32 bg-surface">
         <div className="container mx-auto px-6 sm:px-8 md:px-12 max-w-6xl">
           <div className="text-center mb-16">
-            <span className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase text-primary block mb-4">
-              Gallery
-            </span>
+            <span className="section-label mb-4">Gallery</span>
             <h2 className="text-4xl font-extrabold tracking-tight text-on-surface">
               Event Photos
             </h2>
@@ -201,7 +195,7 @@ export default function EventDetailPage() {
           </p>
           <a
             href="/join-us"
-            className="btn-wedge inline-block bg-primary text-on-primary px-8 py-3 font-bold tracking-wide uppercase"
+            className="btn btn-primary"
           >
             Join Us
           </a>

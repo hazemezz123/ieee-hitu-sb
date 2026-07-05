@@ -43,9 +43,7 @@ export default function JoinUsPage() {
 
         <div className="container mx-auto px-6 sm:px-8 md:px-12 relative z-10 max-w-6xl">
           <div className="max-w-4xl">
-            <span className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase text-primary block mb-3 md:mb-4">
-              Join Us
-            </span>
+            <span className="section-label mb-4">Join Us</span>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-on-surface leading-tight mb-4 md:mb-6">
               Start Your Journey With <span className="text-primary">IEEE HITU SB</span>
             </h1>
@@ -56,19 +54,19 @@ export default function JoinUsPage() {
             </p>
 
             <div className="grid gap-3 md:gap-6 sm:grid-cols-3">
-              <div className="bg-surface-container-low p-4 md:p-6">
+              <div className="card p-4 md:p-6">
                 <div className="text-2xl md:text-3xl font-bold text-primary mb-1 md:mb-2">11</div>
                 <div className="text-xs md:text-sm uppercase tracking-wider text-on-surface-variant">
                   Committees
                 </div>
               </div>
-              <div className="bg-surface-container-low p-4 md:p-6">
+              <div className="card p-4 md:p-6">
                 <div className="text-2xl md:text-3xl font-bold text-primary mb-1 md:mb-2">2</div>
                 <div className="text-xs md:text-sm uppercase tracking-wider text-on-surface-variant">
                   Main Tracks
                 </div>
               </div>
-              <div className="bg-surface-container-low p-4 md:p-6">
+              <div className="card p-4 md:p-6">
                 <div className="text-2xl md:text-3xl font-bold text-primary mb-1 md:mb-2">1</div>
                 <div className="text-xs md:text-sm uppercase tracking-wider text-on-surface-variant">
                   First Step
@@ -85,9 +83,7 @@ export default function JoinUsPage() {
         <div className="container mx-auto px-6 sm:px-8 md:px-12">
           <div className="max-w-3xl mx-auto bg-surface-container-lowest p-5 md:p-8 lg:p-10 shadow-sm border border-outline-variant/20">
             <div className="mb-6 md:mb-8">
-              <span className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase text-primary block mb-3 md:mb-4">
-                Contact Form
-              </span>
+              <span className="section-label mb-4">Contact Form</span>
               <h2 className="text-2xl md:text-3xl font-black tracking-tight mb-2 md:mb-3">Quick Contact Form</h2>
               <p className="text-sm md:text-base text-on-surface-variant leading-relaxed">
                 Fill in your details and we&apos;ll reach out with the next steps.
@@ -106,7 +102,7 @@ export default function JoinUsPage() {
 
             <form className="space-y-5 flex flex-col" onSubmit={handleSubmit}>
               <div>
-                <label className="block text-sm font-semibold mb-2" htmlFor="name">
+                <label className="form-label" htmlFor="name">
                   Full Name
                 </label>
                 <input
@@ -116,13 +112,13 @@ export default function JoinUsPage() {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full border border-outline-variant/40 bg-surface px-4 py-3 outline-none focus:border-primary"
+                  className="form-input"
                   placeholder="Enter your full name"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2" htmlFor="email">
+                <label className="form-label" htmlFor="email">
                   Email Address
                 </label>
                 <input
@@ -132,13 +128,13 @@ export default function JoinUsPage() {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full border border-outline-variant/40 bg-surface px-4 py-3 outline-none focus:border-primary"
+                  className="form-input"
                   placeholder="Enter your email"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2" htmlFor="phone">
+                <label className="form-label" htmlFor="phone">
                   Phone Number
                 </label>
                 <input
@@ -147,13 +143,13 @@ export default function JoinUsPage() {
                   type="tel"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full border border-outline-variant/40 bg-surface px-4 py-3 outline-none focus:border-primary"
+                  className="form-input"
                   placeholder="Enter your phone number"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2" htmlFor="interest">
+                <label className="form-label" htmlFor="interest">
                   Area of Interest
                 </label>
                 <select
@@ -162,7 +158,7 @@ export default function JoinUsPage() {
                   value={formData.interest}
                   onChange={handleChange}
                   required
-                  className="w-full border border-outline-variant/40 bg-surface px-4 py-3 outline-none focus:border-primary"
+                  className="form-select"
                 >
                   <option value="">Select an option</option>
                   <option value="technical">Technical Committees</option>
@@ -173,7 +169,7 @@ export default function JoinUsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2" htmlFor="message">
+                <label className="form-label" htmlFor="message">
                   Message
                 </label>
                 <textarea
@@ -182,14 +178,14 @@ export default function JoinUsPage() {
                   rows="5"
                   value={formData.message}
                   onChange={handleChange}
-                  className="w-full border border-outline-variant/40 bg-surface px-4 py-3 outline-none focus:border-primary resize-none"
+                  className="form-textarea"
                   placeholder="Tell us what you want to join or learn more about"
                 ></textarea>
               </div>
 
               <button
                 type="submit"
-                className="btn-wedge self-start bg-primary text-on-primary px-6 py-3 md:px-8 md:py-4 font-bold tracking-wide uppercase hover:bg-primary-container transition-all"
+                className="btn btn-primary self-start"
               >
                 Submit Interest
               </button>

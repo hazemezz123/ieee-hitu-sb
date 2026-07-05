@@ -34,7 +34,7 @@ function EmailIcon() {
 
 function LeaderCard({ leader }) {
   return (
-    <article className="bg-surface-container-low overflow-hidden md:grid md:grid-cols-[260px_minmax(0,1fr)] md:items-stretch">
+    <article className="card overflow-hidden md:grid md:grid-cols-[260px_minmax(0,1fr)] md:items-stretch">
       <div className="md:h-full">
         <img
           src={leader.image}
@@ -72,9 +72,9 @@ function LeaderCard({ leader }) {
   );
 }
 
-function SectionList({ title, items }) {
-  return (
-    <div className="bg-surface-container-low p-5 md:p-6 lg:p-8 lg:col-span-1">
+  function SectionList({ title, items }) {
+    return (
+      <div className="card-hover lg:col-span-1">
       <h2 className="text-xl md:text-2xl font-bold mb-4">{title}</h2>
       <ul className="space-y-3 text-on-surface-variant">
         {items.map((item) => (
@@ -104,7 +104,7 @@ export default function CommitteeDetailPage() {
           </p>
           <Link
             to="/committees"
-            className="btn-wedge inline-block bg-primary text-on-primary px-6 py-3 font-bold tracking-wide uppercase"
+            className="btn btn-primary"
           >
             Back to Committees
           </Link>
@@ -148,19 +148,19 @@ export default function CommitteeDetailPage() {
           </div>
 
           <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-surface-container-low p-4 md:p-6">
+            <div className="card p-4 md:p-6">
               <div className="text-sm uppercase tracking-wider text-on-surface-variant mb-2">
                 Category
               </div>
               <div className="text-2xl font-bold text-primary">{committee.categoryLabel}</div>
             </div>
-            <div className="bg-surface-container-low p-4 md:p-6">
+            <div className="card p-4 md:p-6">
               <div className="text-sm uppercase tracking-wider text-on-surface-variant mb-2">
                 Members
               </div>
               <div className="text-2xl font-bold text-primary">{committee.memberCount}</div>
             </div>
-            <div className="bg-surface-container-low p-4 md:p-6">
+            <div className="card p-4 md:p-6">
               <div className="text-sm uppercase tracking-wider text-on-surface-variant mb-2">
                 Focus
               </div>
@@ -181,9 +181,7 @@ export default function CommitteeDetailPage() {
       <section className="py-20 md:py-24 lg:py-32 bg-surface-container-lowest">
         <div className="container mx-auto px-6 sm:px-8 md:px-12">
           <div className="text-center mb-8 md:mb-12 lg:mb-16">
-            <span className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase text-primary block mb-4">
-              Leadership
-            </span>
+            <span className="section-label mb-4">Leadership</span>
             <h2 className="text-4xl font-extrabold tracking-tight">Committee Leadership</h2>
           </div>
 
