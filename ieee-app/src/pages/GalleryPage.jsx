@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import PageTransition from '../components/PageTransition'
+import PageLayout from '../components/PageLayout'
 import AnimatedSection from '../components/AnimatedSection'
 import MasonryGallery from '../components/MasonryGallery'
 import { fetchEvents } from '../data/eventsSource';
@@ -17,7 +17,7 @@ export default function GalleryPage() {
   }, []);
 
   return (
-    <PageTransition>
+    <PageLayout>
     <div className="min-h-screen bg-surface">
       <AnimatedSection>
       <section className="relative py-16 md:py-24 lg:py-32 bg-surface-container-lowest overflow-hidden">
@@ -61,6 +61,6 @@ export default function GalleryPage() {
       </section>
       </AnimatedSection>
     </div>
-    </PageTransition>
+    </PageLayout>
   );
 }

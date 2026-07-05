@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import PageTransition from '../components/PageTransition'
+import PageLayout from '../components/PageLayout'
 import AnimatedSection from '../components/AnimatedSection'
 
 const initialForm = {
@@ -26,7 +26,7 @@ export default function JoinUsPage() {
   }
 
   return (
-    <PageTransition>
+    <PageLayout>
     <div className="min-h-screen bg-surface">
       <AnimatedSection>
       <section className="relative py-16 md:py-24 lg:py-32 bg-surface-container-lowest overflow-hidden">
@@ -195,6 +195,6 @@ export default function JoinUsPage() {
       </section>
       </AnimatedSection>
     </div>
-    </PageTransition>
+    </PageLayout>
   );
 }

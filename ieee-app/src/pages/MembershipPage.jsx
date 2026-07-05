@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import PageTransition from '../components/PageTransition'
+import { AnimatePresence, motion } from 'framer-motion'
+import PageLayout from '../components/PageLayout'
 import AnimatedSection from '../components/AnimatedSection'
 
 const membershipTiers = [
@@ -126,7 +127,7 @@ export default function MembershipPage() {
   const [openFaq, setOpenFaq] = useState(null);
 
   return (
-    <PageTransition>
+    <PageLayout>
     <div className="min-h-screen bg-surface">
       {/* Hero Section */}
       <AnimatedSection>
@@ -172,24 +173,26 @@ export default function MembershipPage() {
             {membershipTiers.map((tier, index) => (
               <div
                 key={index}
-                className={`card-hover relative ${tier.popular ? 'ring-2 ring-primary' : ''}`}
+                className={`card-hover relative flex flex-col p-6 md:p-8 ${tier.popular ? 'ring-2 ring-primary' : ''}`}
               >
                 {tier.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-on-primary text-xs font-bold uppercase tracking-widest px-4 py-1">
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-on-primary text-xs font-bold uppercase tracking-widest px-4 py-1 rounded-full">
                     Most Popular
                   </div>
                 )}
-                <h3 className="text-xl font-bold mb-2">{tier.title}</h3>
-                <div className="text-2xl md:text-3xl font-black text-primary mb-2">{tier.price}</div>
-                <p className="text-sm text-on-surface-variant mb-6">{tier.description}</p>
-                <ul className="space-y-3 mb-8">
-                  {tier.features.map((feature, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm">
-                      <span className="material-symbols-outlined text-primary text-sm">check_circle</span>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
+                <div className="flex-1">
+                  <h3 className="text-xl md:text-2xl font-bold mb-2">{tier.title}</h3>
+                  <div className="text-2xl md:text-3xl font-black text-primary mb-2">{tier.price}</div>
+                  <p className="text-sm text-on-surface-variant mb-6">{tier.description}</p>
+                  <ul className="space-y-3 mb-8">
+                    {tier.features.map((feature, i) => (
+                      <li key={i} className="flex items-start gap-2 text-sm">
+                        <span className="material-symbols-outlined text-primary text-sm shrink-0 mt-0.5">check_circle</span>
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
                 <button className={`btn w-full ${tier.popular ? 'btn-primary' : 'btn-secondary'}`}>
                   {tier.cta}
                 </button>
@@ -210,10 +213,10 @@ export default function MembershipPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
             {benefits.map((benefit, index) => (
-              <div key={index} className="card-hover">
-                <span className="material-symbols-outlined text-primary text-4xl mb-4">{benefit.icon}</span>
+              <div key={index} className="card-hover p-5 md:p-6">
+                <span className="material-symbols-outlined text-primary text-3xl md:text-4xl mb-3 md:mb-4 block">{benefit.icon}</span>
                 <h3 className="text-lg font-bold mb-2">{benefit.title}</h3>
-                <p className="text-sm text-on-surface-variant">{benefit.description}</p>
+                <p className="text-sm text-on-surface-variant leading-relaxed">{benefit.description}</p>
               </div>
             ))}
           </div>
@@ -231,12 +234,12 @@ export default function MembershipPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
             {testimonials.map((testimonial, index) => (
-              <div key={index} className="card-hover">
-                <span className="material-symbols-outlined text-primary text-3xl mb-4">format_quote</span>
-                <p className="text-on-surface-variant mb-6 italic">"{testimonial.quote}"</p>
-                <div>
-                  <div className="font-bold">{testimonial.name}</div>
-                  <div className="text-sm text-on-surface-variant">{testimonial.title}</div>
+              <div key={index} className="card-hover p-5 md:p-6 flex flex-col">
+                <span className="material-symbols-outlined text-primary text-3xl mb-3 md:mb-4">format_quote</span>
+                <p className="text-on-surface-variant mb-6 italic text-sm leading-relaxed flex-1">"{testimonial.quote}"</p>
+                <div className="mt-auto">
+                  <div className="font-bold text-sm">{testimonial.name}</div>
+                  <div className="text-xs text-on-surface-variant">{testimonial.title}</div>
                   <div className="text-xs text-primary uppercase tracking-wider mt-1">{testimonial.tier}</div>
                 </div>
               </div>
@@ -254,23 +257,39 @@ export default function MembershipPage() {
             <span className="section-label mb-4">Questions</span>
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight">Frequently Asked Questions</h2>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {faqs.map((faq, index) => (
-              <div key={index} className="card">
-                <button 
-                  className="w-full p-6 text-left flex justify-between items-center"
+              <div key={index} className="card overflow-hidden">
+                <button
+                  className="w-full px-5 md:px-6 py-4 md:py-5 text-left flex justify-between items-center gap-4 transition-colors duration-200 hover:bg-surface-container/50"
                   onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                  aria-expanded={openFaq === index}
                 >
-                  <span className="font-bold">{faq.question}</span>
-                  <span className="material-symbols-outlined text-primary">
-                    {openFaq === index ? 'remove' : 'add'}
-                  </span>
+                  <span className="font-bold text-sm md:text-base">{faq.question}</span>
+                  <motion.span
+                    animate={{ rotate: openFaq === index ? 45 : 0 }}
+                    transition={{ duration: 0.2, ease: 'easeOut' }}
+                    className="material-symbols-outlined text-primary shrink-0 text-xl"
+                  >
+                    add
+                  </motion.span>
                 </button>
-                {openFaq === index && (
-                  <div className="px-6 pb-6 text-on-surface-variant">
-                    {faq.answer}
-                  </div>
-                )}
+                <AnimatePresence initial={false}>
+                  {openFaq === index && (
+                    <motion.div
+                      key="answer"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: 'easeOut' }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-5 md:px-6 pb-5 md:pb-6 text-sm text-on-surface-variant leading-relaxed">
+                        {faq.answer}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             ))}
           </div>
@@ -294,6 +313,6 @@ export default function MembershipPage() {
       </section>
       </AnimatedSection>
     </div>
-    </PageTransition>
+    </PageLayout>
   );
 }

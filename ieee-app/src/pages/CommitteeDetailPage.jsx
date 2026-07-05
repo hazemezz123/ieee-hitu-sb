@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
-import PageTransition from '../components/PageTransition'
+import PageLayout from '../components/PageLayout'
 import AnimatedSection from '../components/AnimatedSection'
 import { committees } from '../data/committees';
 
@@ -96,6 +96,7 @@ export default function CommitteeDetailPage() {
 
   if (!committee) {
     return (
+      <PageLayout>
       <div className="min-h-screen bg-surface flex items-center justify-center px-4 md:px-8">
         <div className="text-center max-w-xl">
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tight mb-4">Committee not found</h1>
@@ -110,11 +111,12 @@ export default function CommitteeDetailPage() {
           </Link>
         </div>
       </div>
+      </PageLayout>
     );
   }
 
   return (
-    <PageTransition>
+    <PageLayout>
     <div className="min-h-screen bg-surface">
       <AnimatedSection trigger="load">
       <section className="relative py-16 md:py-24 lg:py-32 bg-surface-container-lowest overflow-hidden">
@@ -193,6 +195,6 @@ export default function CommitteeDetailPage() {
       </section>
       </AnimatedSection>
     </div>
-    </PageTransition>
+    </PageLayout>
   );
 }

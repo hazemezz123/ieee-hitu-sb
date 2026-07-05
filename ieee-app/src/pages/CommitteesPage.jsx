@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import PageTransition from '../components/PageTransition'
+import PageLayout from '../components/PageLayout'
 import AnimatedSection from '../components/AnimatedSection'
 import {
   committeeCategories,
@@ -11,7 +11,7 @@ import {
 const renderCommitteeCard = (committee) => (
   <article
     key={committee.slug}
-    className="card-hover"
+    className="card-hover flex flex-col p-5 md:p-6"
   >
     <span className="material-symbols-outlined text-primary text-3xl md:text-4xl mb-3 md:mb-4">
       {committee.icon}
@@ -22,22 +22,22 @@ const renderCommitteeCard = (committee) => (
         {committee.memberCount} Members
       </span>
     </div>
-    <p className="text-sm text-on-surface-variant leading-relaxed mb-4 md:mb-6">
+    <p className="text-sm text-on-surface-variant leading-relaxed mb-4 md:mb-6 flex-1">
       {committee.shortDescription}
     </p>
     <Link
-      className="inline-flex items-center gap-2 text-primary font-bold text-xs tracking-widest uppercase"
+      className="inline-flex items-center gap-2 text-primary font-bold text-xs tracking-widest uppercase group"
       to={`/committees/${committee.slug}`}
     >
       View Committee
-      <span className="material-symbols-outlined text-sm">arrow_forward</span>
+      <span className="material-symbols-outlined text-sm transition-transform duration-200 group-hover:translate-x-1">arrow_forward</span>
     </Link>
   </article>
 );
 
 export default function CommitteesPage() {
   return (
-    <PageTransition>
+    <PageLayout>
     <div className="min-h-screen bg-surface">
       <AnimatedSection>
       <section className="relative py-16 md:py-24 lg:py-32 bg-surface-container-lowest overflow-hidden">
@@ -102,6 +102,6 @@ export default function CommitteesPage() {
         </div>
       </section>
     </div>
-    </PageTransition>
+    </PageLayout>
   );
 }

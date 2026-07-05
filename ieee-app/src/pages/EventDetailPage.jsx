@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import PageTransition from '../components/PageTransition'
+import PageLayout from '../components/PageLayout'
 import AnimatedSection from '../components/AnimatedSection'
 import { fetchEventBySlug } from '../data/eventsSource';
 import MasonryGallery from '../components/MasonryGallery';
@@ -40,6 +40,7 @@ export default function EventDetailPage() {
 
   if (loading) {
     return (
+      <PageLayout>
       <div className="min-h-screen bg-surface flex items-center justify-center">
         <div className="text-center">
           <span className="material-symbols-outlined text-5xl text-primary animate-spin mb-4 block">
@@ -48,11 +49,13 @@ export default function EventDetailPage() {
           <p className="text-on-surface-variant">Loading event...</p>
         </div>
       </div>
+      </PageLayout>
     );
   }
 
   if (!event) {
     return (
+      <PageLayout>
       <div className="min-h-screen bg-surface flex items-center justify-center px-8">
         <div className="text-center max-w-xl">
           <h1 className="text-4xl font-black tracking-tight mb-4">Event not found</h1>
@@ -67,11 +70,12 @@ export default function EventDetailPage() {
           </Link>
         </div>
       </div>
+      </PageLayout>
     );
   }
 
   return (
-    <PageTransition>
+    <PageLayout>
     <div className="min-h-screen bg-surface">
       {/* Hero Header */}
       <AnimatedSection>
@@ -203,6 +207,6 @@ export default function EventDetailPage() {
       </section>
       </AnimatedSection>
     </div>
-    </PageTransition>
+    </PageLayout>
   );
 }

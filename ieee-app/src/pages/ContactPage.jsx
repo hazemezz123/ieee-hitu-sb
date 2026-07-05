@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import PageTransition from '../components/PageTransition'
+import PageLayout from '../components/PageLayout'
 import AnimatedSection from '../components/AnimatedSection'
 import { totalCommittees } from '../data/committees';
 
@@ -28,7 +28,7 @@ export default function ContactPage() {
   }
 
   return (
-    <PageTransition>
+    <PageLayout>
     <div className="min-h-screen bg-surface">
       <AnimatedSection>
       <section className="relative py-16 md:py-24 lg:py-32 bg-surface-container-lowest overflow-hidden">
@@ -199,6 +199,6 @@ export default function ContactPage() {
       </section>
       </AnimatedSection>
     </div>
-    </PageTransition>
+    </PageLayout>
   );
 }

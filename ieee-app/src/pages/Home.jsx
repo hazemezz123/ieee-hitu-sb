@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import PageTransition from '../components/PageTransition'
+import PageLayout from '../components/PageLayout'
 import AnimatedSection from '../components/AnimatedSection'
 import Hero from '../components/Hero'
 import SectionDecorations from '../components/SectionDecorations'
@@ -15,7 +15,7 @@ const whyJoinItems = [
 
 export default function Home() {
   return (
-    <PageTransition>
+    <PageLayout variant="home">
       <Hero />
 
       <AnimatedSection>
@@ -161,6 +161,6 @@ export default function Home() {
         </div>
       </section>
       </AnimatedSection>
-    </PageTransition>
+    </PageLayout>
   )
 }

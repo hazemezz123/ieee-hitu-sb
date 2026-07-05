@@ -1,0 +1,146 @@
+import { useState, useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { fetchEvents, createEvent, updateEvent } from '../data/eventsSource'
+
+const categories = [
+  { value: 'workshops', label: 'Workshops' },
+  { value: 'conferences', label: 'Conferences' },
+  { value: 'competitions', label: 'Competitions' },
+  { value: 'social', label: 'Social' },
+  { value: 'orientation', label: 'Orientation' },
+  { value: 'outreach', label: 'Outreach' },
+]
+
+const emptyForm = {
+  title: '', slug: '', date: '', endDate: '', location: '', category: 'workshops',
+  coverImage: '', excerpt: '', description: '', gallery: '[]', organizerCommittee: '',
+}
+
+function slugify(text) {
+  return text.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean).join('-')
+}
+
+export default function EventFormPage() {
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const [form, setForm] = useState(emptyForm)
+  const [error, setError] = useState(null)
+
+  const isEdit = Boolean(id)
+
+  useEffect(() => {
+    if (!isEdit) return
+    async function load() {
+      try {
+        const events = await fetchEvents()
+        const ev = events.find(e => e._id === Number(id))
+        if (!ev) { setError('Event not found'); return }
+        setForm({
+          title: ev.title,
+          slug: ev.slug,
+          date: ev.date ? ev.date.slice(0, 16) : '',
+          endDate: ev.endDate ? ev.endDate.slice(0, 16) : '',
+          location: ev.location,
+          category: ev.category,
+          coverImage: ev.coverImage,
+          excerpt: ev.excerpt,
+          description: ev.description,
+          gallery: JSON.stringify(ev.gallery, null, 2),
+          organizerCommittee: ev.organizerCommittee || '',
+        })
+      } catch (err) { setError(err.message) }
+    }
+    load()
+  }, [id])
+
+  async function handleSave(e) {
+    e.preventDefault()
+    setError(null)
+    let gallery
+    try { gallery = JSON.parse(form.gallery) } catch { gallery = [] }
+
+    const data = { ...form, endDate: form.endDate || null, gallery }
+
+    try {
+      if (isEdit) {
+        await updateEvent(Number(id), data)
+      } else {
+        data.slug = data.slug || slugify(data.title)
+        await createEvent(data)
+      }
+      navigate('/admin')
+    } catch (err) { setError(err.message) }
+  }
+
+  return (
+    <div className="min-h-screen bg-surface" style={{ paddingTop: 'var(--navbar-height)' }}>
+      <div className="max-w-2xl mx-auto px-6 py-16 md:py-24">
+        <button onClick={() => navigate('/admin')} className="text-sm text-primary hover:underline mb-6 inline-block">&larr; Back to Admin</button>
+
+        <h1 className="text-2xl md:text-3xl font-black tracking-tight mb-8">{isEdit ? 'Edit Event' : 'New Event'}</h1>
+
+        {error && (
+          <div className="mb-6 p-4 bg-error/10 border border-error/30 rounded-lg text-sm text-error">{error}</div>
+        )}
+
+        <form onSubmit={handleSave} className="space-y-4">
+          <div>
+            <label className="form-label">Title</label>
+            <input className="form-input" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })}
+                   onBlur={e => { if (!isEdit && !form.slug) setForm({ ...form, slug: slugify(e.target.value) }) }} required />
+          </div>
+          <div>
+            <label className="form-label">Slug</label>
+            <input className="form-input" value={form.slug} onChange={e => setForm({ ...form, slug: e.target.value })} required />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="form-label">Date</label>
+              <input type="datetime-local" className="form-input" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} required />
+            </div>
+            <div>
+              <label className="form-label">End Date</label>
+              <input type="datetime-local" className="form-input" value={form.endDate} onChange={e => setForm({ ...form, endDate: e.target.value })} />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="form-label">Location</label>
+              <input className="form-input" value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} required />
+            </div>
+            <div>
+              <label className="form-label">Category</label>
+              <select className="form-select" value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}>
+                {categories.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+              </select>
+            </div>
+          </div>
+          <div>
+            <label className="form-label">Cover Image URL</label>
+            <input className="form-input" value={form.coverImage} onChange={e => setForm({ ...form, coverImage: e.target.value })} />
+          </div>
+          <div>
+            <label className="form-label">Excerpt</label>
+            <textarea className="form-textarea" style={{ minHeight: '60px' }} value={form.excerpt} onChange={e => setForm({ ...form, excerpt: e.target.value })} />
+          </div>
+          <div>
+            <label className="form-label">Description</label>
+            <textarea className="form-textarea" style={{ minHeight: '100px' }} value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} />
+          </div>
+          <div>
+            <label className="form-label">Gallery (JSON array)</label>
+            <textarea className="form-textarea font-mono text-xs" style={{ minHeight: '80px' }} value={form.gallery} onChange={e => setForm({ ...form, gallery: e.target.value })} />
+          </div>
+          <div>
+            <label className="form-label">Organizer Committee</label>
+            <input className="form-input" value={form.organizerCommittee} onChange={e => setForm({ ...form, organizerCommittee: e.target.value })} />
+          </div>
+          <div className="flex gap-3 pt-2">
+            <button type="submit" className="btn btn-primary">{isEdit ? 'Update Event' : 'Create Event'}</button>
+            <button type="button" className="btn btn-secondary" onClick={() => navigate('/admin')}>Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  )
+}

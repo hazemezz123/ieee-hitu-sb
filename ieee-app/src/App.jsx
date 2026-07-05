@@ -14,6 +14,8 @@ import EventsPage from './pages/EventsPage'
 import EventDetailPage from './pages/EventDetailPage'
 import GalleryPage from './pages/GalleryPage'
 import ContactPage from './pages/ContactPage'
+import AdminPage from './pages/AdminPage'
+import EventFormPage from './pages/EventFormPage'
 
 function AnimatedRoutes() {
   const location = useLocation()
@@ -31,6 +33,9 @@ function AnimatedRoutes() {
         <Route path="/events/:slug" element={<EventDetailPage />} />
         <Route path="/gallery" element={<GalleryPage />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/admin" element={<AdminPage />} />
+        <Route path="/admin/events/new" element={<EventFormPage />} />
+        <Route path="/admin/events/:id/edit" element={<EventFormPage />} />
       </Routes>
     </AnimatePresence>
   )

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { useTheme } from "../theme/useTheme";
@@ -47,6 +47,23 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
+  const headerRef = useRef(null);
+
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+
+    function updateHeight() {
+      document.documentElement.style.setProperty('--navbar-height', `${header.offsetHeight}px`);
+    }
+
+    updateHeight();
+
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(header);
+
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     function handleScroll() {
@@ -85,6 +102,7 @@ export default function Navbar() {
   return (
     <>
       <header
+        ref={headerRef}
         className={`fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 transition-all duration-300 ease-out animate-[navbar-enter_0.6s_ease-out] ${
           isScrolled ? "py-2" : "py-4 sm:py-5"
         }`}

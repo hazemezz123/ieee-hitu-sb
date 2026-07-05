@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import PageTransition from '../components/PageTransition'
+import PageLayout from '../components/PageLayout'
 import AnimatedSection from '../components/AnimatedSection'
 import { fetchEvents } from '../data/eventsSource';
 import EventCard from '../components/EventCard';
@@ -29,6 +29,7 @@ export default function EventsPage() {
 
   if (loading) {
     return (
+      <PageLayout>
       <div className="min-h-screen bg-surface flex items-center justify-center">
         <div className="text-center">
           <span className="material-symbols-outlined text-5xl text-primary animate-spin mb-4 block">
@@ -37,11 +38,12 @@ export default function EventsPage() {
           <p className="text-on-surface-variant">Loading events...</p>
         </div>
       </div>
+      </PageLayout>
     );
   }
 
   return (
-    <PageTransition>
+    <PageLayout>
     <div className="min-h-screen bg-surface">
       {/* Hero Section */}
       <AnimatedSection>
@@ -153,6 +155,6 @@ export default function EventsPage() {
       </section>
       </AnimatedSection>
     </div>
-    </PageTransition>
+    </PageLayout>
   );
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import PageTransition from '../components/PageTransition'
+import PageLayout from '../components/PageLayout'
 import AnimatedSection from '../components/AnimatedSection'
 import SectionDecorations from '../components/SectionDecorations'
 import { fetchEvents } from '../data/eventsSource';
@@ -53,7 +53,7 @@ export default function AboutPage() {
   }, []);
 
   return (
-    <PageTransition>
+    <PageLayout>
     <div className="min-h-screen bg-surface">
       <AnimatedSection>
       <section className="relative overflow-hidden bg-surface-container-lowest py-16 md:py-24 lg:py-32">
@@ -288,6 +288,6 @@ export default function AboutPage() {
       </section>
       </AnimatedSection>
     </div>
-    </PageTransition>
+    </PageLayout>
   );
 }
