@@ -12,7 +12,7 @@ export default function EventCard({ event }) {
   const { day, month } = formatDateBadge(event.date);
 
   return (
-    <article className="group relative bg-surface-container-low overflow-hidden transition-all duration-300 hover:bg-surface-container-lowest hover:shadow-lg">
+    <article className="card-hover group relative overflow-hidden">
       <div className="relative aspect-[4/3] overflow-hidden">
         <img
           src={event.coverImage}

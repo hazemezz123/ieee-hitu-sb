@@ -9,11 +9,11 @@ const communityItems = [
 
 export default function Membership() {
   return (
-    <section className="py-12 sm:py-16 md:py-24 bg-surface-container-lowest relative overflow-hidden">
+    <section className="py-20 md:py-24 lg:py-32 bg-surface-container-lowest relative overflow-hidden">
       <div className="absolute top-0 right-0 w-1/3 h-full bg-surface-container opacity-50" style={{ clipPath: 'polygon(30% 0, 100% 0, 100% 100%, 0% 100%)' }}></div>
       <div className="container mx-auto px-6 sm:px-8 md:px-12 relative z-10">
         <div className="max-w-3xl mb-8 sm:mb-12 md:mb-16">
-          <span className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase text-tertiary block mb-3 sm:mb-4">Connect with Excellence</span>
+          <span className="section-label mb-4">Connect with Excellence</span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter mb-4 sm:mb-6 md:mb-8 leading-tight">Membership & Community</h2>
           <p className="text-base sm:text-lg md:text-xl text-on-surface-variant leading-relaxed">Join over 420,000 members in more than 160 countries who are building the future of technology and engineering.</p>
         </div>

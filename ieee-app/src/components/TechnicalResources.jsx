@@ -21,11 +21,11 @@ const resources = [
 
 export default function TechnicalResources() {
   return (
-    <section className="py-12 sm:py-16 md:py-24 bg-surface">
+    <section className="py-20 md:py-24 lg:py-32 bg-surface relative">
       <div className="container mx-auto px-6 sm:px-8 md:px-12">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-8 sm:mb-12 md:mb-16 gap-4 sm:gap-0">
           <div>
-            <span className="text-[0.6875rem] font-bold tracking-[0.2em] uppercase text-primary block mb-3 sm:mb-4">Core Ecosystem</span>
+            <span className="section-label mb-4">Core Ecosystem</span>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight">Technical Resources</h2>
           </div>
           <div className="h-1 w-24 sm:w-28 md:w-32 bg-primary-container"></div>
@@ -34,7 +34,7 @@ export default function TechnicalResources() {
           {resources.map((item, index) => (
             <div
               key={index}
-              className="bg-surface-container-low p-6 sm:p-8 md:p-10 group hover:bg-surface-container-lowest transition-all duration-300 relative overflow-hidden"
+              className="card-hover p-6 sm:p-8 md:p-10 group relative overflow-hidden"
             >
               <div className="mb-6 sm:mb-8 text-primary">
                 <span className="material-symbols-outlined text-3xl sm:text-4xl">{item.icon}</span>

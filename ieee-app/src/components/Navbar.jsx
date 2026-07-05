@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
 import logo from "../assets/logo.png";
 import { useTheme } from "../theme/useTheme";
 
@@ -11,12 +10,12 @@ function ThemeToggleButton({ className = "", onClick, theme }) {
     <button
       type="button"
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      className={`inline-flex h-11 w-11 items-center justify-center border border-outline-variant/30 bg-surface text-on-surface transition-colors hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/40 ${className}`}
+      className={`inline-flex h-9 w-9 items-center justify-center rounded-full text-on-surface-variant transition-all duration-250 ease-out hover:bg-primary/10 hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 ${className}`}
       onClick={onClick}
     >
       <svg
         aria-hidden="true"
-        className={`theme-toggle-icon h-5 w-5 ${isDark ? "rotate-0 scale-100" : "-rotate-90 scale-90"}`}
+        className={`theme-toggle-icon h-4 w-4 transition-all duration-200 ${isDark ? "rotate-0 scale-100" : "-rotate-90 scale-90"}`}
         fill="none"
         viewBox="0 0 24 24"
         xmlns="http://www.w3.org/2000/svg"
@@ -45,115 +44,160 @@ function ThemeToggleButton({ className = "", onClick, theme }) {
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
 
+  useEffect(() => {
+    function handleScroll() {
+      setIsScrolled(window.scrollY > 10);
+    }
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    function handleKeyDown(e) {
+      if (e.key === "Escape") setIsMenuOpen(false);
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [isMenuOpen]);
+
   const navLinks = [
+    { name: "Home", href: "/" },
     { name: "About", href: "/about" },
-    { name: "Committees", href: "/committees" },
     { name: "Events", href: "/events" },
-    { name: "Join Us", href: "/join-us" },
-    { name: "Membership", href: "/membership" },
+    { name: "Committee", href: "/committees" },
+    { name: "Gallery", href: "/gallery" },
+    { name: "Contact", href: "/contact" },
   ];
 
   return (
     <>
-      <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{
-          type: "spring",
-          stiffness: 200,
-          damping: 25,
-          duration: 0.6,
-        }}
-        className="sticky top-0 w-full z-50 bg-surface-container-lowest/80 backdrop-blur-md border-b border-outline-variant/15 "
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 transition-all duration-300 ease-out animate-[navbar-enter_0.6s_ease-out] ${
+          isScrolled ? "py-2" : "py-4 sm:py-5"
+        }`}
       >
-        <div className="flex justify-between items-center px-6 md:px-8 py-4 max-w-full mx-auto">
-          <Link to="/" className="flex items-center">
-            <img
-              src={logo}
-              alt="IEEE HITU SB"
-              className={`h-12 w-auto transition-[filter] duration-200 ${theme === "dark" ? "brightness-0 invert" : ""}`}
-            />
-          </Link>
+        <div className="mx-auto max-w-7xl">
+          <nav
+            className={`relative flex items-center justify-center rounded-2xl border border-outline-variant/20 bg-surface-container-lowest/70 backdrop-blur-xl px-4 sm:px-6 transition-all duration-300 ease-out ${
+              isScrolled
+                ? "py-2 shadow-sm shadow-black/5"
+                : "py-3 shadow-none"
+            }`}
+          >
+            <Link to="/" className="absolute left-4 sm:left-6 flex items-center" aria-label="IEEE HITU SB Home">
+              <img
+                src={logo}
+                alt="IEEE HITU SB"
+                className={`h-10 w-auto transition-[filter] duration-200 ${
+                  theme === "dark" ? "brightness-0 invert" : ""
+                }`}
+              />
+            </Link>
 
-          <div className="flex items-center gap-4 md:gap-8">
-            {navLinks.map((link) =>
-              link.href.startsWith("/") ? (
-                <Link
-                  key={link.name}
-                  className={`font-sans tracking-tight text-sm font-semibold uppercase transition-colors hidden md:block ${
-                    location.pathname === link.href
-                      ? "text-primary"
-                      : "text-on-surface-variant hover:text-primary"
-                  }`}
-                  to={link.href}
-                >
-                  {link.name}
-                </Link>
-              ) : (
-                <a
-                  key={link.name}
-                  className="font-sans tracking-tight text-sm font-semibold uppercase text-on-surface-variant hover:text-primary transition-colors hidden md:block"
-                  href={link.href}
-                >
-                  {link.name}
-                </a>
-              ),
-            )}
-            <ThemeToggleButton
-              className="hidden md:inline-flex"
-              onClick={toggleTheme}
-              theme={theme}
-            />
+            <div className="hidden md:flex items-center justify-center gap-0.5">
+              {navLinks.map((link) => {
+                const isActive = location.pathname === link.href;
+                return (
+                  <Link
+                    key={link.name}
+                    to={link.href}
+                    className={`relative px-4 py-2 text-sm font-medium rounded-2xl transition-all duration-250 ease-out ${
+                      isActive
+                        ? "bg-primary/10 text-primary"
+                        : "text-on-surface-variant hover:bg-primary/5 hover:text-on-surface"
+                    }`}
+                  >
+                    {link.name}
+                  </Link>
+                );
+              })}
+            </div>
+
+            <div className="hidden md:flex items-center gap-3 absolute right-4 sm:right-6">
+              <ThemeToggleButton onClick={toggleTheme} theme={theme} />
+              <Link
+                to="/membership"
+                className="btn btn-primary"
+              >
+                Join IEEE
+              </Link>
+            </div>
+
             <button
               type="button"
               aria-expanded={isMenuOpen}
-              aria-label={
-                isMenuOpen ? "Close navigation menu" : "Open navigation menu"
-              }
-              className="md:hidden text-on-surface-variant p-2"
+              aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+              className="md:hidden absolute right-4 sm:right-6 flex items-center justify-center h-9 w-9 rounded-full text-on-surface-variant hover:bg-primary/5 transition-colors duration-250 ease-out"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
-              <span className="material-symbols-outlined">
+              <span className="material-symbols-outlined text-xl select-none">
                 {isMenuOpen ? "close" : "menu"}
               </span>
             </button>
-          </div>
+          </nav>
         </div>
-      </motion.nav>
+      </header>
 
-      {isMenuOpen && (
-        <div className="fixed top-[73px] left-0 w-full bg-surface-container-lowest shadow-lg z-40 md:hidden">
-          <div className="flex flex-col py-4">
-            {navLinks.map((link) =>
-              link.href.startsWith("/") ? (
+      <div
+        className={`fixed inset-0 z-40 bg-black/20 backdrop-blur-sm transition-all duration-300 ease-out md:hidden ${
+          isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setIsMenuOpen(false)}
+        aria-hidden="true"
+      />
+
+      <div
+        className={`fixed top-0 left-0 right-0 z-40 pt-24 px-4 sm:px-6 transition-all duration-300 ease-out md:hidden ${
+          isMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4 pointer-events-none"
+        }`}
+      >
+        <div className="mx-auto max-w-7xl">
+          <div className="rounded-2xl border border-outline-variant/20 bg-surface-container-lowest/95 backdrop-blur-2xl px-3 py-3 shadow-lg shadow-black/10">
+            <div className="flex flex-col gap-0.5">
+              {navLinks.map((link) => {
+                const isActive = location.pathname === link.href;
+                return (
+                  <Link
+                    key={link.name}
+                    to={link.href}
+                    className={`px-4 py-3 text-sm font-medium rounded-xl transition-all duration-250 ease-out ${
+                      isActive
+                        ? "bg-primary/10 text-primary"
+                        : "text-on-surface-variant hover:bg-primary/5 hover:text-on-surface"
+                    }`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {link.name}
+                  </Link>
+                );
+              })}
+              <div className="flex items-center gap-3 px-4 pt-3 mt-2 border-t border-outline-variant/15">
+                <ThemeToggleButton onClick={toggleTheme} theme={theme} />
                 <Link
-                  key={link.name}
-                  className="font-sans tracking-tight text-sm font-semibold uppercase text-on-surface-variant hover:text-primary transition-colors px-8 py-3"
-                  to={link.href}
+                  to="/membership"
+                  className="btn btn-primary flex-1 text-center"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  {link.name}
+                  Join IEEE
                 </Link>
-              ) : (
-                <a
-                  key={link.name}
-                  className="font-sans tracking-tight text-sm font-semibold uppercase text-on-surface-variant hover:text-primary transition-colors px-8 py-3"
-                  href={link.href}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {link.name}
-                </a>
-              ),
-            )}
-            <div className="px-8 py-3">
-              <ThemeToggleButton onClick={toggleTheme} theme={theme} />
+              </div>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </>
   );
 }
