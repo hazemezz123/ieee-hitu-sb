@@ -110,3 +110,152 @@ export async function updateEvent(id, data) {
 export async function deleteEvent(id) {
   await execute('DELETE FROM events WHERE id = ?', [id])
 }
+
+const SCHEMA_STATEMENTS = [
+  `CREATE TABLE IF NOT EXISTS gallery_photos (
+     id INTEGER PRIMARY KEY AUTOINCREMENT,
+     src TEXT NOT NULL,
+     caption TEXT,
+     created_at TEXT DEFAULT (datetime('now'))
+   )`,
+  `CREATE TABLE IF NOT EXISTS committees (
+     id INTEGER PRIMARY KEY AUTOINCREMENT,
+     name TEXT NOT NULL,
+     slug TEXT UNIQUE NOT NULL,
+     category TEXT NOT NULL,
+     short_description TEXT
+   )`,
+  `CREATE TABLE IF NOT EXISTS committee_members (
+     id INTEGER PRIMARY KEY AUTOINCREMENT,
+     committee_id INTEGER NOT NULL,
+     name TEXT NOT NULL,
+     position TEXT,
+     email TEXT,
+     phone TEXT,
+     img TEXT
+   )`,
+]
+
+export async function ensureSchema() {
+  for (const sql of SCHEMA_STATEMENTS) await execute(sql)
+}
+
+function rowToPhoto(row) {
+  return {
+    _id: Number(row.id) || 0,
+    src: row.src || '',
+    caption: row.caption || '',
+    createdAt: row.created_at || '',
+  }
+}
+
+function rowToCommittee(row) {
+  const cat = typeof row.category === 'string' ? row.category : ''
+  return {
+    _id: Number(row.id) || 0,
+    name: String(row.name || ''),
+    slug: String(row.slug || ''),
+    category: cat,
+    categoryLabel: cat ? cat.charAt(0).toUpperCase() + cat.slice(1) : '',
+    shortDescription: row.short_description || '',
+    memberCount: Number(row.member_count) || 0,
+  }
+}
+
+function rowToMember(row) {
+  const member = {
+    _id: Number(row.id) || 0,
+    committeeId: Number(row.committee_id) || 0,
+    name: String(row.name || ''),
+    position: row.position || '',
+    email: row.email || '',
+    phone: row.phone || '',
+    img: row.img || '',
+  }
+  if (row.committee_name !== undefined && row.committee_name !== null) {
+    member.committee = row.committee_name
+  }
+  return member
+}
+
+export async function fetchGalleryPhotos() {
+  const result = await execute('SELECT * FROM gallery_photos ORDER BY id DESC')
+  return (result?.rows || []).map(rowToPhoto)
+}
+
+export async function addGalleryPhoto(src, caption) {
+  const result = await execute('INSERT INTO gallery_photos (src, caption) VALUES (?, ?)', [src, caption || ''])
+  return result?.last_insert_rowid
+}
+
+export async function deleteGalleryPhoto(id) {
+  await execute('DELETE FROM gallery_photos WHERE id = ?', [id])
+}
+
+export async function fetchCommittees() {
+  const result = await execute(
+    `SELECT c.*, COUNT(m.id) AS member_count
+     FROM committees c LEFT JOIN committee_members m ON m.committee_id = c.id
+     GROUP BY c.id ORDER BY c.name`
+  )
+  return (result?.rows || []).map(rowToCommittee)
+}
+
+export async function fetchCommitteeBySlug(slug) {
+  const result = await execute('SELECT * FROM committees WHERE slug = ?', [slug])
+  const rows = result?.rows || []
+  return rows.length > 0 ? rowToCommittee(rows[0]) : null
+}
+
+export async function createCommittee(data) {
+  const result = await execute(
+    'INSERT INTO committees (name, slug, category, short_description) VALUES (?, ?, ?, ?)',
+    [data.name, data.slug, data.category, data.shortDescription || '']
+  )
+  return result?.last_insert_rowid
+}
+
+export async function updateCommittee(id, data) {
+  await execute(
+    'UPDATE committees SET name = ?, slug = ?, category = ?, short_description = ? WHERE id = ?',
+    [data.name, data.slug, data.category, data.shortDescription || '', id]
+  )
+}
+
+export async function deleteCommittee(id) {
+  await execute('DELETE FROM committee_members WHERE committee_id = ?', [id])
+  await execute('DELETE FROM committees WHERE id = ?', [id])
+}
+
+export async function fetchCommitteeMembers(committeeId) {
+  const result = await execute('SELECT * FROM committee_members WHERE committee_id = ? ORDER BY id', [committeeId])
+  return (result?.rows || []).map(rowToMember)
+}
+
+export async function fetchAllMembers() {
+  const result = await execute(
+    `SELECT m.*, c.name AS committee_name
+     FROM committee_members m JOIN committees c ON c.id = m.committee_id
+     ORDER BY m.id`
+  )
+  return (result?.rows || []).map(rowToMember)
+}
+
+export async function createCommitteeMember(committeeId, data) {
+  const result = await execute(
+    'INSERT INTO committee_members (committee_id, name, position, email, phone, img) VALUES (?, ?, ?, ?, ?, ?)',
+    [committeeId, data.name, data.position || '', data.email || '', data.phone || '', data.img || '']
+  )
+  return result?.last_insert_rowid
+}
+
+export async function updateCommitteeMember(id, data) {
+  await execute(
+    'UPDATE committee_members SET name = ?, position = ?, email = ?, phone = ?, img = ? WHERE id = ?',
+    [data.name, data.position || '', data.email || '', data.phone || '', data.img || '', id]
+  )
+}
+
+export async function deleteCommitteeMember(id) {
+  await execute('DELETE FROM committee_members WHERE id = ?', [id])
+}
