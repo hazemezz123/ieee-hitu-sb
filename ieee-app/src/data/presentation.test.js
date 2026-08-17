@@ -76,6 +76,18 @@ describe('presentation selectors', () => {
     expect(findCommitteeLeaders('unknown', members)).toEqual([])
   })
 
+  it('matches DB display names that slugify to the route', () => {
+    const members = [
+      { name: 'Roster', committee: 'Robotic', position: 'Head' },
+      { name: 'Display', committee: 'Robotics', position: 'Head' },
+      { name: 'Slugged', committee: 'PR & OC', position: 'Vice Head' },
+      { name: 'Manager', committee: 'Robotics', position: 'Technical Manager' },
+    ]
+
+    expect(findCommitteeLeaders('robotics', members).map(member => member.name)).toEqual(['Roster', 'Display'])
+    expect(findCommitteeLeaders('pr-oc', members).map(member => member.name)).toEqual(['Slugged'])
+  })
+
   it('maps every committee route to only its supported real roster records', () => {
     const expectedNames = {
       ai: ['Kareem Mohammed Sayed', 'Ramez Kamal', 'Samer Muharram', 'Mohamed Osama Mohamed'],

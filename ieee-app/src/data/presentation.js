@@ -1,3 +1,5 @@
+import { slugify } from '../lib/slugify'
+
 const committeeAliases = {
   ai: ['AI'],
   automations: ['Automation'],
@@ -30,7 +32,9 @@ export const getRecentEvents = (events, now = new Date(), limit = events.length)
 export const findCommitteeLeaders = (slug, members) => {
   const aliases = committeeAliases[slug]
   if (!aliases) return []
-  return members.filter(member => aliases.includes(member.committee) && /^(Head|Vice Head)$/.test(member.position))
+  return members.filter(member =>
+    (aliases.includes(member.committee) || slugify(member.committee) === slug) && /^(Head|Vice Head)$/.test(member.position),
+  )
 }
 
 export const aggregateGallery = events => events.flatMap(event =>
