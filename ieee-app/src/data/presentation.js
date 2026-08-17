@@ -12,7 +12,9 @@ const committeeAliases = {
 
 const eventTime = event => event.date == null ? NaN : new Date(event.date).getTime()
 
-export const sortEvents = events => [...events].sort((a, b) => {
+export const sortEvents = events => events.filter((event, index) =>
+  !event.slug || events.findIndex(candidate => candidate.slug === event.slug) === index
+).sort((a, b) => {
   const aTime = eventTime(a)
   const bTime = eventTime(b)
   if (!Number.isFinite(aTime)) return Number.isFinite(bTime) ? 1 : 0

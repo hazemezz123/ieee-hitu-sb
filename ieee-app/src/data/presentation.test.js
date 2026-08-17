@@ -38,6 +38,16 @@ describe('presentation selectors', () => {
     expect(getRecentEvents(mixedEvents, now).map(event => event.slug)).toEqual(['past'])
   })
 
+  it('keeps the first non-empty slug and preserves slugless records', () => {
+    const first = { slug: 'same', title: 'First', date: '2026-09-01T10:00:00Z' }
+    const duplicate = { slug: 'same', title: 'Duplicate', date: '2026-10-01T10:00:00Z' }
+    const sluglessA = { title: 'Slugless A', date: '2026-11-01T10:00:00Z' }
+    const sluglessB = { slug: '', title: 'Slugless B', date: '2026-12-01T10:00:00Z' }
+
+    expect(sortEvents([sluglessB, first, duplicate, sluglessA])).toEqual([first, sluglessA, sluglessB])
+    expect(getNextEvents([first, duplicate, sluglessA, sluglessB], new Date('2026-08-17T00:00:00Z'))).toEqual([first, sluglessA, sluglessB])
+  })
+
   it('matches every explicit committee alias and excludes managers', () => {
     const aliases = {
       ai: ['AI'],

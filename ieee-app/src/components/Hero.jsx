@@ -1,38 +1,25 @@
+import { Link } from 'react-router-dom'
 import logo from '../assets/logo.png'
 
 export default function Hero() {
   return (
-    <section className="relative min-h-screen flex flex-col overflow-hidden bg-inverse-surface">
-      <div
-        className="flex-1 flex items-center justify-center w-full relative z-10 pt-16 sm:pt-20 md:pt-24 lg:pt-28 pb-16"
-      >
-        <div className="container mx-auto px-6 sm:px-8 md:px-12 max-w-4xl text-center">
-          <div className="space-y-6 md:space-y-8 lg:space-y-10">
-            <div className="flex justify-center">
-              <div className="px-4 py-3 md:px-6 md:py-4">
-                <img
-                  src={logo}
-                  alt="IEEE HITU Student Branch logo"
-                  className="h-20 sm:h-24 md:h-28 lg:h-32 w-auto brightness-0 invert"
-                />
-              </div>
-            </div>
-
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight text-[#F0F4F8] leading-[1.05]">
-              Beyond Labels. <br />
-              <span className="text-[#7BAED4]">Beyond Limits.</span>
-            </h1>
-
-            <p className="text-sm sm:text-base md:text-lg text-[#9BA9B4] max-w-2xl mx-auto leading-relaxed">
-              The official student branch of IEEE at Heliopolis International
-              Technological University — connecting students to a global community
-              of engineers, innovators, and problem-solvers.
-            </p>
-
+    <section aria-labelledby="home-title" className="min-h-[calc(100svh-var(--navbar-height))] grid items-end bg-inverse-surface">
+      <div className="container mx-auto grid max-w-6xl gap-10 px-6 py-12 md:px-12 lg:grid-cols-[1.4fr_0.6fr] lg:items-end lg:py-20">
+        <div>
+          <p className="section-label mb-4">Heliopolis International Technological University</p>
+          <h1 id="home-title" className="max-w-4xl text-4xl font-black leading-none tracking-tight text-[#F0F4F8] sm:text-6xl lg:text-8xl">
+            IEEE HITU Student Branch
+          </h1>
+          <p className="mt-6 max-w-2xl text-base leading-relaxed text-[#9BA9B4] md:text-xl">
+            Technical learning, student-led committees, and IEEE opportunities rooted at HITU.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link className="btn btn-primary" to="/events">View events</Link>
+            <Link className="btn btn-secondary" to="/join-us">Join the branch</Link>
           </div>
         </div>
+        <img src={logo} alt="" className="w-full max-w-xs justify-self-start object-contain brightness-0 invert lg:justify-self-end" />
       </div>
-      <div data-next-section />
     </section>
   )
 }

@@ -1,164 +1,89 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import PageLayout from '../components/PageLayout'
-import AnimatedSection from '../components/AnimatedSection'
 import Hero from '../components/Hero'
+import { fetchEventsResult } from '../data/eventsSource'
+import { getNextEvents, getRecentEvents, sortEvents } from '../data/presentation'
+import { committees } from '../data/committees'
 import { boardMembers } from '../data/boardMembers'
-import leaderPlaceholder from '../assets/leader-placeholder.svg'
 
-const whyJoinItems = [
- { icon: 'school', title: 'Hands-On Learning', description: 'Workshops, projects, and study camps that build practical skills beyond the classroom.' },
- { icon: 'groups', title: 'Community & Network', description: 'Connect with fellow students, industry professionals, and IEEE members across 160+ countries.' },
- { icon: 'business_center', title: 'Leadership Opportunities', description: 'Run committees, organize events, and build real leadership experience while studying.' },
- { icon: 'workspace_premium', title: 'Career Growth', description: 'Access IEEE Xplore, conference discounts, scholarships, and resources that accelerate your career.' },
-]
+const formatDate = date => new Date(date).toLocaleDateString('en-US', { dateStyle: 'medium' })
+
+function EventRecord({ event, tone = 'light' }) {
+  const inverse = tone === 'inverse'
+  return (
+    <article className={`border-t py-5 ${inverse ? 'border-white/20' : 'border-outline-variant/40'}`}>
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h3 className={`text-lg font-bold ${inverse ? 'text-[#F0F4F8]' : 'text-on-surface'}`}>{event.title}</h3>
+        <time className="text-xs font-bold uppercase tracking-widest text-primary" dateTime={event.date}>{formatDate(event.date)}</time>
+      </div>
+      <p className={`mt-2 text-sm ${inverse ? 'text-[#C7D0D8]' : 'text-on-surface-variant'}`}>{event.excerpt || event.location}</p>
+      {event.slug && <Link aria-label={`Read ${event.title} event record`} className="mt-3 inline-flex text-xs font-bold uppercase tracking-widest text-primary" to={`/events/${event.slug}`}>Read event record</Link>}
+    </article>
+  )
+}
+
+function CommitteeDirectory() {
+  return (
+    <section className="container mx-auto grid max-w-6xl gap-12 px-6 py-16 md:grid-cols-[0.8fr_1.2fr] md:px-12">
+      <div><p className="section-label">Branch structure</p><h2 className="mt-3 text-3xl font-bold text-on-surface">Committee directory</h2><Link className="mt-5 inline-flex text-xs font-bold uppercase tracking-widest text-primary" to="/committees">Open directory</Link></div>
+      <ol className="divide-y divide-outline-variant/30 border-t border-outline-variant/30">{committees.map((committee, index) => <li key={committee.slug} className="flex gap-4 py-3 text-on-surface"><span className="font-mono text-primary">{String(index + 1).padStart(2, '0')}</span><Link to={`/committees/${committee.slug}`}>{committee.name}</Link><span className="ml-auto text-xs text-on-surface-variant">{committee.category}</span></li>)}</ol>
+    </section>
+  )
+}
+
+function Counts({ events, status }) {
+  return (
+    <section className="border-b border-outline-variant/30 bg-surface py-10">
+      <div className="container mx-auto grid max-w-6xl grid-cols-2 gap-6 px-6 md:grid-cols-4 md:px-12">
+        {status === 'loading' ? <p role="status" aria-live="polite" aria-label="Loading event count"><strong className="block text-3xl text-primary">—</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">Events loading</span></p> : status === 'error' ? <p aria-label="Event count unavailable"><strong className="block text-3xl text-primary">—</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">Events unavailable</span></p> : <p aria-label={`${events.length} events`}><strong className="block text-3xl text-primary">{events.length}</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">Events</span></p>}
+        <p aria-label={`${committees.length} committees`}><strong className="block text-3xl text-primary">{committees.length}</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">Committees</span></p>
+        <p aria-label={`${boardMembers.length} board records`}><strong className="block text-3xl text-primary">{boardMembers.length}</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">Board records</span></p>
+        <p><strong className="block text-3xl text-primary">HITU</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">University</span></p>
+      </div>
+    </section>
+  )
+}
 
 export default function Home() {
- return (
- <PageLayout variant="home">
- <Hero />
+  const [result, setResult] = useState({ events: [], source: null, status: 'loading' })
 
- <AnimatedSection>
- <section className="py-20 md:py-24 lg:py-32 relative">
- <div className="container mx-auto px-6 md:px-12 max-w-6xl relative section-content">
- <div className="max-w-3xl mx-auto text-center">
- <span className="section-label mb-4">About Us</span>
- <h2 className="mb-4 md:mb-6 text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-[#F0F4F8]">
- What Is <span className="text-primary">IEEE HITU SB</span>?
- </h2>
- <p className="mb-4 text-sm md:text-base leading-relaxed text-[#9BA9B4] md:text-lg">
- IEEE HITU SB is the student branch of IEEE at Heliopolis International
- Technological University, built to give students a structured community for
- learning, collaboration, and professional growth.
- </p>
- <p className="text-sm md:text-base leading-relaxed text-[#9BA9B4] md:text-lg">
- Through committees, events, and shared branch work, students gain technical
- exposure, leadership experience, and a stronger connection to the wider world
- of engineering and technology.
- </p>
- </div>
- </div>
- </section>
- </AnimatedSection>
+  useEffect(() => {
+    let active = true
+    fetchEventsResult().then(data => {
+      if (active) setResult({ ...data, status: 'ready' })
+    }).catch(() => {
+      if (active) setResult({ events: [], source: null, status: 'error' })
+    })
+    return () => { active = false }
+  }, [])
 
- <AnimatedSection delay={1}>
- <section className="py-20 md:py-24 lg:py-32 relative">
- <div className="container mx-auto px-6 md:px-12 max-w-6xl relative section-content">
- <div className="grid gap-8 md:gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
- <div>
- <span className="section-label mb-4">Our University</span>
- <h2 className="mb-4 md:mb-6 text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-[#F0F4F8]">
- What Is <span className="text-primary">HITU</span>?
- </h2>
- <p className="mb-4 text-sm md:text-base leading-relaxed text-[#9BA9B4] md:text-lg">
- Heliopolis International Technological University is a modern technological
- university focused on applied learning, innovation, and industry-connected
- education.
- </p>
- <p className="text-sm md:text-base leading-relaxed text-[#9BA9B4] md:text-lg">
- IEEE HITU SB operates within this environment, giving students a platform
- to extend their learning beyond the curriculum through technical committees,
- events, and IEEE&apos;s global network.
- </p>
- </div>
- <div className="grid gap-3 md:gap-4">
- <div className="card px-4 md:px-6 py-4 md:py-5">
- <p className="leading-relaxed text-sm md:text-base text-on-surface">
- A university shaped around innovation, technology, and applied sciences.
- </p>
- </div>
- <div className="card px-4 md:px-6 py-4 md:py-5">
- <p className="leading-relaxed text-sm md:text-base text-on-surface">
- Strong focus on bridging academic knowledge with industry practice.
- </p>
- </div>
- <div className="card px-4 md:px-6 py-4 md:py-5">
- <p className="leading-relaxed text-sm md:text-base text-on-surface">
- Home to IEEE HITU SB — a student branch that brings IEEE&apos;s global mission to campus.
- </p>
- </div>
- </div>
- </div>
- </div>
- </section>
- </AnimatedSection>
+  const events = sortEvents(result.events)
+  const now = new Date()
+  const nextEvents = getNextEvents(events, now, 3)
+  const recentEvents = getRecentEvents(events, now, 3)
+  const featuredEvent = nextEvents[0]
+  const remainingNextEvents = nextEvents.slice(1)
 
- <AnimatedSection delay={2}>
- <section className="py-20 md:py-24 lg:py-32 relative">
- <div className="container mx-auto px-6 md:px-12 max-w-6xl relative section-content">
- <div className="mb-8 md:mb-12 lg:mb-16 max-w-3xl">
- <span className="section-label mb-4">Benefits</span>
- <h2 className="mb-4 md:mb-6 text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-[#F0F4F8]">
- Why Join <span className="text-primary">Us</span>?
- </h2>
- <p className="text-sm md:text-base leading-relaxed text-[#9BA9B4] md:text-lg">
- IEEE HITU SB offers more than membership. It offers a space to learn, lead,
- and connect with a global community of engineers and technologists.
- </p>
- </div>
- <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
- {whyJoinItems.map((item, index) => (
- <div key={index} className="card-hover p-5 md:p-6 lg:p-8">
- <span className="material-symbols-outlined text-primary text-3xl md:text-4xl mb-4">{item.icon}</span>
- <h3 className="text-lg md:text-xl font-bold mb-2">{item.title}</h3>
- <p className="text-sm text-on-surface-variant">{item.description}</p>
- </div>
- ))}
- </div>
- </div>
- </section>
- </AnimatedSection>
-
- <AnimatedSection delay={3}>
- <section className="py-20 md:py-24 lg:py-32 relative">
- <div className="container mx-auto px-6 md:px-12 max-w-6xl relative section-content">
- <div className="mb-8 md:mb-12 lg:mb-16 text-center">
- <span className="section-label mb-4">Leadership</span>
- <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-[#F0F4F8]">
- Board Members
- </h2>
- </div>
- <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
- {boardMembers.map((member, i) => (
- <div key={i} className="group text-center">
- <div className="aspect-square overflow-hidden mb-3 md:mb-4 transition-all duration-300 group-hover: ">
- <img
- src={member.img || leaderPlaceholder}
- alt={member.name}
- className="h-full w-full object-contain p-2 transition-transform duration-300 group-hover:scale-105"
- />
- </div>
- <h3 className="text-sm md:text-base font-bold text-[#F0F4F8]">{member.name}</h3>
- <p className="text-xs text-[#9BA9B4]">
- {member.position ? `${member.position} — ` : ''}{member.committee}
- </p>
- </div>
- ))}
- </div>
- </div>
- </section>
- </AnimatedSection>
-
- <AnimatedSection delay={4}>
- <section className="py-20 md:py-24 lg:py-32">
- <div className="container mx-auto px-6 md:px-12 text-center max-w-3xl">
- <div className="card p-8 md:p-12 lg:p-16">
- <h2 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tight mb-4 text-on-surface">
- Ready to Become Part of IEEE HITU?
- </h2>
- <p className="text-base md:text-lg lg:text-xl opacity-80 mb-8 max-w-2xl mx-auto text-on-surface-variant">
- Join the student branch and start your journey with a global community
- of engineers, innovators, and problem-solvers.
- </p>
- <Link
- to="/membership"
- className="btn btn-primary"
- >
- Join IEEE Today
- </Link>
- </div>
- </div>
- </section>
- </AnimatedSection>
- </PageLayout>
- )
+  return (
+    <PageLayout variant="home">
+      <Hero />
+      <div>
+        {result.status === 'loading' && <p role="status" aria-live="polite" className="container mx-auto max-w-6xl px-6 py-16 text-on-surface-variant md:px-12">Loading event records...</p>}
+        {result.status === 'ready' && <>
+          {featuredEvent && <section className="container mx-auto max-w-6xl px-6 py-16 md:px-12"><div className="border-l-4 border-primary pl-5"><h2 className="text-2xl font-bold text-on-surface">Featured next event</h2>{result.source === 'fallback' && <p className="mt-3 text-sm text-on-surface-variant">Showing the static event archive while live event data is unavailable.</p>}<EventRecord event={featuredEvent} /></div></section>}
+        </>}
+        <Counts events={events} status={result.status} />
+        {result.status === 'error' && <section className="container mx-auto max-w-6xl px-6 py-16 md:px-12"><div role="alert" className="border-l-4 border-primary pl-5"><h2 className="text-2xl font-bold text-on-surface">Event data could not be loaded</h2><p className="mt-2 text-on-surface-variant">Please try the event archive again later.</p></div></section>}
+        {result.status === 'ready' && <>
+          {result.source === 'fallback' && !featuredEvent && <p className="border-b border-outline-variant/30 bg-secondary-container px-6 py-3 text-center text-sm text-on-secondary-container">Showing the static event archive while live event data is unavailable.</p>}
+          {events.length === 0 && <section className="container mx-auto max-w-6xl px-6 py-20 md:px-12"><div className="border-l-4 border-primary pl-5"><h2 className="text-2xl font-bold text-on-surface">No events are available</h2><p className="mt-2 text-on-surface-variant">The branch has no event records to publish yet.</p><Link className="mt-5 inline-flex text-xs font-bold uppercase tracking-widest text-primary" to="/contact">Contact the branch</Link></div></section>}
+          {events.length > 0 && nextEvents.length === 0 && recentEvents.length === 0 && <p role="status" className="container mx-auto max-w-6xl px-6 py-12 text-on-surface-variant md:px-12">Event dates are not available yet.</p>}
+          {remainingNextEvents.length > 0 && <section className="border-y border-outline-variant/30 bg-surface-container-low py-16"><div className="container mx-auto max-w-6xl px-6 md:px-12"><h2 className="mb-6 text-2xl font-bold text-on-surface">Next events</h2>{remainingNextEvents.map((event, index) => <EventRecord key={event.slug || index} event={event} />)}</div></section>}
+        </>}
+        <CommitteeDirectory />
+        {result.status === 'ready' && recentEvents.length > 0 && <section className="border-t border-outline-variant/30 bg-inverse-surface py-16"><div className="container mx-auto max-w-6xl px-6 md:px-12"><h2 className="mb-6 text-2xl font-bold text-[#F0F4F8]">Recent events</h2>{recentEvents.map((event, index) => <EventRecord key={event.slug || index} event={event} tone="inverse" />)}</div></section>}
+      </div>
+    </PageLayout>
+  )
 }
