@@ -2164,10 +2164,13 @@ git add ieee-app/src/pages/CommitteesPage.jsx ieee-app/src/pages/CommitteeDetail
 git commit -m "feat: read committees and members from database with static fallback"
 ```
 
+Applied deviations (from code review, committed 8ecaffa + ab97306):
+- Plan's fail-first check could not fail: the old pages render statically and synchronously, so `findByRole` resolves immediately even with the mocks installed; the async test conversion is the plumbing, and the DB usage proof is the green suite against the mock-backed pages.
+- Quality review found that DB members carry committee display names ('Robotics', 'PR & OC', 'HR - T&D') which never match the roster-label aliases ('Robotic', 'PR'...), so remote leadership silently rendered empty. Fixed in `presentation.js` `findCommitteeLeaders` by also accepting members whose `committee` slugifies to the route slug (`slugify(member.committee) === slug`), with a new test; commit ab97306. Suite is 138/138.
+
 ---
 
 ### Task 12: Full verification + Cloudinary setup handoff
-
 **Files:** none (verification only)
 
 - [ ] **Step 1: Run the full test suite**
