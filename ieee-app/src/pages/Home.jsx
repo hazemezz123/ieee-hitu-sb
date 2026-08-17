@@ -5,7 +5,6 @@ import Hero from '../components/Hero'
 import { fetchEventsResult } from '../data/eventsSource'
 import { getNextEvents, getRecentEvents, sortEvents } from '../data/presentation'
 import { committees } from '../data/committees'
-import { boardMembers } from '../data/boardMembers'
 import { communityPartners } from '../data/partners'
 
 const formatDate = date => new Date(date).toLocaleDateString('en-US', { dateStyle: 'medium' })
@@ -33,17 +32,6 @@ function CommitteeDirectory() {
   )
 }
 
-function Counts() {
-  return (
-    <section className="border-b border-outline-variant/30 bg-surface py-10">
-      <div className="container mx-auto grid max-w-6xl grid-cols-2 gap-6 px-6 md:grid-cols-3 md:px-12">
-        <p aria-label={`${committees.length} committees`}><strong className="block text-3xl text-primary">{committees.length}</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">Committees</span></p>
-        <p aria-label={`${boardMembers.length} board records`}><strong className="block text-3xl text-primary">{boardMembers.length}</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">Board records</span></p>
-        <p><strong className="block text-3xl text-primary">HITU</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">University</span></p>
-      </div>
-    </section>
-  )
-}
 
 function PartnershipCarousel() {
   const row = isClone => (
@@ -99,8 +87,7 @@ export default function Home() {
         {result.status === 'ready' && <>
           {featuredEvent && <section className="container mx-auto max-w-6xl px-6 py-16 md:px-12"><div className="border-l border-primary/40 pl-5"><h2 className="text-2xl font-bold text-on-surface">Featured next event</h2>{result.source === 'fallback' && <p className="mt-3 text-sm text-on-surface-variant">Showing the static event archive while live event data is unavailable.</p>}<EventRecord event={featuredEvent} /></div></section>}
         </>}
-        <Counts />
-        <PartnershipCarousel />
+                <PartnershipCarousel />
          {result.status === 'error' && <section className="container mx-auto max-w-6xl px-6 py-16 md:px-12"><div role="alert" className="border-l border-primary/40 pl-5"><h2 className="text-2xl font-bold text-on-surface">Event data could not be loaded</h2><p className="mt-2 text-on-surface-variant">Please try the event archive again later.</p></div></section>}
         {result.status === 'ready' && <>
           {result.source === 'fallback' && !featuredEvent && <p className="border-b border-outline-variant/30 bg-secondary-container px-6 py-3 text-center text-sm text-on-secondary-container">Showing the static event archive while live event data is unavailable.</p>}

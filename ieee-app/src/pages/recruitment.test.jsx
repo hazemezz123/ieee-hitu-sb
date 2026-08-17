@@ -53,7 +53,7 @@ describe('recruitment pages', () => {
     expect(screen.queryByText(/learn, grow, connect/i)).toBeNull()
   })
 
-  it('orders featured, next, and recent records and renders labeled derived counts', async () => {
+  it('orders featured, next, and recent records', async () => {
     renderPage(<Home />)
 
     await screen.findByText('Next Lab')
@@ -62,8 +62,6 @@ describe('recruitment pages', () => {
     expect(screen.getByRole('heading', { level: 3, name: 'Later Lab' })).toBeTruthy()
     const recent = screen.getByRole('heading', { level: 2, name: 'Recent events' }).parentElement.textContent
     expect(recent.indexOf('Recent Workshop')).toBeLessThan(recent.indexOf('Older Workshop'))
-    expect(screen.getByLabelText('11 committees')).toBeTruthy()
-    expect(screen.getByLabelText('28 board records')).toBeTruthy()
   })
 
   it('orders Home bands as identity, featured, counts, next, directory, and recent', async () => {

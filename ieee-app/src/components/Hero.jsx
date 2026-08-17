@@ -3,7 +3,7 @@ import logo from '../assets/logo.png'
 
 export default function Hero() {
   return (
-    <section aria-labelledby="home-title" className="min-h-[calc(100svh-var(--navbar-height))] grid items-end bg-inverse-surface">
+    <section aria-labelledby="home-title" className="min-h-[calc(100svh-var(--navbar-height))] grid items-end bg-inverse-surface pt-[var(--navbar-height)] md:min-h-[100svh] md:pb-16 md:pt-0">
       <div className="container mx-auto grid max-w-6xl gap-10 px-6 py-12 md:px-12 lg:grid-cols-[1.4fr_0.6fr] lg:items-end lg:py-20">
         <div>
           <p className="section-label mb-4">Helwan International Technological University</p>
