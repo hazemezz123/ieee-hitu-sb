@@ -226,7 +226,7 @@ export default function AdminPage() {
 
         {deleteTarget && (
           <div
-            className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center px-4"
+            className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4"
             onClick={() => setDeleteTarget(null)}
           >
             <div
