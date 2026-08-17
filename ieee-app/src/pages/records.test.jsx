@@ -19,8 +19,15 @@ const { fetchEventsResult, fetchEventBySlugResult, fetchEvents, fetchEventBySlug
 
 const { fetchGalleryPhotosResult } = vi.hoisted(() => ({ fetchGalleryPhotosResult: vi.fn() }))
 
+const committeeSource = vi.hoisted(() => ({
+  fetchAllMembersResult: vi.fn(),
+  fetchCommitteeDetailResult: vi.fn(),
+  fetchCommitteesResult: vi.fn(),
+}))
+
 vi.mock('../data/eventsSource', () => ({ fetchEventsResult, fetchEventBySlugResult, fetchEvents, fetchEventBySlug }))
 vi.mock('../data/gallerySource', () => ({ fetchGalleryPhotosResult }))
+vi.mock('../data/committeeSource', () => committeeSource)
 
 globalThis.IntersectionObserver = class {
   observe() {}
@@ -55,6 +62,19 @@ beforeEach(() => {
   fetchEventBySlugResult.mockReset()
   fetchGalleryPhotosResult.mockReset()
   fetchGalleryPhotosResult.mockResolvedValue({ photos: [], source: 'remote' })
+  committeeSource.fetchCommitteesResult.mockReset()
+  committeeSource.fetchCommitteesResult.mockResolvedValue({ committees: structuredClone(committees), source: 'fallback' })
+  committeeSource.fetchAllMembersResult.mockReset()
+  committeeSource.fetchAllMembersResult.mockResolvedValue({ members: structuredClone(boardMembers), source: 'fallback' })
+  committeeSource.fetchCommitteeDetailResult.mockReset()
+  committeeSource.fetchCommitteeDetailResult.mockImplementation(async slug => {
+    const committee = committees.find(item => item.slug === slug)
+    return {
+      committee: committee ? structuredClone(committee) : null,
+      members: structuredClone(boardMembers),
+      source: 'fallback',
+    }
+  })
 })
 
 describe('committee records', () => {
@@ -72,10 +92,10 @@ describe('committee records', () => {
     }
   })
 
-  it('renders every committee as a record grouped by category', () => {
+  it('renders every committee as a record grouped by category', async () => {
     const { container } = renderRoute('/committees')
 
-    expect(screen.getByRole('heading', { level: 1, name: 'Committee directory' })).toBeTruthy()
+    await screen.findByRole('heading', { level: 1, name: 'Committee directory' })
     expect(screen.getByLabelText('11 committee records')).toBeTruthy()
     const technical = screen.getByRole('heading', { level: 2, name: 'Technical committees' }).parentElement
     const nonTechnical = screen.getByRole('heading', { level: 2, name: 'Non-technical committees' }).parentElement
@@ -97,9 +117,10 @@ describe('committee records', () => {
     expect(container.querySelector('.material-symbols-outlined')).toBeNull()
   })
 
-  it('shows explicitly aliased leadership without managers or private contacts', () => {
+  it('shows explicitly aliased leadership without managers or private contacts', async () => {
     renderRoute('/committees')
 
+    await screen.findByRole('heading', { level: 1, name: 'Committee directory' })
     for (const name of [
       'Omar Raafat Hamed Abdelaziz',
       'Ahmed Hamdy',
@@ -115,12 +136,12 @@ describe('committee records', () => {
     expect(screen.queryByText(/placeholder|slogan|turning intelligence|build motion/i)).toBeNull()
   })
 
-  it('renders every detail route with exactly its explicitly supported leadership', () => {
+  it('renders every detail route with exactly its explicitly supported leadership', async () => {
     for (const committee of committees) {
       const expected = findCommitteeLeaders(committee.slug, boardMembers)
       const page = renderRoute(`/committees/${committee.slug}`)
 
-      expect(screen.getByRole('heading', { level: 1, name: committee.name })).toBeTruthy()
+      await screen.findByRole('heading', { level: 1, name: committee.name })
       expect(screen.getByRole('heading', { level: 2, name: 'Mandate' })).toBeTruthy()
       expect(screen.getByText(committee.categoryLabel)).toBeTruthy()
       const backLink = screen.getByRole('link', { name: 'All committees' })
@@ -145,9 +166,10 @@ describe('committee records', () => {
     }
   })
 
-  it('does not infer cyber leadership from CS or DS roster labels', () => {
+  it('does not infer cyber leadership from CS or DS roster labels', async () => {
     for (const slug of ['cyber-defensive', 'cyber-offensive']) {
       const page = renderRoute(`/committees/${slug}`)
+      await screen.findByRole('heading', { level: 1, name: slug === 'cyber-defensive' ? 'Cyber Defensive' : 'Cyber Offensive' })
       expect(screen.queryByRole('heading', { name: 'Leadership' })).toBeNull()
       for (const member of boardMembers.filter(item => ['CS', 'DS'].includes(item.committee))) {
         expect(screen.queryByText(member.name)).toBeNull()
@@ -156,9 +178,9 @@ describe('committee records', () => {
     }
   })
 
-  it('handles unknown committee routes', () => {
+  it('handles unknown committee routes', async () => {
     renderRoute('/committees/not-a-committee')
-    expect(screen.getByRole('heading', { level: 1, name: 'Committee not found' })).toBeTruthy()
+    await screen.findByRole('heading', { level: 1, name: 'Committee not found' })
     const backLink = screen.getByRole('link', { name: 'Back to committees' })
     expect(backLink.getAttribute('href')).toBe('/committees')
     expect(backLink.classList.contains('inline-flex')).toBe(true)

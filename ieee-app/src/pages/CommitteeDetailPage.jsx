@@ -1,13 +1,25 @@
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import PageLayout from '../components/PageLayout'
 import AnimatedSection from '../components/AnimatedSection'
-import { boardMembers } from '../data/boardMembers'
-import { committees } from '../data/committees'
 import { findCommitteeLeaders } from '../data/presentation'
+import { fetchCommitteeDetailResult } from '../data/committeeSource'
 
 export default function CommitteeDetailPage() {
   const { slug } = useParams()
-  const committee = committees.find(item => item.slug === slug)
+  const [detail, setDetail] = useState(null)
+
+  useEffect(() => {
+    let active = true
+    fetchCommitteeDetailResult(slug).then(result => {
+      if (active) setDetail(result)
+    })
+    return () => { active = false }
+  }, [slug])
+
+  if (!detail) return null
+
+  const { committee, members } = detail
 
   if (!committee) return (
     <PageLayout>
@@ -19,7 +31,7 @@ export default function CommitteeDetailPage() {
     </PageLayout>
   )
 
-  const leaders = findCommitteeLeaders(committee.slug, boardMembers)
+  const leaders = findCommitteeLeaders(committee.slug, members)
 
   return (
     <PageLayout>
