@@ -1,8 +1,13 @@
-import { act, cleanup, render, screen } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import Home from './Home'
 import AboutPage from './AboutPage'
+import MembershipPage from './MembershipPage'
+import JoinUsPage from './JoinUsPage'
+import ContactPage from './ContactPage'
+import TechnicalResources from '../components/TechnicalResources'
+import { committees } from '../data/committees'
 
 const { fetchEventsResult } = vi.hoisted(() => ({ fetchEventsResult: vi.fn() }))
 
@@ -201,5 +206,76 @@ describe('recruitment pages', () => {
 
     await act(async () => resolve({ events, source: 'remote' }))
     expect(page.container.textContent).toBe('')
+  })
+
+  it('keeps membership factual and links only to the local participation route', () => {
+    const { container } = renderPage(<MembershipPage />)
+
+    expect(screen.getByRole('heading', { level: 1, name: /membership and participation/i })).toBeTruthy()
+    expect(screen.getByRole('link', { name: /start with ieee hitu/i }).getAttribute('href')).toBe('/join-us')
+    expect(screen.getAllByRole('link')).toHaveLength(1)
+    expect(screen.getByText(/current participation process details are not published/i)).toBeTruthy()
+    expect(screen.getByText(/technical learning, committees, events, and the wider ieee network/i)).toBeTruthy()
+    expect(screen.queryByText(/free|\$197|\$217|420,000|160\+|50%|testimonial|payment|cancel|refund|eligib|placement|expected to|attend|communicate reliably/i)).toBeNull()
+    expect(container.querySelector('main')).toBeNull()
+    expect(container.querySelector('.section-label')).toBeNull()
+  })
+
+  it.each([
+    ['join', <JoinUsPage />, 'Submit interest'],
+    ['contact', <ContactPage />, 'Record message'],
+  ])('uses committee data, native labels, and an honest local outcome on %s', (_, page, action) => {
+    const { container } = renderPage(page)
+    const name = screen.getByLabelText('Full name')
+    const email = screen.getByLabelText('Email address')
+    const phone = screen.getByLabelText('Phone number')
+    const committee = screen.getByLabelText('Committee')
+
+    const controls = [name, email, phone, committee, screen.getByLabelText('Message')]
+    expect(new Set(controls.map(control => control.id)).size).toBe(controls.length)
+    expect(screen.getByLabelText(`${committees.length} committees`)).toBeTruthy()
+    expect(Array.from(committee.options).slice(1).map(option => option.textContent)).toEqual(committees.map(item => item.name))
+    expect(Array.from(committee.options).slice(1).map(option => option.value)).toEqual(committees.map(item => item.slug))
+    expect(screen.getByText(/local demonstration/i)).toBeTruthy()
+    expect(container.querySelector('main')).toBeNull()
+    expect(container.querySelector('.section-label')).toBeNull()
+
+    fireEvent.change(name, { target: { value: 'HITU Student' } })
+    fireEvent.change(email, { target: { value: 'not-an-email' } })
+    expect(email.validity.typeMismatch).toBe(true)
+    fireEvent.click(screen.getByRole('button', { name: action }))
+    expect(email.value).toBe('not-an-email')
+    expect(screen.queryByRole('status')).toBeNull()
+
+    fireEvent.change(email, { target: { value: 'student@hitu.edu.eg' } })
+    fireEvent.change(committee, { target: { value: committees[0].slug } })
+    const message = screen.getByLabelText('Message')
+    if (message.required) fireEvent.change(message, { target: { value: 'Participation question' } })
+    fireEvent.click(screen.getByRole('button', { name: action }))
+    expect(screen.getByRole('status').textContent).toMatch(/recorded locally|not transmitted/i)
+    expect(screen.queryByText(/message sent|we'll get back|success/i)).toBeNull()
+    expect(email.value).toBe('student@hitu.edu.eg')
+  })
+
+  it('renders technical resources as factual non-linked editorial entries', () => {
+    const { container } = render(<TechnicalResources />)
+    expect(screen.getByRole('heading', { name: 'IEEE Xplore' })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'IEEE Standards' })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: 'IEEE conferences' })).toBeTruthy()
+    expect(screen.queryByRole('link')).toBeNull()
+    expect(screen.queryByRole('button')).toBeNull()
+    expect(container.querySelector('.card-hover')).toBeNull()
+    expect(container.querySelector('.section-label')).toBeNull()
+  })
+
+  it('does not invent participation instructions or a public contact channel', () => {
+    const join = renderPage(<JoinUsPage />)
+    expect(screen.queryByText(/contact page for current participation instructions/i)).toBeNull()
+    join.unmount()
+
+    renderPage(<ContactPage />)
+    expect(screen.getByText(/currently no verified public contact channel/i)).toBeTruthy()
+    expect(screen.getByText(/local demonstration.*transmits nothing/i)).toBeTruthy()
+    expect(screen.queryByText(/current branch channels|we'll get back|reach out/i)).toBeNull()
   })
 })
