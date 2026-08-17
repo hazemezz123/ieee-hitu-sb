@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
-import { addGalleryPhoto, deleteGalleryPhoto } from '../../lib/turso'
+import { addGalleryPhoto, deleteGalleryPhoto, fetchGalleryPhotos } from '../../lib/turso'
 import { uploadToCloudinary } from '../../lib/upload'
-import { fetchGalleryPhotos } from '../../data/gallerySource'
 import PhotoInput from './PhotoInput'
 
 export default function GalleryTab() {

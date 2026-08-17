@@ -1170,6 +1170,10 @@ git add ieee-app/src/pages/admin/GalleryTab.jsx ieee-app/src/pages/admin/gallery
 git commit -m "feat: add gallery management tab"
 ```
 
+Applied deviations (from code review, committed a9b5138 + follow-up):
+1. Mock paths in the test corrected from `../` to `../../` — the test lives in `src/pages/admin/`, one level deeper than the plan assumed; the original paths resolved to non-existent `src/pages/data|lib` and never intercepted.
+2. GalleryTab imports `fetchGalleryPhotos` directly from `../../lib/turso` instead of `../../data/gallerySource` — the source module never rejects (it falls back to `[]`), making the component's load-error banner dead code. The admin tab needs a visible error when the DB is down; the source module stays for public pages only. Test mocks turso's `fetchGalleryPhotos` accordingly.
+
 ---
 
 ### Task 8: CommitteesTab admin component

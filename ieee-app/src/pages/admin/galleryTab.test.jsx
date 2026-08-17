@@ -2,15 +2,14 @@ import { cleanup, fireEvent, render, screen, within } from '@testing-library/rea
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import GalleryTab from './GalleryTab'
 
-const { fetchGalleryPhotos, addGalleryPhoto, deleteGalleryPhoto, uploadToCloudinary } = vi.hoisted(() => ({
-  fetchGalleryPhotos: vi.fn(),
+const { addGalleryPhoto, deleteGalleryPhoto, fetchGalleryPhotos, uploadToCloudinary } = vi.hoisted(() => ({
   addGalleryPhoto: vi.fn(),
   deleteGalleryPhoto: vi.fn(),
+  fetchGalleryPhotos: vi.fn(),
   uploadToCloudinary: vi.fn(),
 }))
 
-vi.mock('../../data/gallerySource', () => ({ fetchGalleryPhotos }))
-vi.mock('../../lib/turso', () => ({ addGalleryPhoto, deleteGalleryPhoto }))
+vi.mock('../../lib/turso', () => ({ addGalleryPhoto, deleteGalleryPhoto, fetchGalleryPhotos }))
 vi.mock('../../lib/upload', () => ({ uploadToCloudinary }))
 
 const photo = { _id: 1, src: 'https://cdn/x.jpg', caption: 'Group photo', createdAt: '2026-08-17 10:00:00' }
