@@ -4,6 +4,7 @@ export default function PhotoInput({ id, file, setFile, url, setUrl }) {
   const [preview, setPreview] = useState(null)
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- canonical object-URL pattern
     if (!file) { setPreview(null); return }
     const objectUrl = URL.createObjectURL(file)
     setPreview(objectUrl)
@@ -23,6 +24,7 @@ export default function PhotoInput({ id, file, setFile, url, setUrl }) {
         type="text"
         className="form-input"
         placeholder="Or paste an image URL"
+        aria-label="Image URL"
         value={url}
         onChange={e => setUrl(e.target.value)}
       />
