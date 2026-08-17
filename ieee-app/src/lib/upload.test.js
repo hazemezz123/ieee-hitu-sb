@@ -33,4 +33,15 @@ describe('uploadToCloudinary', () => {
     await expect(uploadToCloudinary(new File(['x'], 'a.png', { type: 'image/png' })))
       .rejects.toThrow('Invalid preset')
   })
+
+  it('throws a readable error when Cloudinary returns a non-JSON body', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: false,
+      status: 502,
+      json: async () => { throw new SyntaxError('Unexpected token <') },
+    }))
+
+    await expect(uploadToCloudinary(new File(['x'], 'a.png', { type: 'image/png' })))
+      .rejects.toThrow('Upload failed (502)')
+  })
 })

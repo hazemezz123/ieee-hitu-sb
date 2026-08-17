@@ -11,7 +11,8 @@ export async function uploadToCloudinary(file) {
     method: 'POST',
     body,
   })
-  const data = await res.json()
+  const data = await res.json().catch(() => ({}))
   if (!res.ok) throw new Error(data.error?.message || `Upload failed (${res.status})`)
+  if (!data.secure_url) throw new Error(`Upload failed (${res.status})`)
   return data.secure_url
 }
