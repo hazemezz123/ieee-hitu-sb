@@ -671,7 +671,7 @@ describe('committee source', () => {
     turso.fetchCommitteeBySlug.mockResolvedValue(committee)
     turso.fetchCommitteeMembers.mockResolvedValue(members)
 
-    await expect(fetchCommitteeDetailResult('ai')).resolves.toEqual({ committee, members, source: 'remote' })
+    await expect(fetchCommitteeDetailResult('ai')).resolves.toEqual({ committee, members: [{ ...members[0], committee: 'AI' }], source: 'remote' })
     expect(turso.fetchCommitteeMembers).toHaveBeenCalledWith(2)
   })
 
@@ -767,7 +767,9 @@ export async function fetchCommitteeDetailResult(slug) {
     const committee = await tursoFetchCommitteeBySlug(slug)
     if (!committee) return { committee: null, members: [], source: 'remote' }
     const members = await tursoFetchCommitteeMembers(committee._id)
-    return { committee, members, source: 'remote' }
+    // members from fetchCommitteeMembers carry no committee name; attach it so
+    // findCommitteeLeaders(slug, members) matches on the detail page
+    return { committee, members: members.map(member => ({ ...member, committee: committee.name })), source: 'remote' }
   } catch (err) {
     console.warn('Turso fetch failed, falling back to static:', err?.message ?? String(err))
     const committee = staticCommittees.find(item => item.slug === slug)
