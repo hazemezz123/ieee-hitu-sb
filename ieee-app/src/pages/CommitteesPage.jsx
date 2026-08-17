@@ -26,7 +26,6 @@ const CommitteeGroup = ({ title, committees, offset = 0 }) => (
             </div>
             <div className="md:text-right">
               <p className="text-sm text-on-surface-variant">{committee.categoryLabel}</p>
-              <p className="mt-1 text-sm text-on-surface-variant">{committee.memberCount} members</p>
               <Link aria-label={`View ${committee.name} committee record`} className="mt-4 inline-flex min-h-11 items-center text-xs font-bold uppercase tracking-widest text-primary" to={`/committees/${committee.slug}`}>View record</Link>
             </div>
           </li>

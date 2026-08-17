@@ -121,7 +121,6 @@ describe('committee records', () => {
       expect(screen.getByRole('heading', { level: 1, name: committee.name })).toBeTruthy()
       expect(screen.getByRole('heading', { level: 2, name: 'Mandate' })).toBeTruthy()
       expect(screen.getByText(committee.categoryLabel)).toBeTruthy()
-      expect(screen.getByText(`${committee.memberCount} members`)).toBeTruthy()
       const backLink = screen.getByRole('link', { name: 'All committees' })
       expect(backLink.classList.contains('inline-flex')).toBe(true)
       expect(backLink.classList.contains('items-center')).toBe(true)

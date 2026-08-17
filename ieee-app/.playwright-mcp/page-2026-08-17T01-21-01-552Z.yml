@@ -1,0 +1,75 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - navigation "Primary navigation" [ref=e4]:
+      - link "IEEE HITU Student Branch home" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - img "IEEE HITU Student Branch" [ref=e6]
+      - generic [ref=e7]:
+        - link "Home" [ref=e8] [cursor=pointer]:
+          - /url: /
+        - link "About" [ref=e9] [cursor=pointer]:
+          - /url: /about
+        - link "Events" [ref=e10] [cursor=pointer]:
+          - /url: /events
+        - link "Committees" [ref=e11] [cursor=pointer]:
+          - /url: /committees
+        - link "Gallery" [ref=e12] [cursor=pointer]:
+          - /url: /gallery
+        - link "Contact" [ref=e13] [cursor=pointer]:
+          - /url: /contact
+      - link "Join IEEE" [ref=e14] [cursor=pointer]:
+        - /url: /membership
+      - button "Open navigation menu" [ref=e15]:
+        - generic [ref=e16]: menu
+  - main [ref=e17]:
+    - generic [ref=e18]:
+      - region [ref=e19]:
+        - generic [ref=e20]:
+          - generic [ref=e21]:
+            - paragraph [ref=e22]: Heliopolis International Technological University
+            - heading "IEEE HITU Student Branch" [level=1] [ref=e23]
+            - paragraph [ref=e24]: Technical learning, student-led committees, and IEEE opportunities rooted at HITU.
+            - generic [ref=e25]:
+              - link "View events" [ref=e26] [cursor=pointer]:
+                - /url: /events
+              - link "Join the branch" [ref=e27] [cursor=pointer]:
+                - /url: /join-us
+          - img "IEEE HITU Student Branch" [ref=e28]
+      - main [ref=e29]:
+        - generic [ref=e31]:
+          - paragraph [ref=e32]:
+            - strong [ref=e33]: "0"
+            - text: Events
+          - paragraph [ref=e34]:
+            - strong [ref=e35]: "11"
+            - text: Committees
+          - paragraph [ref=e36]:
+            - strong [ref=e37]: "28"
+            - text: Board records
+          - paragraph [ref=e38]:
+            - strong [ref=e39]: HITU
+            - text: University
+        - paragraph [ref=e40]: Loading event records...
+  - contentinfo [ref=e41]:
+    - generic [ref=e42]:
+      - generic [ref=e43]:
+        - img "IEEE HITU Student Branch" [ref=e44]
+        - paragraph [ref=e45]: The IEEE Student Branch at Heliopolis International Technological University, Cairo, Egypt.
+      - navigation "Footer navigation" [ref=e46]:
+        - link "About" [ref=e47] [cursor=pointer]:
+          - /url: /about
+        - link "Committees" [ref=e48] [cursor=pointer]:
+          - /url: /committees
+        - link "Events" [ref=e49] [cursor=pointer]:
+          - /url: /events
+        - link "Gallery" [ref=e50] [cursor=pointer]:
+          - /url: /gallery
+        - link "Membership" [ref=e51] [cursor=pointer]:
+          - /url: /membership
+        - link "Join Us" [ref=e52] [cursor=pointer]:
+          - /url: /join-us
+        - link "Contact" [ref=e53] [cursor=pointer]:
+          - /url: /contact
+    - generic [ref=e55]:
+      - paragraph [ref=e56]: © 2026 IEEE HITU Student Branch
+      - paragraph [ref=e57]: Heliopolis International Technological University

@@ -18,7 +18,7 @@ export default function Footer() {
         <div>
           <img src={logo} alt="IEEE HITU Student Branch" className="mb-5 h-10 w-auto brightness-0 invert" />
           <p className="max-w-xl text-sm leading-6 text-white/75">
-            The IEEE Student Branch at Heliopolis International Technological University, Cairo, Egypt.
+            The IEEE Student Branch at Helwan International Technological University, Cairo, Egypt.
           </p>
         </div>
         <nav aria-label="Footer navigation" className="grid grid-cols-2 gap-x-8 gap-y-3 sm:grid-cols-3 md:grid-cols-2">
@@ -32,7 +32,7 @@ export default function Footer() {
       <div className="border-t border-white/20">
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-6 py-5 text-xs text-white/65 sm:px-8 md:flex-row md:justify-between">
           <p>&copy; 2026 IEEE HITU Student Branch</p>
-          <p>Heliopolis International Technological University</p>
+          <p>Helwan International Technological University</p>
         </div>
       </div>
     </footer>

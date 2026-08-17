@@ -29,7 +29,6 @@ export default function CommitteeDetailPage() {
           <h1 className="mt-8 text-4xl font-black text-on-surface md:text-6xl">{committee.name}</h1>
           <dl className="mt-8 flex flex-wrap gap-x-12 gap-y-4 text-sm">
             <div><dt className="text-on-surface-variant">Category</dt><dd className="mt-1 font-semibold text-on-surface">{committee.categoryLabel}</dd></div>
-            <div><dt className="text-on-surface-variant">Member count</dt><dd className="mt-1 font-semibold text-on-surface">{committee.memberCount} members</dd></div>
           </dl>
         </header>
 

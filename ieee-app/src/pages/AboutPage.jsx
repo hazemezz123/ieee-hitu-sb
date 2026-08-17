@@ -26,7 +26,7 @@ export default function AboutPage() {
         <header className="max-w-4xl border-b border-outline-variant/40 pb-12">
           <p className="section-label">Branch profile</p>
           <h1 className="mt-4 text-4xl font-black leading-tight text-on-surface md:text-6xl">About IEEE HITU Student Branch</h1>
-          <p className="mt-6 max-w-3xl text-lg leading-relaxed text-on-surface-variant">IEEE HITU Student Branch is the student branch of IEEE at Heliopolis International Technological University. It is a structured student community connecting HITU students with technical learning, committees, events, and the wider IEEE network.</p>
+          <p className="mt-6 max-w-3xl text-lg leading-relaxed text-on-surface-variant">IEEE HITU Student Branch is the student branch of IEEE at Helwan International Technological University. It is a structured student community connecting HITU students with technical learning, committees, events, and the wider IEEE network.</p>
         </header>
 
         <section className="grid gap-10 border-b border-outline-variant/40 py-12 md:grid-cols-[1fr_1.4fr]">

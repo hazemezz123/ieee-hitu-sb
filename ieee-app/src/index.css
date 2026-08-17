@@ -303,7 +303,9 @@ a { text-underline-offset: 0.2em; }
 .nav-link[aria-current='page']::after { position: absolute; inset: auto 0.85rem -1px; height: 3px; background: var(--primary); content: ''; }
 .nav-link-mobile { min-height: 2.75rem; border-bottom: 1px solid var(--color-outline-variant); }
 .nav-link-mobile[aria-current='page'] { color: var(--primary-strong); }
-.nav-menu-button { display: inline-flex; width: 2.75rem; height: 2.75rem; align-items: center; justify-content: center; border: 1px solid var(--color-outline-variant); border-radius: var(--radius-sm); background: var(--surface-raised); color: var(--text); }
+@layer components {
+  .nav-menu-button { display: inline-flex; width: 2.75rem; height: 2.75rem; align-items: center; justify-content: center; border: 1px solid var(--color-outline-variant); border-radius: var(--radius-sm); background: var(--surface-raised); color: var(--text); }
+}
 
 .section-label {
   display: block;

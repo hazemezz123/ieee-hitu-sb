@@ -1,0 +1,91 @@
+- generic [ref=e1] [box=0,0,1425,6662]:
+  - generic [ref=e2] [box=0,0,1425,6662]:
+    - banner [ref=e3] [box=0,0,1425,102]:
+      - navigation [ref=e5] [box=73,20,1280,62]:
+        - link "IEEE HITU SB Home" [ref=e6] [cursor=pointer] [box=98,31,40,40]:
+          - /url: /
+          - img "IEEE HITU SB" [ref=e7] [box=98,31,40,40]
+        - generic [ref=e8] [box=463,33,500,36]:
+          - link "Home" [ref=e9] [cursor=pointer] [box=463,33,72,36]:
+            - /url: /
+          - link "About" [ref=e10] [cursor=pointer] [box=536,33,72,36]:
+            - /url: /about
+          - link "Events" [ref=e11] [cursor=pointer] [box=610,33,77,36]:
+            - /url: /events
+          - link "Committee" [ref=e12] [cursor=pointer] [box=689,33,105,36]:
+            - /url: /committees
+          - link "Gallery" [ref=e13] [cursor=pointer] [box=796,33,79,36]:
+            - /url: /gallery
+          - link "Contact" [ref=e14] [cursor=pointer] [box=878,33,85,36]:
+            - /url: /contact
+        - link "Join IEEE" [ref=e16] [cursor=pointer] [box=1214,29,113,44]:
+          - /url: /membership
+    - main [ref=e17] [box=0,0,1425,6284]:
+      - generic [ref=e18] [box=0,0,1425,6284]:
+        - generic [ref=e19] [box=0,0,1425,900]:
+          - generic [ref=e22] [box=313,193,800,563]
+          - button "Scroll to next section" [ref=e31] [box=688,821,48,47]
+        - generic [ref=e40] [box=329,1058,768,288]:
+          - generic [ref=e41] [box=329,1058,768,17]: About Us
+          - heading "What Is IEEE HITU SB?" [level=2] [ref=e42] [box=329,1091,768,40]
+          - paragraph [ref=e43] [box=329,1155,768,88]: IEEE HITU SB is the student branch of IEEE at Heliopolis International Technological University, built to give students a structured community for learning, collaboration, and professional growth.
+          - paragraph [ref=e44] [box=329,1258,768,88]: Through committees, events, and shared branch work, students gain technical exposure, leadership experience, and a stronger connection to the wider world of engineering and technology.
+        - generic [ref=e48] [box=185,1602,1056,308]:
+          - generic [ref=e49] [box=185,1612,554,288]
+          - generic [ref=e54] [box=787,1602,454,308]
+        - generic [ref=e63] [box=137,2166,1152,611]:
+          - generic [ref=e64] [box=185,2166,768,155]
+          - generic [ref=e68] [box=185,2385,1056,392]
+        - generic [ref=e87] [box=137,3033,1152,2513]:
+          - generic [ref=e88] [box=185,3033,1056,73]
+          - generic [ref=e91] [box=185,3170,1056,2376]
+        - generic [ref=e235] [box=377,5802,672,384]:
+          - heading "Ready to Become Part of IEEE HITU?" [level=2] [ref=e236] [box=441,5866,544,80]
+          - paragraph [ref=e237] [box=441,5962,544,84]: Join the student branch and start your journey with a global community of engineers, innovators, and problem-solvers.
+          - link "Join IEEE Today" [ref=e238] [cursor=pointer] [box=631,6078,164,44]:
+            - /url: /membership
+    - button "Scroll to top" [ref=e239] [cursor=pointer] [box=1361,836,35,35]:
+      - generic [ref=e240] [box=1369,844,19,19]: arrow_upward
+    - contentinfo [ref=e241] [box=0,6284,1425,379]:
+      - generic [ref=e243] [box=121,6349,1184,216]:
+        - generic [ref=e244] [box=121,6369,260,216]:
+          - img "IEEE HITU Student Branch" [ref=e245] [box=121,6369,40,40]
+          - paragraph [ref=e246] [box=121,6425,260,91]: IEEE HITU Student Branch at Heliopolis International Technological University — building a community of engineers, innovators, and problem-solvers.
+          - generic [ref=e247] [box=121,6536,260,36]
+        - generic [ref=e257] [box=429,6369,260,216]:
+          - heading "Quick Links" [level=4] [ref=e258] [box=429,6369,260,16]
+          - navigation "Quick links" [ref=e259] [box=429,6405,260,180]
+        - generic [ref=e272] [box=737,6369,260,216]:
+          - heading "Resources" [level=4] [ref=e273] [box=737,6369,260,16]
+          - navigation "Resources" [ref=e274] [box=737,6405,260,116]
+        - generic [ref=e283] [box=1045,6369,260,216]:
+          - heading "Contact" [level=4] [ref=e284] [box=1045,6369,260,16]
+          - list [ref=e285] [box=1045,6405,260,152]
+      - generic [ref=e302] [box=73,6606,1280,57]:
+        - paragraph [ref=e303] [box=121,6626,404,17]: © 2026 IEEE HITU Student Branch. All Rights Reserved.
+        - paragraph [ref=e304] [box=1029,6626,275,17]: Designed & Developed by IEEE HITU Web Committee
+  - generic [ref=e305] [box=551,848,324,38]:
+    - img "Impeccable live mode - agent not polling" [ref=e306] [box=552,849,38,36]
+    - generic [ref=e311] [box=590,849,284,36]:
+      - button "Pick element" [ref=e312] [cursor=pointer] [box=592,854,30,26]:
+        - generic [box=610,861,0,12]: Pick
+      - button "Insert new element" [ref=e315] [cursor=pointer] [box=624,854,30,26]:
+        - generic [box=642,861,0,12]: Insert
+      - button "Detect anti-patterns" [ref=e317] [cursor=pointer] [box=656,854,30,26]:
+        - generic [box=674,861,0,12]: Detect
+      - button "Toggle DESIGN.md panel" [ref=e321] [cursor=pointer] [box=688,854,30,26]:
+        - generic [box=706,861,0,12]: DESIGN.md
+      - generic "Steer the page" [ref=e327] [cursor=pointer] [box=726,853,104,28]:
+        - textbox "Steer the page" [active] [ref=e328] [box=755,860,18,15]:
+          - /placeholder: Steer…
+        - button "Voice input" [ref=e329] [box=773,853,28,28]
+        - button "Send steer message" [disabled] [ref=e333] [box=801,853,28,28]
+      - button "Exit live mode" [ref=e337] [cursor=pointer] [box=845,855,24,24]
+  - generic [box=0,0,0,0]:
+    - generic [box=0,0,0,0]:
+      - complementary [box=1437,12,440,816]:
+        - generic [box=1438,13,438,47]:
+          - generic [box=1452,29,265,14]: DESIGN.md
+          - generic [box=1727,24,103,24]
+          - button "Close panel" [box=1840,23,26,26]: ✕
+        - generic [box=1438,60,438,767]: No design system data available.

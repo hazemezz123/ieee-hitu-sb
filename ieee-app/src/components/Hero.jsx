@@ -6,7 +6,7 @@ export default function Hero() {
     <section aria-labelledby="home-title" className="min-h-[calc(100svh-var(--navbar-height))] grid items-end bg-inverse-surface">
       <div className="container mx-auto grid max-w-6xl gap-10 px-6 py-12 md:px-12 lg:grid-cols-[1.4fr_0.6fr] lg:items-end lg:py-20">
         <div>
-          <p className="section-label mb-4">Heliopolis International Technological University</p>
+          <p className="section-label mb-4">Helwan International Technological University</p>
           <h1 id="home-title" className="max-w-4xl text-4xl font-black leading-none tracking-tight text-[#F0F4F8] sm:text-6xl lg:text-8xl">
             IEEE HITU Student Branch
           </h1>
