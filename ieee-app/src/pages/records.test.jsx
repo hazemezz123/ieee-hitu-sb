@@ -342,20 +342,45 @@ describe('event records', () => {
     expect(screen.getByText(/loading event photos/i)).toBeTruthy()
     cleanup()
 
-    fetchEventsResult.mockResolvedValueOnce({ events: [{ gallery: [{ src: '/gallery.jpg', caption: 'Fallback photo' }] }], source: 'fallback' })
+    fetchEventsResult.mockResolvedValueOnce({ events: [{ title: 'Fallback Event', date: '2026-09-01T23:30:00Z', slug: 'fallback-event', gallery: [{ src: '/gallery.jpg', caption: 'Fallback photo' }] }], source: 'fallback' })
     renderGallery()
     expect(await screen.findByText(/showing saved fallback event information/i)).toBeTruthy()
     expect(screen.getByRole('img', { name: 'Fallback photo' })).toBeTruthy()
+    expect(screen.getByText('Fallback Event')).toBeTruthy()
+    expect(screen.getByText('September 1, 2026')).toBeTruthy()
+    expect(screen.getByRole('link', { name: /view fallback event/i }).getAttribute('href')).toBe('/events/fallback-event')
     cleanup()
 
     fetchEventsResult.mockResolvedValueOnce({ events: [], source: 'remote' })
     renderGallery()
-    expect(await screen.findByRole('heading', { level: 2, name: 'Gallery Coming Soon' })).toBeTruthy()
+    expect(await screen.findByRole('heading', { level: 2, name: 'No event photography available' })).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'Browse events' }).getAttribute('href')).toBe('/events')
     cleanup()
 
     fetchEventsResult.mockRejectedValueOnce(new Error('unexpected'))
     renderGallery()
     expect(await screen.findByRole('alert')).toBeTruthy()
+    expect(screen.getByRole('link', { name: 'Browse events' }).getAttribute('href')).toBe('/events')
+  })
+
+  it('keeps archive images stable and replaces failed media neutrally', async () => {
+    fetchEventsResult.mockResolvedValue({ events: [{ title: 'Archive Event', date: '2026-09-01T10:00:00Z', slug: 'archive-event', gallery: [{ src: '/broken.jpg', caption: 'Documented moment', width: 1200, height: 800 }] }], source: 'remote' })
+    const page = renderGallery()
+    const image = await screen.findByRole('img', { name: 'Documented moment' })
+
+    expect(image.getAttribute('width')).toBe('1200')
+    expect(image.getAttribute('height')).toBe('800')
+    fireEvent.error(image)
+    expect(page.container.querySelector('img')).toBeNull()
+    expect(screen.getByRole('img', { name: 'Documented moment image unavailable' })).toBeTruthy()
+    expect(screen.getByText('Archive Event')).toBeTruthy()
+    expect(screen.getByText('Documented moment')).toBeTruthy()
+  })
+
+  it('uses level-two headings for archive records', async () => {
+    fetchEventsResult.mockResolvedValue({ events: [{ title: 'Archive Event', slug: 'archive-event', gallery: [{ src: '/photo.jpg', caption: 'Archive photo' }] }], source: 'remote' })
+    renderGallery()
+    expect(await screen.findByRole('heading', { level: 2, name: 'Archive Event' })).toBeTruthy()
   })
 
   it('does not update Gallery after unmounting before its request resolves', async () => {
