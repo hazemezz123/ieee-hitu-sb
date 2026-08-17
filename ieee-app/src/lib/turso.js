@@ -44,6 +44,8 @@ async function execute(sql, params = []) {
   return result
 }
 
+const capitalize = s => s.charAt(0).toUpperCase() + s.slice(1)
+
 function rowToEvent(row) {
   const parsedGallery = (() => {
     try { return JSON.parse(row.gallery || '[]') } catch { return [] }
@@ -53,7 +55,7 @@ function rowToEvent(row) {
   const status = !isNaN(eventDate) && eventDate > new Date() ? 'upcoming' : 'past'
 
   const cat = typeof row.category === 'string' ? row.category : ''
-  const categoryLabel = cat ? cat.charAt(0).toUpperCase() + cat.slice(1) : ''
+  const categoryLabel = cat ? capitalize(cat) : ''
 
   return {
     _id: Number(row.id) || 0,
@@ -156,7 +158,7 @@ function rowToCommittee(row) {
     name: String(row.name || ''),
     slug: String(row.slug || ''),
     category: cat,
-    categoryLabel: cat ? cat.charAt(0).toUpperCase() + cat.slice(1) : '',
+    categoryLabel: cat ? capitalize(cat) : '',
     shortDescription: row.short_description || '',
     memberCount: Number(row.member_count) || 0,
   }

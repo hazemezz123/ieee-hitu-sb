@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchEvents, deleteEvent } from "../data/eventsSource";
 import { ensureSchema } from "../lib/turso";
+import ConfirmDialog from "../components/ConfirmDialog";
 import GalleryTab from "./admin/GalleryTab";
 import CommitteesTab from "./admin/CommitteesTab";
 
@@ -260,38 +261,9 @@ export default function AdminPage() {
         )}
 
         {deleteTarget && (
-          <div
-            className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4"
-            onClick={() => setDeleteTarget(null)}
-          >
-            <div
-              className="card shadow-xl p-6 md:p-8 max-w-sm w-full"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <h3 className="text-lg font-bold mb-2">Delete Event</h3>
-              <p className="text-sm text-on-surface-variant mb-6">
-                Are you sure you want to delete{" "}
-                <span className="font-semibold text-on-surface">
-                  {deleteTarget.title}
-                </span>
-                ? This cannot be undone.
-              </p>
-              <div className="flex gap-3 justify-end">
-                <button
-                  onClick={() => setDeleteTarget(null)}
-                  className="btn btn-secondary text-sm"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleDelete}
-                  className="btn bg-error text-white text-sm hover:bg-error/90"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
+          <ConfirmDialog title="Delete Event" onCancel={() => setDeleteTarget(null)} onConfirm={handleDelete}>
+            Are you sure you want to delete <span className="font-semibold text-on-surface">{deleteTarget.title}</span>? This cannot be undone.
+          </ConfirmDialog>
         )}
       </div>
     </div>

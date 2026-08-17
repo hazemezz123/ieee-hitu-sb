@@ -1,62 +1,57 @@
-import { render } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import { act, render } from '@testing-library/react'
+import { describe, expect, it } from 'vitest'
 import AnimatedSection from './AnimatedSection'
 
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, initial, animate, whileInView, viewport, ...props }) => (
-      <div
-        data-animate={animate ?? ''}
-        data-initial={initial ?? ''}
-        data-viewport={viewport ? JSON.stringify(viewport) : ''}
-        data-while-in-view={whileInView ?? ''}
-        {...props}
-      >
-        {children}
-      </div>
-    ),
-  },
-  useReducedMotion: vi.fn(() => false),
-}))
+let observerInstance
+class MockIntersectionObserver {
+  constructor(callback) {
+    this.callback = callback
+    observerInstance = this
+  }
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
 
-import { useReducedMotion } from 'framer-motion'
+const withObserver = fn => {
+  const original = globalThis.IntersectionObserver
+  globalThis.IntersectionObserver = MockIntersectionObserver
+  try { return fn() } finally { globalThis.IntersectionObserver = original }
+}
 
 describe('AnimatedSection', () => {
-  it('reveals content when it enters the viewport by default', () => {
-    const { container } = render(
-      <AnimatedSection>
-        <span>Committee content</span>
-      </AnimatedSection>,
-    )
+  it('is hidden until the observer reports it entering the viewport', () => {
+    withObserver(() => {
+      const { container } = render(
+        <AnimatedSection>
+          <span>Committee content</span>
+        </AnimatedSection>,
+      )
+      const wrapper = container.firstElementChild
+      expect(wrapper?.className).not.toContain('is-visible')
 
-    const wrapper = container.firstElementChild
-
-    expect(wrapper?.getAttribute('data-initial')).toBe('hidden')
-    expect(wrapper?.getAttribute('data-while-in-view')).toBe('visible')
-    expect(wrapper?.getAttribute('data-animate')).toBe('')
+      act(() => observerInstance.callback([{ isIntersecting: true }]))
+      expect(wrapper?.className).toContain('is-visible')
+    })
   })
 
-  it('can reveal critical content immediately on mount', () => {
+  it('renders immediately when trigger is load', () => {
     const { container } = render(
       <AnimatedSection trigger="load">
-        <span>Committee content</span>
+        <span>Critical content</span>
       </AnimatedSection>,
     )
-
-    const wrapper = container.firstElementChild
-
-    expect(wrapper?.getAttribute('data-initial')).toBe('hidden')
-    expect(wrapper?.getAttribute('data-animate')).toBe('visible')
-    expect(wrapper?.getAttribute('data-while-in-view')).toBe('')
+    expect(container.firstElementChild?.className).toContain('is-visible')
   })
 
-  it('renders immediately when reduced motion is preferred', () => {
-    useReducedMotion.mockReturnValue(true)
-
-    const { container } = render(<AnimatedSection><span>Content</span></AnimatedSection>)
-
-    const wrapper = container.firstElementChild
-    expect(wrapper?.getAttribute('data-initial')).toBe('false')
-    expect(wrapper?.getAttribute('data-while-in-view')).toBe('')
+  it('renders children without extra landmarks', () => {
+    withObserver(() => {
+      const { container } = render(
+        <AnimatedSection>
+          <span>Content</span>
+        </AnimatedSection>,
+      )
+      expect(container.querySelector('main, .section-label')).toBeNull()
+    })
   })
 })

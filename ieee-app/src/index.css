@@ -328,6 +328,12 @@ a { text-underline-offset: 0.2em; }
 .partner-tile img { max-height: 5rem; max-width: 12rem; object-fit: contain; }
 @keyframes marquee { to { transform: translateX(-50%); } }
 
+.page-enter { animation: page-enter 0.3s ease-out; }
+@keyframes page-enter { from { opacity: 0; transform: translateY(0.75rem); } }
+
+.animate-section { opacity: 0; transform: translateY(0.75rem); transition: opacity 0.3s ease-out, transform 0.3s ease-out; }
+.animate-section.is-visible { opacity: 1; transform: none; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     scroll-behavior: auto !important;

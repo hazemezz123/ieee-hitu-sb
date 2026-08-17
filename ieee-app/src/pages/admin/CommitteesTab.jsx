@@ -11,6 +11,7 @@ import {
 } from '../../lib/turso'
 import { uploadToCloudinary } from '../../lib/upload'
 import { slugify } from '../../lib/slugify'
+import ConfirmDialog from '../../components/ConfirmDialog'
 import PhotoInput from './PhotoInput'
 
 const emptyCommittee = { name: '', slug: '', category: 'technical', shortDescription: '' }
@@ -110,20 +111,16 @@ export default function CommitteesTab() {
   }
 
   const confirmDialog = deleteTarget && (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4" onClick={() => setDeleteTarget(null)}>
-      <div className="card shadow-xl p-6 md:p-8 max-w-sm w-full" onClick={e => e.stopPropagation()}>
-        <h3 className="text-lg font-bold mb-2">{deleteTarget.kind === 'committee' ? 'Delete Committee' : 'Delete Member'}</h3>
-        <p className="text-sm text-on-surface-variant mb-6">
-          {deleteTarget.kind === 'committee'
-            ? <>Are you sure you want to delete <span className="font-semibold text-on-surface">{deleteTarget.item.name}</span>? Its members will also be deleted. This cannot be undone.</>
-            : <>Are you sure you want to delete <span className="font-semibold text-on-surface">{deleteTarget.item.name}</span>? This cannot be undone.</>}
-        </p>
-        <div className="flex gap-3 justify-end">
-          <button onClick={() => setDeleteTarget(null)} className="btn btn-secondary text-sm">Cancel</button>
-          <button onClick={handleDelete} disabled={saving} className="btn bg-error text-white text-sm hover:bg-error/90">Delete</button>
-        </div>
-      </div>
-    </div>
+    <ConfirmDialog
+      title={deleteTarget.kind === 'committee' ? 'Delete Committee' : 'Delete Member'}
+      onCancel={() => setDeleteTarget(null)}
+      onConfirm={handleDelete}
+      busy={saving}
+    >
+      {deleteTarget.kind === 'committee'
+        ? <>Are you sure you want to delete <span className="font-semibold text-on-surface">{deleteTarget.item.name}</span>? Its members will also be deleted. This cannot be undone.</>
+        : <>Are you sure you want to delete <span className="font-semibold text-on-surface">{deleteTarget.item.name}</span>? This cannot be undone.</>}
+    </ConfirmDialog>
   )
 
   if (selected) {

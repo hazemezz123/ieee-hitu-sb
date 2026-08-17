@@ -84,13 +84,6 @@ export const events = [
   }),
 ];
 
-export { eventCategoryLabels };
-
-export const eventCategories = Object.keys(eventCategoryLabels);
-
-export const upcomingEvents = events.filter((e) => e.status === 'upcoming');
-export const pastEvents = events.filter((e) => e.status === 'past');
-
 export function getEventBySlug(slug) {
   return events.find((event) => event.slug === slug);
 }

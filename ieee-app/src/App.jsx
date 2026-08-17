@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
-import { AnimatePresence } from 'framer-motion'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ScrollToTop from './components/ScrollToTop'
@@ -21,8 +20,8 @@ function AnimatedRoutes() {
   const location = useLocation()
 
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
+    <div key={location.pathname} className="page-enter">
+      <Routes location={location}>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/join-us" element={<JoinUsPage />} />
@@ -37,7 +36,7 @@ function AnimatedRoutes() {
         <Route path="/admin/events/new" element={<EventFormPage />} />
         <Route path="/admin/events/:id/edit" element={<EventFormPage />} />
       </Routes>
-    </AnimatePresence>
+    </div>
   )
 }
 

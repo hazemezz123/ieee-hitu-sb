@@ -102,7 +102,3 @@ export const committeeCategories = {
   technical: 'Technical committees',
   nonTechnical: 'Non-technical committees',
 };
-
-export const technicalCommittees = committees.filter((committee) => committee.category === 'technical');
-export const nonTechnicalCommittees = committees.filter((committee) => committee.category === 'non-technical');
-export const totalCommittees = committees.length;

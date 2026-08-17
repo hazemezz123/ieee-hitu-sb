@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { addGalleryPhoto, deleteGalleryPhoto, fetchGalleryPhotos } from '../../lib/turso'
 import { uploadToCloudinary } from '../../lib/upload'
+import ConfirmDialog from '../../components/ConfirmDialog'
 import PhotoInput from './PhotoInput'
 
 export default function GalleryTab() {
@@ -109,21 +110,9 @@ export default function GalleryTab() {
       )}
 
       {deleteTarget && (
-        <div
-          className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4"
-          onClick={() => setDeleteTarget(null)}
-        >
-          <div className="card shadow-xl p-6 md:p-8 max-w-sm w-full" onClick={e => e.stopPropagation()}>
-            <h3 className="text-lg font-bold mb-2">Delete Photo</h3>
-            <p className="text-sm text-on-surface-variant mb-6">
-              Are you sure you want to delete this photo? This cannot be undone.
-            </p>
-            <div className="flex gap-3 justify-end">
-              <button onClick={() => setDeleteTarget(null)} className="btn btn-secondary text-sm">Cancel</button>
-              <button onClick={handleDelete} className="btn bg-error text-white text-sm hover:bg-error/90">Delete</button>
-            </div>
-          </div>
-        </div>
+        <ConfirmDialog title="Delete Photo" onCancel={() => setDeleteTarget(null)} onConfirm={handleDelete}>
+          Are you sure you want to delete this photo? This cannot be undone.
+        </ConfirmDialog>
       )}
     </div>
   )

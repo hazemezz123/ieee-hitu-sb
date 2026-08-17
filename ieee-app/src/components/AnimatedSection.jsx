@@ -1,47 +1,23 @@
-import { motion as Motion, useReducedMotion } from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
 
-const defaultVariants = {
-  hidden: {
-    opacity: 0,
-    y: 12,
-  },
-  visible: (i = 0) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.05,
-      duration: 0.3,
-      ease: 'easeOut',
-    },
-  }),
-}
+function AnimatedSection({ children, trigger = 'inView', className = '' }) {
+  const ref = useRef(null)
+  const [visible, setVisible] = useState(trigger === 'load')
 
-function AnimatedSection({
-  children,
-  variants = defaultVariants,
-  delay = 0,
-  className = '',
-  trigger = 'inView',
-}) {
-  const reduceMotion = useReducedMotion()
-  const visibilityProps =
-    trigger === 'load'
-      ? { animate: 'visible' }
-      : {
-          whileInView: 'visible',
-          viewport: { once: true, margin: '-100px', amount: 0.1 },
-        }
+  useEffect(() => {
+    if (trigger === 'load' || !ref.current) return
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); observer.disconnect() } },
+      { rootMargin: '-100px', threshold: 0.1 },
+    )
+    observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [trigger])
 
   return (
-    <Motion.div
-      initial={reduceMotion ? false : 'hidden'}
-      {...(reduceMotion ? {} : visibilityProps)}
-      custom={delay}
-      variants={variants}
-      className={className}
-    >
+    <div ref={ref} className={`animate-section ${visible ? 'is-visible' : ''} ${className}`.trim()}>
       {children}
-    </Motion.div>
+    </div>
   )
 }
 
