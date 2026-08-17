@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { fetchEvents, createEvent, updateEvent } from '../data/eventsSource'
+import { slugify } from '../lib/slugify'
 
 const categories = [
   { value: 'workshops', label: 'Workshops' },
@@ -14,10 +15,6 @@ const categories = [
 const emptyForm = {
   title: '', slug: '', date: '', endDate: '', location: '', category: 'workshops',
   coverImage: '', excerpt: '', description: '', gallery: '[]', organizerCommittee: '',
-}
-
-function slugify(text) {
-  return text.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean).join('-')
 }
 
 export default function EventFormPage() {
