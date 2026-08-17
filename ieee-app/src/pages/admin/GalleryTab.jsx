@@ -24,6 +24,7 @@ export default function GalleryTab() {
     setLoading(false)
   }, [])
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- fire-and-forget load
   useEffect(() => { load() }, [load])
 
   async function handleAdd(e) {
