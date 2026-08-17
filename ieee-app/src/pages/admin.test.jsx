@@ -13,6 +13,23 @@ const { fetchEvents, createEvent, updateEvent, deleteEvent } = vi.hoisted(() => 
 
 vi.mock('../data/eventsSource', () => ({ fetchEvents, createEvent, updateEvent, deleteEvent }))
 
+const turso = vi.hoisted(() => ({
+  ensureSchema: vi.fn(),
+  fetchGalleryPhotos: vi.fn(),
+  addGalleryPhoto: vi.fn(),
+  deleteGalleryPhoto: vi.fn(),
+  fetchCommittees: vi.fn(),
+  fetchCommitteeMembers: vi.fn(),
+  createCommittee: vi.fn(),
+  updateCommittee: vi.fn(),
+  deleteCommittee: vi.fn(),
+  createCommitteeMember: vi.fn(),
+  updateCommitteeMember: vi.fn(),
+  deleteCommitteeMember: vi.fn(),
+}))
+vi.mock('../lib/turso', () => turso)
+vi.mock('../lib/upload', () => ({ uploadToCloudinary: vi.fn() }))
+
 const event = {
   _id: 7,
   title: 'Robotics Workshop',
@@ -60,6 +77,14 @@ beforeEach(() => {
   createEvent.mockResolvedValue(undefined)
   updateEvent.mockResolvedValue(undefined)
   deleteEvent.mockResolvedValue(undefined)
+  turso.ensureSchema.mockReset()
+  turso.ensureSchema.mockResolvedValue(undefined)
+  turso.fetchGalleryPhotos.mockReset()
+  turso.fetchGalleryPhotos.mockResolvedValue([])
+  turso.fetchCommittees.mockReset()
+  turso.fetchCommittees.mockResolvedValue([])
+  turso.fetchCommitteeMembers.mockReset()
+  turso.fetchCommitteeMembers.mockResolvedValue([])
 })
 
 afterEach(cleanup)
@@ -91,6 +116,7 @@ describe('admin authentication and event list', () => {
     fetchEvents.mockReturnValueOnce(new Promise(() => {}))
     const pending = renderRoute('/admin')
     expect(screen.getByText('Loading...')).toBeTruthy()
+    await act(async () => {})
     pending.unmount()
 
     fetchEvents.mockRejectedValueOnce(new Error('Events unavailable'))
@@ -225,5 +251,28 @@ describe('event form', () => {
     renderRoute('/admin/events/new')
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
     expect(screen.getByRole('heading', { name: 'Admin Login' })).toBeTruthy()
+  })
+})
+
+describe('admin tabs', () => {
+  it('bootstraps the schema and keeps the events view as the default tab', async () => {
+    sessionStorage.setItem('admin_auth', 'ieee2026')
+    fetchEvents.mockResolvedValue([])
+    renderRoute('/admin')
+    expect(await screen.findByRole('heading', { name: 'Manage Events' })).toBeTruthy()
+    expect(turso.ensureSchema).toHaveBeenCalledOnce()
+  })
+
+  it('switches to the gallery and committees tabs', async () => {
+    sessionStorage.setItem('admin_auth', 'ieee2026')
+    fetchEvents.mockResolvedValue([])
+    renderRoute('/admin')
+    await screen.findByRole('heading', { name: 'Manage Events' })
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Gallery' }))
+    expect(screen.getByRole('heading', { name: 'Manage Gallery' })).toBeTruthy()
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Committees' }))
+    expect(screen.getByRole('heading', { name: 'Manage Committees' })).toBeTruthy()
   })
 })

@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchEvents, deleteEvent } from "../data/eventsSource";
+import { ensureSchema } from "../lib/turso";
+import GalleryTab from "./admin/GalleryTab";
+import CommitteesTab from "./admin/CommitteesTab";
 
 const ADMIN_PASSWORD = "ieee2026";
 
@@ -14,6 +17,7 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [tab, setTab] = useState("events");
 
   const loadEvents = useCallback(async () => {
     setLoading(true);
@@ -29,15 +33,23 @@ export default function AdminPage() {
   useEffect(() => {
     if (!authed) return;
     let active = true;
-    fetchEvents()
-      .then((data) => {
-        if (active) setEvents(data);
-      })
+    ensureSchema()
       .catch((err) => {
         if (active) setError(err.message);
       })
       .finally(() => {
-        if (active) setLoading(false);
+        if (active) {
+          fetchEvents()
+            .then((data) => {
+              if (active) setEvents(data);
+            })
+            .catch((err) => {
+              if (active) setError(err.message);
+            })
+            .finally(() => {
+              if (active) setLoading(false);
+            });
+        }
       });
     return () => {
       active = false;
@@ -146,13 +158,36 @@ export default function AdminPage() {
           </div>
         </div>
 
+        <div role="tablist" className="mb-8 flex gap-2 border-b border-outline-variant/20">
+          {["events", "gallery", "committees"].map((name) => (
+            <button
+              key={name}
+              role="tab"
+              aria-selected={tab === name}
+              onClick={() => setTab(name)}
+              className={
+                "px-4 py-2 text-sm font-bold uppercase tracking-wider transition-colors " +
+                (tab === name
+                  ? "border-b-2 border-primary text-primary"
+                  : "text-on-surface-variant hover:text-on-surface")
+              }
+            >
+              {name === "events" ? "Events" : name === "gallery" ? "Gallery" : "Committees"}
+            </button>
+          ))}
+        </div>
+
         {error && (
           <div className="mb-6 p-4 bg-error/10 border border-error/30 rounded-lg text-sm text-error">
             {error}
           </div>
         )}
 
-        {loading ? (
+        {tab === "gallery" ? (
+          <GalleryTab />
+        ) : tab === "committees" ? (
+          <CommitteesTab />
+        ) : loading ? (
           <div className="text-center py-16 text-on-surface-variant">
             Loading...
           </div>
