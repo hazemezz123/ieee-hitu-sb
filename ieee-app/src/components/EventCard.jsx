@@ -1,58 +1,44 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 function formatDateBadge(dateStr) {
   const date = new Date(dateStr);
+  if (!Number.isFinite(date.getTime())) return { day: '--', month: 'DATE' }
   return {
-    day: date.toLocaleDateString('en-US', { day: 'numeric' }).toUpperCase(),
-    month: date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase(),
+    day: date.toLocaleDateString('en-US', { day: 'numeric', timeZone: 'UTC' }).toUpperCase(),
+    month: date.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' }).toUpperCase(),
   };
 }
 
 export default function EventCard({ event }) {
   const { day, month } = formatDateBadge(event.date);
+  const [imageFailed, setImageFailed] = useState(false)
+  const hasSlug = Boolean(event.slug)
 
   return (
-    <article className="card-hover group relative overflow-hidden">
-      <div className="relative aspect-[4/3] overflow-hidden">
-        <img
-          src={event.coverImage}
-          alt={event.title}
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-        />
+    <article data-testid="event-record" data-slug={event.slug || ''} className="overflow-hidden bg-surface-container-lowest">
+      {event.coverImage && !imageFailed ? <div className="relative aspect-[4/3] overflow-hidden">
+        <img src={event.coverImage} alt={event.title || 'Event'} className="h-full w-full object-cover" onError={() => setImageFailed(true)} />
         {event.status === 'upcoming' && (
-          <span className="absolute top-4 left-4 bg-primary text-on-primary text-[0.625rem] font-bold uppercase tracking-widest px-3 py-1 rounded-full">
+          <span className="absolute left-4 top-4 bg-primary px-3 py-1 text-[0.625rem] font-bold uppercase tracking-widest text-on-primary">
             Upcoming
           </span>
         )}
-        <div className="absolute top-4 right-4 bg-surface-container-lowest/95 backdrop-blur-sm text-on-surface px-3 py-2 text-center leading-none shadow-sm">
+        <div className="absolute right-4 top-4 bg-surface-container-lowest/95 px-3 py-2 text-center leading-none text-on-surface">
           <div className="text-lg font-black leading-none">{day}</div>
           <div className="text-[0.625rem] font-bold uppercase tracking-wider leading-none mt-1">{month}</div>
         </div>
-      </div>
+      </div> : event.coverImage ? <div role="img" aria-label={`${event.title || 'Event'} image unavailable`} className="flex aspect-[4/3] items-center justify-center bg-surface-container px-6 text-center text-sm font-semibold text-on-surface-variant">Image unavailable</div> : null}
 
       <div className="p-6">
-        <span className="text-[0.625rem] font-bold uppercase tracking-[0.15em] text-primary block mb-2">
-          {event.categoryLabel}
-        </span>
-        <h3 className="text-xl font-bold text-on-surface mb-2 line-clamp-2">
-          {event.title}
-        </h3>
-        <p className="text-sm text-on-surface-variant leading-relaxed mb-4 line-clamp-2">
-          {event.excerpt}
-        </p>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs text-on-surface-variant">
-            <span className="material-symbols-outlined text-base">location_on</span>
-            <span className="truncate">{event.location}</span>
-          </div>
-          <Link
-            to={`/events/${event.slug}`}
-            className="inline-flex items-center gap-1 text-primary font-bold text-[0.6875rem] uppercase tracking-widest whitespace-nowrap"
-          >
-            View
-            <span className="material-symbols-outlined text-sm">arrow_forward</span>
-          </Link>
-        </div>
+        <div className="mb-2 flex flex-wrap gap-x-4 gap-y-1 text-xs font-bold uppercase tracking-widest text-primary"><span>{event.categoryLabel || event.category || 'Uncategorised'}</span><span>{event.status || 'status unavailable'}</span></div>
+        <h3 className="mb-2 text-xl font-bold text-on-surface">{hasSlug ? <Link to={`/events/${event.slug}`} aria-label={event.title}>{event.title || 'Untitled event'}</Link> : (event.title || 'Untitled event')}</h3>
+        {event.excerpt && <p className="mb-4 text-sm leading-relaxed text-on-surface-variant">{event.excerpt}</p>}
+        <dl className="space-y-2 text-sm text-on-surface-variant">
+          <div><dt className="inline font-semibold text-on-surface">Date: </dt><dd className="inline">{day} {month}</dd></div>
+          {event.location && <div><dt className="inline font-semibold text-on-surface">Location: </dt><dd className="inline">{event.location}</dd></div>}
+          {event.organizerCommittee && <div><dt className="inline font-semibold text-on-surface">Committee: </dt><dd className="inline">{event.organizerCommittee}</dd></div>}
+        </dl>
       </div>
     </article>
   );
