@@ -1,685 +1,332 @@
 @import "tailwindcss";
 
-/* ============================================
-   IEEE HITU SB — Global Design System
-   Three-layer token architecture
-   ============================================ */
-
-/* ============================================
-   LAYER 1 — PRIMITIVE TOKENS
-   Raw design values (the foundation)
-   ============================================ */
 :root {
-  color-scheme: dark;
+  color-scheme: light;
+  --primary: #00629b;
+  --primary-strong: #00476f;
+  --surface: #f4f6f7;
+  --surface-raised: #ffffff;
+  --surface-inverse: #101820;
+  --text: #17212b;
+  --text-muted: #53616d;
+  --signal: #d8ff3e;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --navbar-height: 4.5rem;
 
-  /* ── Spacing scale (4px base) ── */
-  --space-0:   0;
-  --space-px:  1px;
-  --space-0-5: 0.125rem;
-  --space-1:   0.25rem;
-  --space-1-5: 0.375rem;
-  --space-2:   0.5rem;
-  --space-2-5: 0.625rem;
-  --space-3:   0.75rem;
-  --space-3-5: 0.875rem;
-  --space-4:   1rem;
-  --space-5:   1.25rem;
-  --space-6:   1.5rem;
-  --space-7:   1.75rem;
-  --space-8:   2rem;
-  --space-9:   2.25rem;
-  --space-10:  2.5rem;
-  --space-11:  2.75rem;
-  --space-12:  3rem;
-  --space-14:  3.5rem;
-  --space-16:  4rem;
-  --space-20:  5rem;
-  --space-24:  6rem;
-  --space-28:  7rem;
-  --space-32:  8rem;
-  --space-36:  9rem;
-  --space-40:  10rem;
-
-  /* ── Border radius ── */
-  --radius-none:    0;
-  --radius-sm:      0.25rem;
-  --radius-md:      0.5rem;
-  --radius-lg:      0.75rem;
-  --radius-xl:      1rem;
-  --radius-2xl:     1.25rem;
-  --radius-3xl:     1.5rem;
-  --radius-full:    9999px;
-
-  /* ── Shadows (dark mode) ── */
-  --shadow-none: none;
-  --shadow-sm:   0 1px 2px 0 rgb(0 0 0 / 0.15);
-  --shadow-md:   0 2px 8px -2px rgb(0 0 0 / 0.2), 0 1px 3px -1px rgb(0 0 0 / 0.15);
-  --shadow-lg:   0 4px 16px -4px rgb(0 0 0 / 0.25), 0 1px 4px -1px rgb(0 0 0 / 0.15);
-  --shadow-xl:   0 8px 24px -6px rgb(0 0 0 / 0.3), 0 2px 6px -2px rgb(0 0 0 / 0.15);
-  --shadow-2xl:  0 12px 32px -8px rgb(0 0 0 / 0.35), 0 3px 8px -3px rgb(0 0 0 / 0.15);
-  --shadow-inner: inset 0 1px 3px 0 rgb(0 0 0 / 0.15);
-
-  /* ── Duration / motion ── */
-  --duration-75:   75ms;
-  --duration-100:  100ms;
-  --duration-150:  150ms;
-  --duration-200:  200ms;
-  --duration-250:  250ms;
-  --duration-300:  300ms;
-  --duration-400:  400ms;
-  --duration-500:  500ms;
-  --duration-700:  700ms;
-  --duration-1000: 1000ms;
-
-  /* ── Easing ── */
-  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
-  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
-  --ease-out-cubic: cubic-bezier(0.33, 1, 0.68, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-
-  /* ── Color primitives (dark, MD3-based) ── */
-  --color-background: #0d141c;
-  --color-on-error-container: #ffb4ab;
-  --color-error-container: #93000a;
-  --color-surface-container-lowest: #101820;
-  --color-tertiary-container: #164e57;
-  --color-on-tertiary-fixed-variant: #a3eef7;
-  --color-tertiary-fixed: #81f4fe;
-  --color-surface-bright: #36414d;
-  --color-secondary-fixed-dim: #86d2eb;
-  --color-inverse-surface: #dfe3ea;
-  --color-on-primary-container: #cee5ff;
-  --color-error: #ffb4ab;
-  --color-surface: #0d141c;
-  --color-on-secondary-fixed-variant: #baeaff;
-  --color-primary: #7BAED4;
-  --color-tertiary: #8fdbe4;
-  --color-on-surface: #e3e9f1;
-  --color-on-secondary-fixed: #001f29;
-  --color-surface-container-low: #151d25;
-  --color-surface-container-high: #202a34;
-  --color-primary-fixed-dim: #7BAED4;
-  --color-secondary: #86d2eb;
-  --color-inverse-on-surface: #1b1b1b;
-  --color-outline: #8b95a1;
-  --color-on-surface-variant: #b8c2ce;
-  --color-on-tertiary: #002b30;
-  --color-surface-container: #1a232c;
-  --color-secondary-container: #0b495c;
-  --color-on-primary: #003352;
-  --color-on-primary-fixed: #001d33;
-  --color-on-tertiary-container: #a8eef7;
-  --color-tertiary-fixed-dim: #63d7e1;
-  --color-secondary-fixed: #baeaff;
-  --color-on-error: #690005;
-  --color-on-background: #e3e9f1;
-  --color-surface-container-highest: #2a343f;
-  --color-outline-variant: #404b56;
-  --color-on-primary-fixed-variant: #badbff;
-  --color-inverse-primary: #004976;
-  --color-on-secondary-container: #baeaff;
-  --color-on-secondary: #003545;
-  --color-surface-variant: #404b56;
-  --color-primary-fixed: #cee5ff;
-  --color-surface-dim: #0d141c;
-  --color-surface-tint: #7BAED4;
-  --color-on-tertiary-fixed: #002022;
-  --color-primary-container: #004a77;
+  --color-background: var(--surface);
+  --color-surface: var(--surface);
+  --color-surface-container-lowest: var(--surface-raised);
+  --color-surface-container-low: #edf0f2;
+  --color-surface-container: #e5e9ec;
+  --color-surface-container-high: #dce2e5;
+  --color-surface-container-highest: #d2d9dd;
+  --color-surface-bright: #ffffff;
+  --color-surface-dim: #dce2e5;
+  --color-surface-variant: #dce2e5;
+  --color-on-background: var(--text);
+  --color-on-surface: var(--text);
+  --color-on-surface-variant: var(--text-muted);
+  --color-primary: var(--primary);
+  --color-primary-container: var(--primary-strong);
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #ffffff;
+  --color-primary-fixed: #d7e9f3;
+  --color-primary-fixed-dim: #a8cee2;
+  --color-on-primary-fixed: #002f49;
+  --color-on-primary-fixed-variant: #004e79;
+  --color-secondary: #39738e;
+  --color-secondary-container: #d8eaf2;
+  --color-on-secondary: #ffffff;
+  --color-on-secondary-container: #183f52;
+  --color-secondary-fixed: #d8eaf2;
+  --color-secondary-fixed-dim: #b5d5e4;
+  --color-on-secondary-fixed: #153746;
+  --color-on-secondary-fixed-variant: #315f74;
+  --color-tertiary: #53616d;
+  --color-tertiary-container: #e1e6e9;
+  --color-on-tertiary: #ffffff;
+  --color-on-tertiary-container: #303b44;
+  --color-tertiary-fixed: #e1e6e9;
+  --color-tertiary-fixed-dim: #c4ccd1;
+  --color-on-tertiary-fixed: #273139;
+  --color-on-tertiary-fixed-variant: #46545f;
+  --color-outline: #6b7882;
+  --color-outline-variant: #c6cdd1;
+  --color-error: #b42318;
+  --color-error-container: #fbe9e7;
+  --color-on-error: #ffffff;
+  --color-on-error-container: #7a1812;
+  --color-inverse-surface: var(--surface-inverse);
+  --color-inverse-on-surface: #ffffff;
+  --color-inverse-primary: #74b9df;
+  --color-surface-tint: var(--primary);
 
   --font-family-headline: 'Inter', sans-serif;
   --font-family-body: 'Inter', sans-serif;
   --font-family-label: 'Inter', sans-serif;
-
-  /* ── Typography scale primitives ── */
-  --font-size-xs:    0.75rem;
-  --font-size-sm:    0.8125rem;
-  --font-size-base:  0.9375rem;
-  --font-size-lg:    1.0625rem;
-  --font-size-xl:    1.25rem;
-  --font-size-2xl:   1.5rem;
-  --font-size-3xl:   1.875rem;
-  --font-size-4xl:   2.25rem;
-  --font-size-5xl:   3rem;
-  --font-size-6xl:   3.75rem;
-  --font-size-7xl:   4.5rem;
-
-  --font-weight-normal:   400;
-  --font-weight-medium:   500;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  --font-size-5xl: 3rem;
+  --font-size-6xl: 3.75rem;
+  --font-size-7xl: 4.5rem;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
   --font-weight-semibold: 600;
-  --font-weight-bold:     700;
-  --font-weight-black:    900;
-
-  --leading-none:   1;
-  --leading-tight:  1.1;
-  --leading-snug:   1.25;
+  --font-weight-bold: 700;
+  --font-weight-black: 800;
+  --leading-none: 1;
+  --leading-tight: 1.1;
+  --leading-snug: 1.25;
   --leading-normal: 1.5;
   --leading-relaxed: 1.625;
-
   --tracking-tighter: -0.04em;
-  --tracking-tight:   -0.02em;
-  --tracking-normal:   0;
-  --tracking-wide:     0.03em;
-  --tracking-wider:    0.06em;
-  --tracking-widest:   0.1em;
-}
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0;
+  --tracking-wider: 0;
+  --tracking-widest: 0;
 
-/* ============================================
-   LAYER 2 — SEMANTIC TOKENS
-   Purpose-based aliases
-   ============================================ */
-:root {
-  /* ── Section spacing ── */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+  --radius-none: 0;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.5rem;
+  --radius-2xl: 0.5rem;
+  --radius-3xl: 0.5rem;
+  --radius-full: 9999px;
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+  --shadow-xl: none;
+  --shadow-2xl: none;
+  --duration-75: 75ms;
+  --duration-100: 100ms;
+  --duration-150: 150ms;
+  --duration-200: 160ms;
+  --duration-250: 160ms;
+  --duration-300: 200ms;
+  --duration-400: 300ms;
+  --duration-500: 300ms;
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-cubic: cubic-bezier(0.33, 1, 0.68, 1);
   --spacing-section-sm: var(--space-16);
   --spacing-section: var(--space-20);
   --spacing-section-lg: var(--space-24);
   --spacing-section-xl: var(--space-32);
-
-  /* ── Component spacing ── */
   --spacing-card: var(--space-6);
   --spacing-card-sm: var(--space-4);
   --spacing-card-lg: var(--space-8);
   --spacing-inline: var(--space-4);
   --spacing-stack: var(--space-3);
-
-  /* ── Typography semantics ── */
-  --font-display: var(--font-size-6xl);
-  --font-heading-1: var(--font-size-5xl);
-  --font-heading-2: var(--font-size-4xl);
-  --font-heading-3: var(--font-size-3xl);
-  --font-heading-4: var(--font-size-2xl);
-  --font-heading-5: var(--font-size-xl);
-  --font-body: var(--font-size-base);
-  --font-body-sm: var(--font-size-sm);
-  --font-caption: var(--font-size-xs);
-  --font-overline: 0.6875rem;
-
-  /* ── Label/section heading ── */
-  --label-size: 0.6875rem;
-  --label-tracking: 0.2em;
-
-  /* ── Interactive state tokens ── */
   --ring-width: 2px;
-  --ring-offset: 2px;
-  --opacity-disabled: 0.4;
-
-  /* ── Navbar ── */
-  --navbar-height: 6rem;
-}
-
-/* ============================================
-   LAYER 3 — COMPONENT TOKENS
-   Component-specific surface defaults
-   ============================================ */
-:root {
-  /* ── Button ── */
-  --btn-height: 2.75rem;
-  --btn-padding-x: var(--space-6);
-  --btn-radius: var(--radius-2xl);
-
-  /* ── Card ── */
-  --card-radius: var(--radius-xl);
-  --card-padding: var(--space-6);
-  --card-shadow: var(--shadow-sm);
-
-  /* ── Input / form ── */
+  --ring-offset: 3px;
+  --opacity-disabled: 0.45;
+  --btn-height: 2.625rem;
+  --btn-padding-x: 1.125rem;
+  --btn-radius: var(--radius-sm);
+  --card-radius: var(--radius-md);
   --input-height: 2.75rem;
   --input-padding-x: var(--space-4);
-  --input-radius: var(--radius-md);
-  --input-border-width: 1px;
+  --input-radius: var(--radius-sm);
 }
 
-
-
-/* ============================================
-   TAILWIND v4 THEME MAPPING
-   Maps CSS variables to Tailwind utility classes
-   ============================================ */
 @theme inline {
   --color-background: var(--color-background);
-  --color-on-error-container: var(--color-on-error-container);
-  --color-error-container: var(--color-error-container);
-  --color-surface-container-lowest: var(--color-surface-container-lowest);
-  --color-tertiary-container: var(--color-tertiary-container);
-  --color-on-tertiary-fixed-variant: var(--color-on-tertiary-fixed-variant);
-  --color-tertiary-fixed: var(--color-tertiary-fixed);
-  --color-surface-bright: var(--color-surface-bright);
-  --color-secondary-fixed-dim: var(--color-secondary-fixed-dim);
-  --color-inverse-surface: var(--color-inverse-surface);
-  --color-on-primary-container: var(--color-on-primary-container);
-  --color-error: var(--color-error);
   --color-surface: var(--color-surface);
-  --color-on-secondary-fixed-variant: var(--color-on-secondary-fixed-variant);
-  --color-primary: var(--color-primary);
-  --color-tertiary: var(--color-tertiary);
-  --color-on-surface: var(--color-on-surface);
-  --color-on-secondary-fixed: var(--color-on-secondary-fixed);
+  --color-surface-container-lowest: var(--color-surface-container-lowest);
   --color-surface-container-low: var(--color-surface-container-low);
-  --color-surface-container-high: var(--color-surface-container-high);
-  --color-primary-fixed-dim: var(--color-primary-fixed-dim);
-  --color-secondary: var(--color-secondary);
-  --color-inverse-on-surface: var(--color-inverse-on-surface);
-  --color-outline: var(--color-outline);
-  --color-on-surface-variant: var(--color-on-surface-variant);
-  --color-on-tertiary: var(--color-on-tertiary);
   --color-surface-container: var(--color-surface-container);
-  --color-secondary-container: var(--color-secondary-container);
-  --color-on-primary: var(--color-on-primary);
-  --color-on-primary-fixed: var(--color-on-primary-fixed);
-  --color-on-tertiary-container: var(--color-on-tertiary-container);
-  --color-tertiary-fixed-dim: var(--color-tertiary-fixed-dim);
-  --color-secondary-fixed: var(--color-secondary-fixed);
-  --color-on-error: var(--color-on-error);
-  --color-on-background: var(--color-on-background);
+  --color-surface-container-high: var(--color-surface-container-high);
   --color-surface-container-highest: var(--color-surface-container-highest);
-  --color-outline-variant: var(--color-outline-variant);
-  --color-on-primary-fixed-variant: var(--color-on-primary-fixed-variant);
-  --color-inverse-primary: var(--color-inverse-primary);
-  --color-on-secondary-container: var(--color-on-secondary-container);
-  --color-on-secondary: var(--color-on-secondary);
-  --color-surface-variant: var(--color-surface-variant);
-  --color-primary-fixed: var(--color-primary-fixed);
+  --color-surface-bright: var(--color-surface-bright);
   --color-surface-dim: var(--color-surface-dim);
-  --color-surface-tint: var(--color-surface-tint);
-  --color-on-tertiary-fixed: var(--color-on-tertiary-fixed);
+  --color-surface-variant: var(--color-surface-variant);
+  --color-on-background: var(--color-on-background);
+  --color-on-surface: var(--color-on-surface);
+  --color-on-surface-variant: var(--color-on-surface-variant);
+  --color-primary: var(--color-primary);
   --color-primary-container: var(--color-primary-container);
-
+  --color-on-primary: var(--color-on-primary);
+  --color-on-primary-container: var(--color-on-primary-container);
+  --color-primary-fixed: var(--color-primary-fixed);
+  --color-primary-fixed-dim: var(--color-primary-fixed-dim);
+  --color-on-primary-fixed: var(--color-on-primary-fixed);
+  --color-on-primary-fixed-variant: var(--color-on-primary-fixed-variant);
+  --color-secondary: var(--color-secondary);
+  --color-secondary-container: var(--color-secondary-container);
+  --color-on-secondary: var(--color-on-secondary);
+  --color-on-secondary-container: var(--color-on-secondary-container);
+  --color-secondary-fixed: var(--color-secondary-fixed);
+  --color-secondary-fixed-dim: var(--color-secondary-fixed-dim);
+  --color-on-secondary-fixed: var(--color-on-secondary-fixed);
+  --color-on-secondary-fixed-variant: var(--color-on-secondary-fixed-variant);
+  --color-tertiary: var(--color-tertiary);
+  --color-tertiary-container: var(--color-tertiary-container);
+  --color-on-tertiary: var(--color-on-tertiary);
+  --color-on-tertiary-container: var(--color-on-tertiary-container);
+  --color-tertiary-fixed: var(--color-tertiary-fixed);
+  --color-tertiary-fixed-dim: var(--color-tertiary-fixed-dim);
+  --color-on-tertiary-fixed: var(--color-on-tertiary-fixed);
+  --color-on-tertiary-fixed-variant: var(--color-on-tertiary-fixed-variant);
+  --color-outline: var(--color-outline);
+  --color-outline-variant: var(--color-outline-variant);
+  --color-error: var(--color-error);
+  --color-error-container: var(--color-error-container);
+  --color-on-error: var(--color-on-error);
+  --color-on-error-container: var(--color-on-error-container);
+  --color-inverse-surface: var(--color-inverse-surface);
+  --color-inverse-on-surface: var(--color-inverse-on-surface);
+  --color-inverse-primary: var(--color-inverse-primary);
+  --color-surface-tint: var(--color-surface-tint);
   --font-family-headline: var(--font-family-headline);
   --font-family-body: var(--font-family-body);
   --font-family-label: var(--font-family-label);
-
-  /* ── Shadow mapping ── */
-  --shadow-sm: var(--shadow-sm);
-  --shadow-md: var(--shadow-md);
-  --shadow-lg: var(--shadow-lg);
-  --shadow-xl: var(--shadow-xl);
-  --shadow-2xl: var(--shadow-2xl);
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+  --shadow-xl: none;
+  --shadow-2xl: none;
 }
 
-/* ============================================
-   BASE LAYER
-   ============================================ */
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'Inter', sans-serif;
-  background-color: var(--color-background);
-  color: var(--color-on-background);
+  margin: 0;
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-family-body);
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-*:focus-visible {
-  outline: var(--ring-width) solid var(--color-primary);
-  outline-offset: var(--ring-offset);
-}
+* { box-sizing: border-box; }
+*:focus-visible { outline: var(--ring-width) solid var(--primary); outline-offset: var(--ring-offset); }
+::selection { background: var(--primary); color: #fff; }
 
-::selection {
-  background-color: var(--color-primary);
-  color: var(--color-on-primary);
-}
+a { text-underline-offset: 0.2em; }
 
-/* ============================================
-   ACCESSIBILITY
-   ============================================ */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
+.editorial-band { background: var(--surface); }
+.editorial-rule { border-top: 1px solid color-mix(in srgb, var(--text) 18%, transparent); }
+.section-content { position: relative; }
 
-@media (prefers-contrast: more) {
-  * {
-    --color-outline-variant: var(--color-outline);
-  }
-}
-
-
-
-/* ============================================
-   UTILITY CLASSES — Geometric accents
-   ============================================ */
-.wedge-bg {
-  clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
-}
-
-.wedge-accent {
-  clip-path: polygon(100% 0, 0% 100%, 100% 100%);
-}
-
-.btn-wedge {
-  clip-path: polygon(0 0, 92% 0, 100% 25%, 100% 100%, 0 100%);
-}
-
-/* ============================================
-   UTILITY CLASSES — Section label
-   Replaces hardcoded: text-[0.6875rem] font-bold uppercase tracking-[0.2em] text-primary
-   ============================================ */
-.section-label {
-  font-size: var(--label-size);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: var(--label-tracking);
-  text-transform: uppercase;
-  color: var(--color-primary);
-  display: block;
-}
-
-/* ============================================
-   UTILITY CLASSES — Card
-   Unified card pattern
-   ============================================ */
-.card {
-  background: var(--color-surface-container-low);
-  border-radius: var(--card-radius);
-  transition: all var(--duration-300) var(--ease-out-quart);
-}
-
+.card,
 .card-hover {
-  background: var(--color-surface-container-low);
+  border: 1px solid var(--color-outline-variant);
   border-radius: var(--card-radius);
-  transition: all var(--duration-300) var(--ease-out-quart);
+  background: var(--surface-raised);
+  box-shadow: none;
+  transition: border-color 160ms ease, background-color 160ms ease;
 }
 
-.card-hover:hover {
-  background: var(--color-surface-container-lowest);
-  box-shadow: var(--shadow-md);
-}
+.card-hover:hover { border-color: var(--primary); background: var(--surface-raised); }
 
-/* ============================================
-   UTILITY CLASSES — Button system
-   ============================================ */
 .btn {
   display: inline-flex;
+  min-height: var(--btn-height);
   align-items: center;
   justify-content: center;
-  height: var(--btn-height);
   padding-inline: var(--btn-padding-x);
+  border: 1px solid transparent;
   border-radius: var(--btn-radius);
-  font-weight: var(--font-weight-bold);
   font-size: var(--font-size-sm);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  transition: all var(--duration-250) var(--ease-out-quart);
-  cursor: pointer;
-  user-select: none;
-  white-space: nowrap;
-  border: none;
-  text-decoration: none;
+  font-weight: var(--font-weight-bold);
   line-height: 1;
+  text-decoration: none;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
 }
 
-.btn:focus-visible {
-  outline: var(--ring-width) solid var(--color-primary);
-  outline-offset: var(--ring-offset);
-}
+.btn:disabled { opacity: var(--opacity-disabled); cursor: not-allowed; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-strong); }
+.btn-secondary { border-color: var(--primary); background: var(--surface-raised); color: var(--primary-strong); }
+.btn-secondary:hover { background: var(--color-primary-fixed); }
+.btn-ghost { color: var(--text-muted); }
+.btn-ghost:hover { background: var(--color-surface-container); color: var(--text); }
 
-.btn:disabled {
-  opacity: var(--opacity-disabled);
-  pointer-events: none;
-}
-
-.btn-primary {
-  background: var(--color-primary);
-  color: var(--color-on-primary);
-}
-
-.btn-primary:hover {
-  background: var(--color-primary-container);
-}
-
-.btn-secondary {
-  background: transparent;
-  color: var(--color-primary);
-  border: 1px solid var(--color-outline-variant);
-}
-
-.btn-secondary:hover {
-  border-color: var(--color-primary);
-}
-
-.btn-ghost {
-  background: transparent;
-  color: var(--color-on-surface-variant);
-  padding-inline: var(--space-2);
-}
-
-.btn-ghost:hover {
-  color: var(--color-on-surface);
-  background: var(--color-surface-container-high);
-}
-
-/* ============================================
-   UTILITY CLASSES — Form elements
-   Unified input / select / textarea
-   ============================================ */
 .form-input,
 .form-select,
 .form-textarea {
   width: 100%;
-  height: var(--input-height);
+  min-height: var(--input-height);
   padding-inline: var(--input-padding-x);
+  border: 1px solid var(--color-outline);
   border-radius: var(--input-radius);
-  border: var(--input-border-width) solid var(--color-outline-variant);
-  background: var(--color-surface);
-  color: var(--color-on-surface);
-  font-size: var(--font-size-sm);
-  font-family: inherit;
-  transition: border-color var(--duration-200) var(--ease-out-quart),
-              box-shadow var(--duration-200) var(--ease-out-quart);
-  outline: none;
+  background: var(--surface-raised);
+  color: var(--text);
+  font: inherit;
+  transition: border-color 160ms ease;
 }
 
 .form-input:focus,
 .form-select:focus,
-.form-textarea:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
-}
-
+.form-textarea:focus { border-color: var(--primary); outline: 2px solid var(--primary); outline-offset: 1px; }
 .form-input::placeholder,
-.form-textarea::placeholder {
-  color: var(--color-outline);
+.form-textarea::placeholder { color: var(--text-muted); }
+.form-textarea { min-height: 8rem; padding-block: var(--space-3); resize: vertical; }
+.form-select { padding-right: 2.5rem; }
+.form-label { display: block; margin-bottom: var(--space-2); color: var(--text); font-size: var(--font-size-sm); font-weight: 600; }
+.form-error { margin-top: var(--space-1); color: var(--color-error); font-size: var(--font-size-xs); }
+.form-checkbox { width: 1.125rem; height: 1.125rem; accent-color: var(--primary); }
+
+.nav-link,
+.nav-link-mobile {
+  display: flex;
+  align-items: center;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
 }
 
-.form-input:disabled,
-.form-select:disabled,
-.form-textarea:disabled {
-  opacity: var(--opacity-disabled);
-  cursor: not-allowed;
-}
+.nav-link { position: relative; padding-inline: 0.85rem; }
+.nav-link:hover,
+.nav-link-mobile:hover { color: var(--primary-strong); }
+.nav-link[aria-current='page'] { color: var(--primary-strong); }
+.nav-link[aria-current='page']::after { position: absolute; inset: auto 0.85rem -1px; height: 3px; background: var(--primary); content: ''; }
+.nav-link-mobile { min-height: 2.75rem; border-bottom: 1px solid var(--color-outline-variant); }
+.nav-link-mobile[aria-current='page'] { color: var(--primary-strong); }
+.nav-menu-button { display: inline-flex; width: 2.75rem; height: 2.75rem; align-items: center; justify-content: center; border: 1px solid var(--color-outline-variant); border-radius: var(--radius-sm); background: var(--surface-raised); color: var(--text); }
 
-.form-textarea {
-  height: auto;
-  min-height: 8rem;
-  padding-block: var(--space-3);
-  resize: vertical;
-}
-
-.form-select {
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath stroke='%23717881' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round' d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  padding-right: 2.5rem;
-}
-
-.form-label {
+.section-label {
   display: block;
+  color: var(--primary-strong);
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  margin-bottom: var(--space-2);
-  color: var(--color-on-surface);
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
-.form-error {
-  font-size: var(--font-size-xs);
-  color: var(--color-error);
-  margin-top: var(--space-1);
-}
+.wedge-bg { clip-path: polygon(0 0, 100% 0, 100% 86%, 0 100%); }
+.wedge-accent { clip-path: polygon(100% 0, 0 100%, 100% 100%); }
+.btn-wedge { clip-path: polygon(0 0, calc(100% - 0.75rem) 0, 100% 0.75rem, 100% 100%, 0 100%); }
 
-.form-checkbox {
-  accent-color: var(--color-primary);
-  width: 1.125rem;
-  height: 1.125rem;
-}
-
-/* ============================================
-   KEYFRAMES — Existing (preserved)
-   ============================================ */
-@keyframes navbar-enter {
-  from {
-    translate: 0 -100%;
-    opacity: 0;
-  }
-  to {
-    translate: 0 0;
-    opacity: 1;
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
-@keyframes logo-float {
-  0%, 100% { translate: 0 0; }
-  50% { translate: 0 -6px; }
-}
-
-@keyframes button-float {
-  0%, 100% { translate: 0 0; }
-  50% { translate: 0 -2px; }
-}
-
-@keyframes scroll-bounce {
-  0%, 100% { translate: 0 0; }
-  50% { translate: 0 4px; }
-}
-
-@keyframes scroll-dot {
-  0%, 100% { translate: 0 0; opacity: 1; }
-  50% { translate: 0 6px; opacity: 0.3; }
-}
-
-@keyframes shape-drift-1 {
-  0%, 100% { translate: 0 0; }
-  33% { translate: 8px -12px; }
-  66% { translate: -4px 6px; }
-}
-
-@keyframes shape-drift-2 {
-  0%, 100% { translate: 0 0; }
-  50% { translate: -10px 8px; }
-}
-
-@keyframes shape-drift-3 {
-  0%, 100% { translate: 0 0; rotate: 0deg; }
-  50% { translate: 6px -6px; rotate: 5deg; }
-}
-
-/* ============================================
-   KEYFRAMES — Motion system (new)
-   Animation library for the design system
-   ============================================ */
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    translate: 0 24px;
-  }
-  to {
-    opacity: 1;
-    translate: 0 0;
-  }
-}
-
-@keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes scale-in {
-  from {
-    opacity: 0;
-    scale: 0.95;
-  }
-  to {
-    opacity: 1;
-    scale: 1;
-  }
-}
-
-@keyframes slide-up {
-  from {
-    opacity: 0;
-    translate: 0 16px;
-  }
-  to {
-    opacity: 1;
-    translate: 0 0;
-  }
-}
-
-/* ============================================
-   ANIMATION UTILITY CLASSES
-   Apply with: animate-fade-up, animate-fade-in, etc.
-   ============================================ */
-.animate-fade-up {
-  animation: fade-up var(--duration-500) var(--ease-out-expo) both;
-}
-
-.animate-fade-in {
-  animation: fade-in var(--duration-500) var(--ease-out-quart) both;
-}
-
-.animate-scale-in {
-  animation: scale-in var(--duration-400) var(--ease-out-expo) both;
-}
-
-.animate-slide-up {
-  animation: slide-up var(--duration-400) var(--ease-out-cubic) both;
-}
-
-/* ── Stagger delay helpers ── */
-.animate-delay-1  { animation-delay: 100ms; }
-.animate-delay-2  { animation-delay: 200ms; }
-.animate-delay-3  { animation-delay: 300ms; }
-.animate-delay-4  { animation-delay: 400ms; }
-.animate-delay-5  { animation-delay: 500ms; }
-.animate-delay-6  { animation-delay: 600ms; }
-.animate-delay-7  { animation-delay: 700ms; }
-.animate-delay-8  { animation-delay: 800ms; }
-.animate-delay-9  { animation-delay: 900ms; }
-.animate-delay-10 { animation-delay: 1000ms; }
-
-/* ============================================
-   BACKGROUND PATTERN UTILITIES
-   Subtle textures for section alternation
-   ============================================ */
-.bg-dot-pattern::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(circle, var(--color-primary) 1px, transparent 1px);
-  background-size: 24px 24px;
-  opacity: 0.04;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.bg-line-pattern::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(90deg, var(--color-primary) 0.5px, transparent 0.5px),
-    linear-gradient(0deg, var(--color-primary) 0.5px, transparent 0.5px);
-  background-size: 48px 48px;
-  opacity: 0.03;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.section-content {
-  position: relative;
-  z-index: 1;
+@media (prefers-contrast: more) {
+  :root { --color-outline-variant: var(--color-outline); }
 }

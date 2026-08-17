@@ -1,25 +1,26 @@
-import { motion } from 'framer-motion'
+import { motion as Motion, useReducedMotion } from 'framer-motion'
 
 const pageVariants = {
-  initial: { opacity: 0, y: 20 },
+  initial: { opacity: 0, y: 12 },
   animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -20 },
+  exit: { opacity: 0 },
 }
 
 const pageTransition = {
   type: 'tween',
   ease: 'easeOut',
-  duration: 0.4,
+  duration: 0.3,
 }
 
 export default function PageLayout({ children, variant = 'default' }) {
   const isHome = variant === 'home'
+  const reduceMotion = useReducedMotion()
 
   return (
-    <motion.div
-      initial="initial"
-      animate="animate"
-      exit="exit"
+    <Motion.div
+      initial={reduceMotion ? false : 'initial'}
+      animate={reduceMotion ? undefined : 'animate'}
+      exit={reduceMotion ? undefined : 'exit'}
       variants={pageVariants}
       transition={pageTransition}
       className={
@@ -29,6 +30,6 @@ export default function PageLayout({ children, variant = 'default' }) {
       }
     >
       {children}
-    </motion.div>
+    </Motion.div>
   )
 }

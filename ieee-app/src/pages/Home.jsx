@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 import PageLayout from '../components/PageLayout'
 import AnimatedSection from '../components/AnimatedSection'
 import Hero from '../components/Hero'
-import SectionDecorations from '../components/SectionDecorations'
 import { boardMembers } from '../data/boardMembers'
 import leaderPlaceholder from '../assets/leader-placeholder.svg'
 
@@ -20,7 +19,6 @@ export default function Home() {
 
  <AnimatedSection>
  <section className="py-20 md:py-24 lg:py-32 relative">
- <SectionDecorations variant="dots" />
  <div className="container mx-auto px-6 md:px-12 max-w-6xl relative section-content">
  <div className="max-w-3xl mx-auto text-center">
  <span className="section-label mb-4">About Us</span>
@@ -44,7 +42,6 @@ export default function Home() {
 
  <AnimatedSection delay={1}>
  <section className="py-20 md:py-24 lg:py-32 relative">
- <SectionDecorations variant="lines" />
  <div className="container mx-auto px-6 md:px-12 max-w-6xl relative section-content">
  <div className="grid gap-8 md:gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
  <div>
@@ -87,7 +84,6 @@ export default function Home() {
 
  <AnimatedSection delay={2}>
  <section className="py-20 md:py-24 lg:py-32 relative">
- <SectionDecorations variant="grid" />
  <div className="container mx-auto px-6 md:px-12 max-w-6xl relative section-content">
  <div className="mb-8 md:mb-12 lg:mb-16 max-w-3xl">
  <span className="section-label mb-4">Benefits</span>

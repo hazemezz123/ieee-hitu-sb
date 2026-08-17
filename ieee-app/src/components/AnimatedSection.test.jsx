@@ -16,7 +16,10 @@ vi.mock('framer-motion', () => ({
       </div>
     ),
   },
+  useReducedMotion: vi.fn(() => false),
 }))
+
+import { useReducedMotion } from 'framer-motion'
 
 describe('AnimatedSection', () => {
   it('reveals content when it enters the viewport by default', () => {
@@ -44,6 +47,16 @@ describe('AnimatedSection', () => {
 
     expect(wrapper?.getAttribute('data-initial')).toBe('hidden')
     expect(wrapper?.getAttribute('data-animate')).toBe('visible')
+    expect(wrapper?.getAttribute('data-while-in-view')).toBe('')
+  })
+
+  it('renders immediately when reduced motion is preferred', () => {
+    useReducedMotion.mockReturnValue(true)
+
+    const { container } = render(<AnimatedSection><span>Content</span></AnimatedSection>)
+
+    const wrapper = container.firstElementChild
+    expect(wrapper?.getAttribute('data-initial')).toBe('false')
     expect(wrapper?.getAttribute('data-while-in-view')).toBe('')
   })
 })

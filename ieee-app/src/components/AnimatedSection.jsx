@@ -1,16 +1,16 @@
-import { motion } from 'framer-motion'
+import { motion as Motion, useReducedMotion } from 'framer-motion'
 
 const defaultVariants = {
   hidden: {
     opacity: 0,
-    y: 30,
+    y: 12,
   },
   visible: (i = 0) => ({
     opacity: 1,
     y: 0,
     transition: {
-      delay: i * 0.1,
-      duration: 0.5,
+      delay: i * 0.05,
+      duration: 0.3,
       ease: 'easeOut',
     },
   }),
@@ -23,6 +23,7 @@ function AnimatedSection({
   className = '',
   trigger = 'inView',
 }) {
+  const reduceMotion = useReducedMotion()
   const visibilityProps =
     trigger === 'load'
       ? { animate: 'visible' }
@@ -32,15 +33,15 @@ function AnimatedSection({
         }
 
   return (
-    <motion.div
-      initial="hidden"
-      {...visibilityProps}
+    <Motion.div
+      initial={reduceMotion ? false : 'hidden'}
+      {...(reduceMotion ? {} : visibilityProps)}
       custom={delay}
       variants={variants}
       className={className}
     >
       {children}
-    </motion.div>
+    </Motion.div>
   )
 }
 

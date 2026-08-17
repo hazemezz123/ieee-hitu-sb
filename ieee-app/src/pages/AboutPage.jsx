@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PageLayout from '../components/PageLayout'
 import AnimatedSection from '../components/AnimatedSection'
-import SectionDecorations from '../components/SectionDecorations'
 import { fetchEvents } from '../data/eventsSource';
 import EventCard from '../components/EventCard';
 import { totalCommittees, committeeCategories } from '../data/committees';
@@ -121,7 +120,6 @@ export default function AboutPage() {
 
  <AnimatedSection delay={1}>
  <section className=" relative py-20 md:py-24 lg:py-32">
- <SectionDecorations variant="dots" />
  <div className="container mx-auto max-w-6xl px-6 md:px-12 relative section-content">
  <div className="grid gap-8 md:gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
  <div>
@@ -217,7 +215,6 @@ export default function AboutPage() {
 
  <AnimatedSection delay={3}>
  <section className=" relative py-20 md:py-24 lg:py-32">
- <SectionDecorations variant="grid" />
  <div className="container mx-auto max-w-6xl px-6 md:px-12 relative section-content">
  <div className="mb-8 md:mb-12 lg:mb-16 flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
  <div>

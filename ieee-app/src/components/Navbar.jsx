@@ -1,176 +1,108 @@
-import { useState, useEffect, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
-import logo from "../assets/logo.png";
+import { useEffect, useRef, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import logo from '../assets/logo.png'
+
+const navLinks = [
+  { name: 'Home', href: '/' },
+  { name: 'About', href: '/about' },
+  { name: 'Events', href: '/events' },
+  { name: 'Committees', href: '/committees' },
+  { name: 'Gallery', href: '/gallery' },
+  { name: 'Contact', href: '/contact' },
+]
 
 export default function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const location = useLocation();
-  const headerRef = useRef(null);
+  const [openPath, setOpenPath] = useState(null)
+  const location = useLocation()
+  const menuButtonRef = useRef(null)
+  const isMenuOpen = openPath === location.pathname
 
   useEffect(() => {
-    const header = headerRef.current;
-    if (!header) return;
-
-    function updateHeight() {
-      document.documentElement.style.setProperty('--navbar-height', `${header.offsetHeight}px`);
+    const desktop = window.matchMedia?.('(min-width: 768px)')
+    function closeAtDesktop(event) {
+      if (event.matches) {
+        setOpenPath(null)
+        menuButtonRef.current?.focus()
+      }
     }
-
-    updateHeight();
-
-    const observer = new ResizeObserver(updateHeight);
-    observer.observe(header);
-
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    function handleScroll() {
-      setIsScrolled(window.scrollY > 10);
-    }
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    desktop?.addEventListener('change', closeAtDesktop)
+    return () => desktop?.removeEventListener('change', closeAtDesktop)
+  }, [])
 
   useEffect(() => {
     function handleKeyDown(e) {
-      if (e.key === "Escape") setIsMenuOpen(false);
+      if (e.key === 'Escape' && isMenuOpen) {
+        setOpenPath(null)
+        menuButtonRef.current?.focus()
+      }
     }
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, []);
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isMenuOpen])
 
   useEffect(() => {
-    if (isMenuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => { document.body.style.overflow = ""; };
-  }, [isMenuOpen]);
+    if (!isMenuOpen) return
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = previousOverflow }
+  }, [isMenuOpen])
 
-  const navLinks = [
-    { name: "Home", href: "/" },
-    { name: "About", href: "/about" },
-    { name: "Events", href: "/events" },
-    { name: "Committee", href: "/committees" },
-    { name: "Gallery", href: "/gallery" },
-    { name: "Contact", href: "/contact" },
-  ];
+  const isActive = path => location.pathname === path || (path !== '/' && location.pathname.startsWith(`${path}/`))
+  const dismissAfterNavigation = () => {
+    setOpenPath(null)
+    menuButtonRef.current?.focus()
+  }
 
   return (
-    <>
-      <header
-        ref={headerRef}
-        className={`fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 transition-all duration-300 ease-out animate-[navbar-enter_0.6s_ease-out] ${
-          isScrolled ? "py-2" : "py-4 sm:py-5"
-        }`}
-      >
-        <div className="mx-auto max-w-7xl">
-          <nav
-            className={`relative flex items-center justify-center rounded-2xl border border-outline-variant/20 bg-surface-container-lowest/70 backdrop-blur-xl px-4 sm:px-6 transition-all duration-300 ease-out ${
-              isScrolled
-                ? "py-2 shadow-sm shadow-black/5"
-                : "py-3 shadow-none"
-            }`}
-          >
-            <Link to="/" className="absolute left-4 sm:left-6 flex items-center" aria-label="IEEE HITU SB Home">
-              <img
-                src={logo}
-                alt="IEEE HITU SB"
-                className="h-10 w-auto brightness-0 invert"
-              />
-            </Link>
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-outline-variant bg-surface-container-lowest">
+      <nav className="mx-auto flex h-[var(--navbar-height)] max-w-7xl items-center gap-6 px-5 sm:px-8" aria-label="Primary navigation">
+        <Link to="/" className="mr-auto flex items-center" aria-label="IEEE HITU Student Branch home">
+          <img src={logo} alt="IEEE HITU Student Branch" className="h-9 w-auto" />
+        </Link>
 
-            <div className="hidden md:flex items-center justify-center gap-0.5">
-              {navLinks.map((link) => {
-                const isActive = location.pathname === link.href;
-                return (
-                  <Link
-                    key={link.name}
-                    to={link.href}
-                    className={`relative px-4 py-2 text-sm font-medium rounded-2xl transition-all duration-250 ease-out ${
-                      isActive
-                        ? "bg-primary/10 text-primary"
-                        : "text-on-surface-variant hover:bg-primary/5 hover:text-on-surface"
-                    }`}
-                  >
-                    {link.name}
-                  </Link>
-                );
-              })}
-            </div>
-
-            <div className="hidden md:flex items-center gap-3 absolute right-4 sm:right-6">
-              <Link
-                to="/membership"
-                className="btn btn-primary"
-              >
-                Join IEEE
-              </Link>
-            </div>
-
-            <button
-              type="button"
-              aria-expanded={isMenuOpen}
-              aria-label={isMenuOpen ? "Close navigation menu" : "Open navigation menu"}
-              className="md:hidden absolute right-4 sm:right-6 flex items-center justify-center h-9 w-9 rounded-full text-on-surface-variant hover:bg-primary/5 transition-colors duration-250 ease-out"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
+        <div className="hidden items-stretch self-stretch md:flex">
+          {navLinks.map(link => (
+            <Link
+              key={link.name}
+              to={link.href}
+              aria-current={isActive(link.href) ? 'page' : undefined}
+              className="nav-link"
             >
-              <span className="material-symbols-outlined text-xl select-none">
-                {isMenuOpen ? "close" : "menu"}
-              </span>
-            </button>
-          </nav>
+              {link.name}
+            </Link>
+          ))}
         </div>
-      </header>
 
-      <div
-        className={`fixed inset-0 z-40 bg-black/20 backdrop-blur-sm transition-all duration-300 ease-out md:hidden ${
-          isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
-        onClick={() => setIsMenuOpen(false)}
-        aria-hidden="true"
-      />
+        <Link to="/membership" className="btn btn-primary hidden md:inline-flex">Join IEEE</Link>
+        <button
+          ref={menuButtonRef}
+          type="button"
+          aria-expanded={isMenuOpen}
+          aria-controls="mobile-navigation"
+          aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+          className="nav-menu-button md:hidden"
+          onClick={() => setOpenPath(isMenuOpen ? null : location.pathname)}
+        >
+          <span className="material-symbols-outlined" aria-hidden="true">{isMenuOpen ? 'close' : 'menu'}</span>
+        </button>
+      </nav>
 
-      <div
-        className={`fixed top-0 left-0 right-0 z-40 pt-24 px-4 sm:px-6 transition-all duration-300 ease-out md:hidden ${
-          isMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4 pointer-events-none"
-        }`}
-      >
-        <div className="mx-auto max-w-7xl">
-          <div className="rounded-2xl border border-outline-variant/20 bg-surface-container-lowest/95 backdrop-blur-2xl px-3 py-3 shadow-lg shadow-black/10">
-            <div className="flex flex-col gap-0.5">
-              {navLinks.map((link) => {
-                const isActive = location.pathname === link.href;
-                return (
-                  <Link
-                    key={link.name}
-                    to={link.href}
-                    className={`px-4 py-3 text-sm font-medium rounded-xl transition-all duration-250 ease-out ${
-                      isActive
-                        ? "bg-primary/10 text-primary"
-                        : "text-on-surface-variant hover:bg-primary/5 hover:text-on-surface"
-                    }`}
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {link.name}
-                  </Link>
-                );
-              })}
-              <div className="flex items-center gap-3 px-4 pt-3 mt-2 border-t border-outline-variant/15">
-                <Link
-                  to="/membership"
-                  className="btn btn-primary flex-1 text-center"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Join IEEE
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div id="mobile-navigation" hidden={!isMenuOpen} className="border-t border-outline-variant bg-surface-container-lowest px-5 py-4 md:hidden">
+        <nav className="mx-auto flex max-w-7xl flex-col" aria-label="Mobile navigation">
+          {navLinks.map(link => (
+            <Link
+              key={link.name}
+              to={link.href}
+              aria-current={isActive(link.href) ? 'page' : undefined}
+              className="nav-link-mobile"
+              onClick={dismissAfterNavigation}
+            >
+              {link.name}
+            </Link>
+          ))}
+          <Link to="/membership" className="btn btn-primary mt-3" onClick={dismissAfterNavigation}>Join IEEE</Link>
+        </nav>
       </div>
-    </>
-  );
+    </header>
+  )
 }
