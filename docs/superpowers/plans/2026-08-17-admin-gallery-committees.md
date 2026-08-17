@@ -873,9 +873,9 @@ const { fetchGalleryPhotos, addGalleryPhoto, deleteGalleryPhoto, uploadToCloudin
   uploadToCloudinary: vi.fn(),
 }))
 
-vi.mock('../data/gallerySource', () => ({ fetchGalleryPhotos }))
-vi.mock('../lib/turso', () => ({ addGalleryPhoto, deleteGalleryPhoto }))
-vi.mock('../lib/upload', () => ({ uploadToCloudinary }))
+vi.mock('../../data/gallerySource', () => ({ fetchGalleryPhotos }))
+vi.mock('../../lib/turso', () => ({ addGalleryPhoto, deleteGalleryPhoto }))
+vi.mock('../../lib/upload', () => ({ uploadToCloudinary }))
 
 const photo = { _id: 1, src: 'https://cdn/x.jpg', caption: 'Group photo', createdAt: '2026-08-17 10:00:00' }
 
@@ -1199,9 +1199,9 @@ const turso = vi.hoisted(() => ({
 
 const { fetchCommittees } = vi.hoisted(() => ({ fetchCommittees: vi.fn() }))
 
-vi.mock('../data/committeeSource', () => ({ fetchCommittees }))
-vi.mock('../lib/turso', () => turso)
-vi.mock('../lib/upload', () => ({ uploadToCloudinary: vi.fn().mockResolvedValue('https://cdn/uploaded.jpg') }))
+vi.mock('../../data/committeeSource', () => ({ fetchCommittees }))
+vi.mock('../../lib/turso', () => turso)
+vi.mock('../../lib/upload', () => ({ uploadToCloudinary: vi.fn().mockResolvedValue('https://cdn/uploaded.jpg') }))
 
 const committee = {
   _id: 2, name: 'AI', slug: 'ai', category: 'technical',
