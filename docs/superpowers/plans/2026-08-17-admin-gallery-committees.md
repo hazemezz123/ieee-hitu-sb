@@ -1678,6 +1678,14 @@ git add ieee-app/src/pages/admin/CommitteesTab.jsx ieee-app/src/pages/admin/comm
 git commit -m "feat: add committee and member management tab"
 ```
 
+Applied deviations (from execution + code review, committed 77d5b8c + 4be6db7):
+1. Same as Task 7: `fetchCommittees`/`fetchCommitteeMembers` imported directly from `../../lib/turso`, not `../../data/committeeSource` — admin must never see the static fallback masquerading as DB data, and load errors must surface. Test's turso mock includes `fetchCommittees`; the committeeSource mock is dropped.
+2. Test awaits: `await findByText('Shahd')` after member saves (React 19 batches async continuations — sync queries after a click run before the refetch renders).
+3. `fetchCommitteeMembers` mock chain is 4 values `[member],[member],[member],[]` — the member flow fetches 4× (initial mount, post-add, post-edit, post-delete). The plan's 3-value chain left the delete refetch on the base value, so `'No members yet.'` could never render.
+4. The confirm dialog renders in BOTH views (list + members). The plan rendered it only in the list view's return, making member deletes unconfirmable (test's `getByText('Delete Member')` would throw).
+5. Member list lives in local `useState` inside MemberManager (not `committee._members` mutation): mutation + `setLoadingMembers(false)` false→false no-op means the post-delete refetched list never re-renders under React 19 batching. The `members` fallback prop is dropped entirely.
+6. Code review polish: `handleDelete` guards double-clicks (`if (!deleteTarget || saving) return` + `disabled={saving}`); member-edit test asserts a distinct position value ('Treasurer'); eslint-disable comment on the mount effect; BOM stripped, trailing newlines added.
+
 ---
 
 ### Task 9: AdminPage tab shell
