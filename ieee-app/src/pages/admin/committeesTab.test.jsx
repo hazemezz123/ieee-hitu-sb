@@ -103,9 +103,9 @@ describe('committees tab', () => {
     await screen.findByText('Shahd')
 
     fireEvent.click(screen.getByRole('button', { name: 'Edit' }))
-    fireEvent.change(screen.getByLabelText('Position'), { target: { value: 'Head' } })
+    fireEvent.change(screen.getByLabelText('Position'), { target: { value: 'Treasurer' } })
     fireEvent.click(screen.getByRole('button', { name: 'Save Member' }))
-    expect(turso.updateCommitteeMember).toHaveBeenCalledWith(4, expect.objectContaining({ position: 'Head' }))
+    expect(turso.updateCommitteeMember).toHaveBeenCalledWith(4, expect.objectContaining({ position: 'Treasurer' }))
     await screen.findByText('Shahd')
 
     fireEvent.click(screen.getByRole('button', { name: 'Delete' }))

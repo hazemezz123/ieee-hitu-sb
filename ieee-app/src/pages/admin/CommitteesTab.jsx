@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
   createCommittee,
   createCommitteeMember,
@@ -39,6 +39,7 @@ export default function CommitteesTab() {
     setLoading(false)
   }, [])
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- fire-and-forget load
   useEffect(() => { load() }, [load])
 
   async function saveCommittee(e) {
@@ -89,8 +90,9 @@ export default function CommitteesTab() {
   }
 
   async function handleDelete() {
-    if (!deleteTarget) return
+    if (!deleteTarget || saving) return
     setError(null)
+    setSaving(true)
     try {
       if (deleteTarget.kind === 'committee') {
         await deleteCommittee(deleteTarget.item._id)
@@ -104,6 +106,7 @@ export default function CommitteesTab() {
     } catch (err) {
       setError(err.message)
     }
+    setSaving(false)
   }
 
   const confirmDialog = deleteTarget && (
@@ -117,7 +120,7 @@ export default function CommitteesTab() {
         </p>
         <div className="flex gap-3 justify-end">
           <button onClick={() => setDeleteTarget(null)} className="btn btn-secondary text-sm">Cancel</button>
-          <button onClick={handleDelete} className="btn bg-error text-white text-sm hover:bg-error/90">Delete</button>
+          <button onClick={handleDelete} disabled={saving} className="btn bg-error text-white text-sm hover:bg-error/90">Delete</button>
         </div>
       </div>
     </div>
