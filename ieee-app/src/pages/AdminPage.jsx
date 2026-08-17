@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchEvents, deleteEvent } from "../data/eventsSource";
 
@@ -6,40 +6,49 @@ const ADMIN_PASSWORD = "ieee2026";
 
 export default function AdminPage() {
   const navigate = useNavigate();
-  const [authed, setAuthed] = useState(false);
+  const [authed, setAuthed] = useState(
+    () => sessionStorage.getItem("admin_auth") === ADMIN_PASSWORD,
+  );
   const [password, setPassword] = useState("");
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
 
-  useEffect(() => {
-    const stored = sessionStorage.getItem("admin_auth");
-    if (stored === ADMIN_PASSWORD) setAuthed(true);
-    else setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    if (!authed) return;
-    loadEvents();
-  }, [authed]);
-
-  async function loadEvents() {
+  const loadEvents = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchEvents();
-      setEvents(data);
+      setEvents(await fetchEvents());
     } catch (err) {
       setError(err.message);
     }
     setLoading(false);
-  }
+  }, []);
+
+  useEffect(() => {
+    if (!authed) return;
+    let active = true;
+    fetchEvents()
+      .then((data) => {
+        if (active) setEvents(data);
+      })
+      .catch((err) => {
+        if (active) setError(err.message);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [authed]);
 
   function handleLogin(e) {
     e.preventDefault();
     if (password === ADMIN_PASSWORD) {
       sessionStorage.setItem("admin_auth", password);
+      setLoading(true);
       setAuthed(true);
     }
   }
@@ -54,7 +63,7 @@ export default function AdminPage() {
     try {
       await deleteEvent(deleteTarget._id);
       setDeleteTarget(null);
-      loadEvents();
+      await loadEvents();
     } catch (err) {
       setError(err.message);
     }
@@ -169,7 +178,7 @@ export default function AdminPage() {
                 {events.map((ev) => (
                   <tr
                     key={ev._id}
-                    className="border-b border-outline-variant/10 hover: /50 transition-colors"
+                    className="border-b border-outline-variant/10 hover:bg-surface-container/50 transition-colors"
                   >
                     <td className="py-3 pr-4 font-medium">{ev.title}</td>
                     <td className="py-3 pr-4 text-on-surface-variant hidden sm:table-cell whitespace-nowrap">
@@ -196,13 +205,13 @@ export default function AdminPage() {
                           onClick={() =>
                             navigate("/admin/events/" + ev._id + "/edit")
                           }
-                          className="text-xs font-semibold text-primary hover:underline"
+                          className="btn btn-ghost text-xs"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => confirmDelete(ev)}
-                          className="text-xs font-semibold text-error hover:underline"
+                          className="btn btn-ghost text-xs text-error"
                         >
                           Delete
                         </button>
@@ -221,7 +230,7 @@ export default function AdminPage() {
             onClick={() => setDeleteTarget(null)}
           >
             <div
-              className=" rounded-2xl shadow-xl border border-outline-variant/20 p-6 md:p-8 max-w-sm w-full"
+              className="card shadow-xl p-6 md:p-8 max-w-sm w-full"
               onClick={(e) => e.stopPropagation()}
             >
               <h3 className="text-lg font-bold mb-2">Delete Event</h3>
