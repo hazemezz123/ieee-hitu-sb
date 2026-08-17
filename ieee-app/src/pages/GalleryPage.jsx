@@ -5,6 +5,7 @@ import MasonryGallery from '../components/MasonryGallery'
 import PageLayout from '../components/PageLayout'
 import { aggregateGallery } from '../data/presentation'
 import { fetchEventsResult } from '../data/eventsSource'
+import { fetchGalleryPhotosResult } from '../data/gallerySource'
 
 const eventsLink = <Link className="mt-4 inline-flex min-h-11 items-center gap-2 font-bold text-primary" to="/events">Browse events<span className="material-symbols-outlined text-lg" aria-hidden="true">arrow_forward</span></Link>
 
@@ -15,10 +16,10 @@ export default function GalleryPage() {
 
   useEffect(() => {
     let active = true
-    fetchEventsResult().then(result => {
+    Promise.all([fetchEventsResult(), fetchGalleryPhotosResult()]).then(([eventsResult, photosResult]) => {
       if (!active) return
-      setImages(aggregateGallery(result.events))
-      setSource(result.source)
+      setImages([...photosResult.photos, ...aggregateGallery(eventsResult.events)])
+      setSource(eventsResult.source === 'remote' && photosResult.source === 'remote' ? 'remote' : 'fallback')
       setStatus('ready')
     }).catch(() => active && setStatus('error'))
     return () => { active = false }

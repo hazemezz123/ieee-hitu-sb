@@ -17,7 +17,10 @@ const { fetchEventsResult, fetchEventBySlugResult, fetchEvents, fetchEventBySlug
   fetchEventBySlug: vi.fn(),
 }))
 
+const { fetchGalleryPhotosResult } = vi.hoisted(() => ({ fetchGalleryPhotosResult: vi.fn() }))
+
 vi.mock('../data/eventsSource', () => ({ fetchEventsResult, fetchEventBySlugResult, fetchEvents, fetchEventBySlug }))
+vi.mock('../data/gallerySource', () => ({ fetchGalleryPhotosResult }))
 
 globalThis.IntersectionObserver = class {
   observe() {}
@@ -50,6 +53,8 @@ afterEach(cleanup)
 beforeEach(() => {
   fetchEventsResult.mockReset()
   fetchEventBySlugResult.mockReset()
+  fetchGalleryPhotosResult.mockReset()
+  fetchGalleryPhotosResult.mockResolvedValue({ photos: [], source: 'remote' })
 })
 
 describe('committee records', () => {
@@ -80,7 +85,7 @@ describe('committee records', () => {
     expect(lists[0].tagName).toBe('UL')
     expect(lists[1].tagName).toBe('UL')
 
-    committees.forEach((committee, index) => {
+    committees.forEach(committee => {
       const link = screen.getByRole('link', { name: `View ${committee.name} committee record` })
       expect(link.getAttribute('href')).toBe(`/committees/${committee.slug}`)
       expect(link.classList.contains('min-h-11')).toBe(true)
@@ -386,5 +391,29 @@ describe('event records', () => {
     page.unmount()
     await act(async () => resolve({ events: [], source: 'remote' }))
     expect(page.container.textContent).toBe('')
+  })
+
+  it('merges standalone admin photos ahead of event photos', async () => {
+    fetchEventsResult.mockResolvedValue({
+      events: [{ title: 'Event A', slug: 'event-a', gallery: [{ src: '/event-a.jpg', caption: 'Event photo' }] }],
+      source: 'remote',
+    })
+    fetchGalleryPhotosResult.mockResolvedValue({
+      photos: [{ _id: 1, src: '/standalone.jpg', caption: 'Standalone photo' }],
+      source: 'remote',
+    })
+    renderGallery()
+
+    expect(await screen.findByAltText('Standalone photo')).toBeTruthy()
+    expect(screen.getByAltText('Event photo')).toBeTruthy()
+    const imgs = screen.getAllByRole('img')
+    expect(imgs.map(img => img.getAttribute('src'))).toEqual(['/standalone.jpg', '/event-a.jpg'])
+  })
+
+  it('shows the fallback notice when either source falls back', async () => {
+    fetchEventsResult.mockResolvedValue({ events: [], source: 'remote' })
+    fetchGalleryPhotosResult.mockResolvedValue({ photos: [], source: 'fallback' })
+    renderGallery()
+    expect(await screen.findByText(/fallback event information/i)).toBeTruthy()
   })
 })
