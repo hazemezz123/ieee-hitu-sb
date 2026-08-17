@@ -1,107 +1,57 @@
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom'
 import PageLayout from '../components/PageLayout'
 import AnimatedSection from '../components/AnimatedSection'
+import { boardMembers } from '../data/boardMembers'
 import {
- committeeCategories,
- nonTechnicalCommittees,
- technicalCommittees,
- totalCommittees,
-} from '../data/committees';
+  committeeCategories,
+  nonTechnicalCommittees,
+  technicalCommittees,
+  totalCommittees,
+} from '../data/committees'
+import { findCommitteeLeaders } from '../data/presentation'
 
-const renderCommitteeCard = (committee) => (
- <article
- key={committee.slug}
- className="card-hover flex flex-col p-5 md:p-6"
- >
- <span className="material-symbols-outlined text-primary text-3xl md:text-4xl mb-3 md:mb-4">
- {committee.icon}
- </span>
- <div className="flex items-center justify-between gap-3 md:gap-4 mb-3 md:mb-4">
- <h3 className="text-lg md:text-xl font-bold">{committee.name}</h3>
- <span className="text-xs font-bold tracking-widest uppercase text-primary whitespace-nowrap">
- {committee.memberCount} Members
- </span>
- </div>
- <p className="text-sm text-on-surface-variant leading-relaxed mb-4 md:mb-6 flex-1">
- {committee.shortDescription}
- </p>
- <Link
- className="inline-flex items-center gap-2 text-primary font-bold text-xs tracking-widest uppercase group"
- to={`/committees/${committee.slug}`}
- >
- View Committee
- <span className="material-symbols-outlined text-sm transition-transform duration-200 group-hover:translate-x-1">arrow_forward</span>
- </Link>
- </article>
-);
+const CommitteeGroup = ({ title, committees, offset = 0 }) => (
+  <section>
+    <h2 className="text-2xl font-bold text-on-surface md:text-3xl">{title}</h2>
+    <ol className="mt-8 divide-y divide-outline-variant/30 border-t border-outline-variant/30" start={offset ? offset + 1 : undefined}>
+      {committees.map((committee, index) => {
+        const leaders = findCommitteeLeaders(committee.slug, boardMembers)
+        return (
+          <li key={committee.slug} className="grid gap-4 py-8 md:grid-cols-[3rem_minmax(0,1fr)_10rem] md:gap-8">
+            <span className="font-mono text-sm text-primary">{String(offset + index + 1).padStart(2, '0')}</span>
+            <div>
+              <h3 className="text-xl font-bold text-on-surface">{committee.name}</h3>
+              <p className="mt-2 max-w-3xl leading-relaxed text-on-surface-variant">{committee.shortDescription}</p>
+              {leaders.length > 0 && <p className="mt-3 flex flex-wrap gap-x-2 text-sm text-on-surface-variant"><span className="font-semibold text-on-surface">Leadership:</span> {leaders.map(leader => <span key={`${leader.name}-${leader.position}`}>{leader.name}</span>)}</p>}
+            </div>
+            <div className="md:text-right">
+              <p className="text-sm text-on-surface-variant">{committee.categoryLabel}</p>
+              <p className="mt-1 text-sm text-on-surface-variant">{committee.memberCount} members</p>
+              <Link aria-label={`View ${committee.name} committee record`} className="mt-4 inline-flex min-h-11 items-center text-xs font-bold uppercase tracking-widest text-primary" to={`/committees/${committee.slug}`}>View record</Link>
+            </div>
+          </li>
+        )
+      })}
+    </ol>
+  </section>
+)
 
 export default function CommitteesPage() {
- return (
- <PageLayout>
- <div className="min-h-screen">
- <AnimatedSection>
- <section className="relative py-16 md:py-24 lg:py-32 overflow-hidden">
- <div className="absolute inset-0 z-0 opacity-5 pointer-events-none">
- <div
- className="absolute top-0 right-0 w-1/2 h-full bg-primary wedge-accent"
- style={{ transform: 'rotate(0deg) scale(1.5)' }}
- ></div>
- </div>
- <div className="container mx-auto px-6 sm:px-8 md:px-12 relative z-10 max-w-5xl text-center">
- <span className="section-label mb-4">Committees</span>
- <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-on-surface leading-tight mb-4 md:mb-6">
- The Teams That Power Our <span className="text-primary">Branch</span>
- </h1>
- <p className="text-base md:text-lg text-on-surface-variant leading-relaxed mb-6 md:mb-8">
- Explore the technical and non-technical committees that shape learning,
- operations, and community impact across IEEE HITU SB.
- </p>
- <div className="flex gap-4 md:gap-8 justify-center text-on-surface-variant">
- <div className="text-center">
- <div className="text-2xl md:text-3xl font-bold text-primary">{totalCommittees}</div>
- <div className="text-xs md:text-sm uppercase tracking-wider">Committees</div>
- </div>
- <div className="text-center">
- <div className="text-2xl md:text-3xl font-bold text-primary">2</div>
- <div className="text-xs md:text-sm uppercase tracking-wider">Categories</div>
- </div>
- </div>
- </div>
- </section>
- </AnimatedSection>
-
-  <section className="py-20 md:py-24 lg:py-32">
- <div className="container mx-auto px-6 sm:px-8 md:px-12 space-y-12 md:space-y-16 lg:space-y-20">
- <div>
- <div className="flex justify-between items-end mb-6 md:mb-8 lg:mb-10">
- <div>
- <span className="section-label mb-4">Category</span>
- <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight">
- {committeeCategories.technical}
- </h2>
- </div>
- </div>
- <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
- {technicalCommittees.map(renderCommitteeCard)}
- </div>
- </div>
-
- <div>
- <div className="flex justify-between items-end mb-6 md:mb-8 lg:mb-10">
- <div>
- <span className="section-label mb-4">Category</span>
- <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight">
- {committeeCategories.nonTechnical}
- </h2>
- </div>
- </div>
- <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
- {nonTechnicalCommittees.map(renderCommitteeCard)}
- </div>
- </div>
- </div>
- </section>
- </div>
- </PageLayout>
- );
+  return (
+    <PageLayout>
+      <AnimatedSection>
+        <header className="container mx-auto max-w-6xl px-6 py-16 sm:px-8 md:px-12 md:py-24">
+          <h1 className="text-4xl font-black text-on-surface md:text-6xl">Committee directory</h1>
+          <p className="mt-6 max-w-3xl text-lg leading-relaxed text-on-surface-variant">Technical and non-technical committee records published by IEEE HITU Student Branch.</p>
+          <p className="mt-8 text-on-surface-variant" aria-label={`${totalCommittees} committee records`}><strong className="text-3xl text-primary">{totalCommittees}</strong> committee records</p>
+        </header>
+      </AnimatedSection>
+      <div className="border-y border-outline-variant/30 bg-surface-container-low py-16">
+        <div className="container mx-auto max-w-6xl space-y-16 px-6 sm:px-8 md:px-12">
+          <CommitteeGroup title={committeeCategories.technical} committees={technicalCommittees} />
+          <CommitteeGroup title={committeeCategories.nonTechnical} committees={nonTechnicalCommittees} offset={technicalCommittees.length} />
+        </div>
+      </div>
+    </PageLayout>
+  )
 }
