@@ -6,6 +6,7 @@ import { fetchEventsResult } from '../data/eventsSource'
 import { getNextEvents, getRecentEvents, sortEvents } from '../data/presentation'
 import { committees } from '../data/committees'
 import { boardMembers } from '../data/boardMembers'
+import { communityPartners } from '../data/partners'
 
 const formatDate = date => new Date(date).toLocaleDateString('en-US', { dateStyle: 'medium' })
 
@@ -27,19 +28,44 @@ function CommitteeDirectory() {
   return (
     <section className="container mx-auto grid max-w-6xl gap-12 px-6 py-16 md:grid-cols-[0.8fr_1.2fr] md:px-12">
       <div><p className="section-label">Branch structure</p><h2 className="mt-3 text-3xl font-bold text-on-surface">Committee directory</h2><Link className="mt-5 inline-flex text-xs font-bold uppercase tracking-widest text-primary" to="/committees">Open directory</Link></div>
-      <ol className="divide-y divide-outline-variant/30 border-t border-outline-variant/30">{committees.map((committee, index) => <li key={committee.slug} className="flex gap-4 py-3 text-on-surface"><span className="font-mono text-primary">{String(index + 1).padStart(2, '0')}</span><Link to={`/committees/${committee.slug}`}>{committee.name}</Link><span className="ml-auto text-xs text-on-surface-variant">{committee.category}</span></li>)}</ol>
+      <ol className="divide-y divide-outline-variant/30 border-t border-outline-variant/30">{committees.map(committee => <li key={committee.slug} className="flex gap-4 py-3 text-on-surface"><Link to={`/committees/${committee.slug}`}>{committee.name}</Link><span className="ml-auto text-xs text-on-surface-variant">{committee.category}</span></li>)}</ol>
     </section>
   )
 }
 
-function Counts({ events, status }) {
+function Counts() {
   return (
     <section className="border-b border-outline-variant/30 bg-surface py-10">
-      <div className="container mx-auto grid max-w-6xl grid-cols-2 gap-6 px-6 md:grid-cols-4 md:px-12">
-        {status === 'loading' ? <p role="status" aria-live="polite" aria-label="Loading event count"><strong className="block text-3xl text-primary">—</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">Events loading</span></p> : status === 'error' ? <p aria-label="Event count unavailable"><strong className="block text-3xl text-primary">—</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">Events unavailable</span></p> : <p aria-label={`${events.length} events`}><strong className="block text-3xl text-primary">{events.length}</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">Events</span></p>}
+      <div className="container mx-auto grid max-w-6xl grid-cols-2 gap-6 px-6 md:grid-cols-3 md:px-12">
         <p aria-label={`${committees.length} committees`}><strong className="block text-3xl text-primary">{committees.length}</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">Committees</span></p>
         <p aria-label={`${boardMembers.length} board records`}><strong className="block text-3xl text-primary">{boardMembers.length}</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">Board records</span></p>
         <p><strong className="block text-3xl text-primary">HITU</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">University</span></p>
+      </div>
+    </section>
+  )
+}
+
+function PartnershipCarousel() {
+  const row = isClone => (
+    <ul className="partners-row" aria-hidden={isClone}>
+      {communityPartners.map(partner => (
+        <li key={partner.name} className="partner-tile" aria-label={partner.name}>
+          {partner.logo ? <img src={partner.logo} alt={partner.name} /> : <span>{partner.name}</span>}
+        </li>
+      ))}
+    </ul>
+  )
+  return (
+    <section className="border-b border-outline-variant/30 bg-surface-container-low py-16" aria-labelledby="partnerships-heading">
+      <div className="container mx-auto max-w-6xl px-6 md:px-12">
+        <p className="section-label">Community partnerships</p>
+        <h2 id="partnerships-heading" className="mt-3 text-3xl font-bold text-on-surface">Partners we build with</h2>
+      </div>
+      <div className="carousel-viewport mt-10">
+        <div className="carousel-track">
+          {row(false)}
+          {row(true)}
+        </div>
       </div>
     </section>
   )
@@ -73,7 +99,8 @@ export default function Home() {
         {result.status === 'ready' && <>
           {featuredEvent && <section className="container mx-auto max-w-6xl px-6 py-16 md:px-12"><div className="border-l border-primary/40 pl-5"><h2 className="text-2xl font-bold text-on-surface">Featured next event</h2>{result.source === 'fallback' && <p className="mt-3 text-sm text-on-surface-variant">Showing the static event archive while live event data is unavailable.</p>}<EventRecord event={featuredEvent} /></div></section>}
         </>}
-        <Counts events={events} status={result.status} />
+        <Counts />
+        <PartnershipCarousel />
          {result.status === 'error' && <section className="container mx-auto max-w-6xl px-6 py-16 md:px-12"><div role="alert" className="border-l border-primary/40 pl-5"><h2 className="text-2xl font-bold text-on-surface">Event data could not be loaded</h2><p className="mt-2 text-on-surface-variant">Please try the event archive again later.</p></div></section>}
         {result.status === 'ready' && <>
           {result.source === 'fallback' && !featuredEvent && <p className="border-b border-outline-variant/30 bg-secondary-container px-6 py-3 text-center text-sm text-on-secondary-container">Showing the static event archive while live event data is unavailable.</p>}

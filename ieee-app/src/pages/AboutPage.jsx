@@ -1,23 +1,8 @@
-import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import PageLayout from '../components/PageLayout'
-import { fetchEventsResult } from '../data/eventsSource'
-import { committees } from '../data/committees'
 import { boardMembers } from '../data/boardMembers'
 
 export default function AboutPage() {
-  const [result, setResult] = useState({ events: [], source: null, status: 'loading' })
-
-  useEffect(() => {
-    let active = true
-    fetchEventsResult().then(data => {
-      if (active) setResult({ ...data, status: 'ready' })
-    }).catch(() => {
-      if (active) setResult({ events: [], source: null, status: 'error' })
-    })
-    return () => { active = false }
-  }, [])
-
   const leadership = boardMembers.filter(member => /^(Head|Vice Head)$/.test(member.position))
 
   return (
@@ -32,9 +17,7 @@ export default function AboutPage() {
         <section className="grid gap-10 border-b border-outline-variant/40 py-12 md:grid-cols-[1fr_1.4fr]">
           <div><p className="section-label">The branch at a glance</p><h2 className="mt-3 text-3xl font-bold text-on-surface">A campus bridge to IEEE</h2></div>
           <div>
-            {result.source === 'fallback' && <p className="mb-5 border-l border-primary/40 pl-4 text-sm text-on-surface-variant">Showing the static event archive while live event data is unavailable.</p>}
-            {result.status === 'error' && <p role="alert" className="mb-5 border-l border-primary/40 pl-4 text-sm text-on-surface-variant">Event data could not be loaded.</p>}
-            <div className="grid grid-cols-3 gap-4">{result.status === 'loading' ? <p role="status" aria-live="polite" aria-label="Loading event count"><strong className="block text-3xl text-primary">—</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">Events loading</span></p> : result.status === 'error' ? <p aria-label="Event count unavailable"><strong className="block text-3xl text-primary">—</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">Events unavailable</span></p> : <p aria-label={`${result.events.length} events`}><strong className="block text-3xl text-primary">{result.events.length}</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">Events</span></p>}<p aria-label={`${committees.length} committees`}><strong className="block text-3xl text-primary">{committees.length}</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">Committees</span></p><p aria-label={`${leadership.length} leaders`}><strong className="block text-3xl text-primary">{leadership.length}</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">Leaders</span></p></div>
+            <div className="grid grid-cols-2 gap-4"><p aria-label="more than 60 sessions"><strong className="block text-3xl text-primary">60+</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">Sessions across all committees</span></p><p aria-label="5 community partnerships"><strong className="block text-3xl text-primary">5</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">Community partnerships</span></p></div>
           </div>
         </section>
 

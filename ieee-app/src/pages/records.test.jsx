@@ -67,7 +67,7 @@ describe('committee records', () => {
     }
   })
 
-  it('renders every committee as a numbered record grouped by category', () => {
+  it('renders every committee as a record grouped by category', () => {
     const { container } = renderRoute('/committees')
 
     expect(screen.getByRole('heading', { level: 1, name: 'Committee directory' })).toBeTruthy()
@@ -77,17 +77,14 @@ describe('committee records', () => {
     const lists = screen.getAllByRole('list')
 
     expect(lists).toHaveLength(2)
-    expect(lists[0].tagName).toBe('OL')
-    expect(lists[0].getAttribute('start')).toBeNull()
-    expect(lists[1].tagName).toBe('OL')
-    expect(lists[1].getAttribute('start')).toBe('8')
+    expect(lists[0].tagName).toBe('UL')
+    expect(lists[1].tagName).toBe('UL')
 
     committees.forEach((committee, index) => {
       const link = screen.getByRole('link', { name: `View ${committee.name} committee record` })
       expect(link.getAttribute('href')).toBe(`/committees/${committee.slug}`)
       expect(link.classList.contains('min-h-11')).toBe(true)
       expect(link.classList.contains('items-center')).toBe(true)
-      expect(within(link.closest('li')).getByText(String(index + 1).padStart(2, '0'))).toBeTruthy()
       expect((committee.category === 'technical' ? technical : nonTechnical).contains(link)).toBe(true)
     })
     expect(container.querySelector('main')).toBeNull()

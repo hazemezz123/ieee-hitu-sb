@@ -10,15 +10,14 @@ import {
 } from '../data/committees'
 import { findCommitteeLeaders } from '../data/presentation'
 
-const CommitteeGroup = ({ title, committees, offset = 0 }) => (
+const CommitteeGroup = ({ title, committees }) => (
   <section>
     <h2 className="text-2xl font-bold text-on-surface md:text-3xl">{title}</h2>
-    <ol className="mt-8 divide-y divide-outline-variant/30 border-t border-outline-variant/30" start={offset ? offset + 1 : undefined}>
+    <ul className="mt-8 divide-y divide-outline-variant/30 border-t border-outline-variant/30">
       {committees.map((committee, index) => {
         const leaders = findCommitteeLeaders(committee.slug, boardMembers)
         return (
-          <li key={committee.slug} className="grid gap-4 py-8 md:grid-cols-[3rem_minmax(0,1fr)_10rem] md:gap-8">
-            <span className="font-mono text-sm text-primary">{String(offset + index + 1).padStart(2, '0')}</span>
+          <li key={committee.slug} className="grid gap-4 py-8 md:grid-cols-[minmax(0,1fr)_10rem] md:gap-8">
             <div>
               <h3 className="text-xl font-bold text-on-surface">{committee.name}</h3>
               <p className="mt-2 max-w-3xl leading-relaxed text-on-surface-variant">{committee.shortDescription}</p>
@@ -31,7 +30,7 @@ const CommitteeGroup = ({ title, committees, offset = 0 }) => (
           </li>
         )
       })}
-    </ol>
+    </ul>
   </section>
 )
 
@@ -48,7 +47,7 @@ export default function CommitteesPage() {
       <div className="border-y border-outline-variant/30 bg-surface-container-low py-16">
         <div className="container mx-auto max-w-6xl space-y-16 px-6 sm:px-8 md:px-12">
           <CommitteeGroup title={committeeCategories.technical} committees={technicalCommittees} />
-          <CommitteeGroup title={committeeCategories.nonTechnical} committees={nonTechnicalCommittees} offset={technicalCommittees.length} />
+          <CommitteeGroup title={committeeCategories.nonTechnical} committees={nonTechnicalCommittees} />
         </div>
       </div>
     </PageLayout>

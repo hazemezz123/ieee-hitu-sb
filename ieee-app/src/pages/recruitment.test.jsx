@@ -62,7 +62,6 @@ describe('recruitment pages', () => {
     expect(screen.getByRole('heading', { level: 3, name: 'Later Lab' })).toBeTruthy()
     const recent = screen.getByRole('heading', { level: 2, name: 'Recent events' }).parentElement.textContent
     expect(recent.indexOf('Recent Workshop')).toBeLessThan(recent.indexOf('Older Workshop'))
-    expect(screen.getByLabelText('4 events')).toBeTruthy()
     expect(screen.getByLabelText('11 committees')).toBeTruthy()
     expect(screen.getByLabelText('28 board records')).toBeTruthy()
   })
@@ -74,7 +73,6 @@ describe('recruitment pages', () => {
     const nodes = [
       screen.getByRole('heading', { level: 1 }),
       screen.getByRole('heading', { name: 'Featured next event' }),
-      screen.getByLabelText('4 events'),
       screen.getByRole('heading', { name: 'Next events' }),
       screen.getByRole('heading', { name: 'Committee directory' }),
       screen.getByRole('heading', { name: 'Recent events' }),
@@ -95,12 +93,11 @@ describe('recruitment pages', () => {
     expect(screen.queryByText('Duplicate Next Lab')).toBeNull()
   })
 
-  it('shows fallback provenance with records and the fallback-derived count', async () => {
+  it('shows fallback provenance with records', async () => {
     fetchEventsResult.mockResolvedValue({ events: events.slice(0, 2), source: 'fallback' })
     renderPage(<Home />)
 
     expect(await screen.findByText(/showing the static event archive/i)).toBeTruthy()
-    expect(screen.getByLabelText('2 events')).toBeTruthy()
     expect(screen.getByText('Later Lab')).toBeTruthy()
   })
 
@@ -122,7 +119,6 @@ describe('recruitment pages', () => {
     renderPage(<Home />)
 
     expect(await screen.findByText('Event dates are not available yet.')).toBeTruthy()
-    expect(screen.getByLabelText('2 events')).toBeTruthy()
     expect(screen.getByRole('heading', { name: 'Committee directory' })).toBeTruthy()
     expect(screen.queryByText(/no events are available/i)).toBeNull()
   })
@@ -148,11 +144,11 @@ describe('recruitment pages', () => {
     expect(screen.queryByRole('heading', { name: 'Next events' })).toBeNull()
   })
 
-  it('shows a pending event count without briefly reporting zero', () => {
+  it('shows a pending event state without briefly reporting zero', () => {
     fetchEventsResult.mockReturnValue(new Promise(() => {}))
     renderPage(<Home />)
 
-    expect(screen.getByRole('status', { name: /loading event count/i }).textContent).toContain('—')
+    expect(screen.getByRole('status').textContent).toContain('Loading event records')
     expect(screen.queryByLabelText('0 events')).toBeNull()
   })
 
@@ -163,35 +159,16 @@ describe('recruitment pages', () => {
     expect(await screen.findByRole('alert')).toBeTruthy()
     expect(screen.getByText(/event data could not be loaded/i)).toBeTruthy()
     expect(screen.queryByText(/static event archive/i)).toBeNull()
-    expect(screen.getByLabelText(/event count unavailable/i).textContent).not.toContain('0')
     expect(screen.queryByLabelText('0 events')).toBeNull()
     expect(screen.getByRole('heading', { name: 'Committee directory' })).toBeTruthy()
-  })
-
-  it('does not report zero events on About when event data rejects', async () => {
-    fetchEventsResult.mockRejectedValue(new Error('unexpected'))
-    renderPage(<AboutPage />)
-
-    expect(await screen.findByRole('alert')).toBeTruthy()
-    expect(screen.getByLabelText(/event count unavailable/i).textContent).not.toContain('0')
-    expect(screen.queryByLabelText('0 events')).toBeNull()
-  })
-
-  it('shows About fallback provenance before its derived event count', async () => {
-    fetchEventsResult.mockResolvedValue({ events: events.slice(0, 2), source: 'fallback' })
-    renderPage(<AboutPage />)
-
-    const notice = await screen.findByText(/showing the static event archive/i)
-    const count = screen.getByLabelText('2 events')
-    expect(notice.compareDocumentPosition(count) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
   it('keeps About factual, private-contact-free, and free of nested main landmarks', async () => {
     const { container } = renderPage(<AboutPage />)
 
-    await screen.findByLabelText('4 events')
+    expect(screen.getByLabelText('more than 60 sessions')).toBeTruthy()
+    expect(screen.getByLabelText('5 community partnerships')).toBeTruthy()
     expect(screen.getByRole('heading', { level: 1, name: /about ieee hitu student branch/i })).toBeTruthy()
-    expect(screen.getByLabelText('11 committees')).toBeTruthy()
     expect(screen.getByText('Abdelrhman Saleh Amin')).toBeTruthy()
     expect(container.querySelector('main')).toBeNull()
     expect(screen.queryByText(/founded|since 20|worldwide impact|global leader/i)).toBeNull()
