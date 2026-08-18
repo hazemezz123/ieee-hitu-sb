@@ -12,6 +12,7 @@ import {
 import { uploadToCloudinary } from '../../lib/upload'
 import { slugify } from '../../lib/slugify'
 import ConfirmDialog from '../../components/ConfirmDialog'
+import Skeleton from '../../components/Skeleton'
 import PhotoInput from './PhotoInput'
 
 const emptyCommittee = { name: '', slug: '', category: 'technical', shortDescription: '' }
@@ -218,7 +219,21 @@ export default function CommitteesTab() {
       {error && <div className="mb-6 p-4 bg-error/10 border border-error/30 rounded-lg text-sm text-error">{error}</div>}
 
       {loading ? (
-        <div className="text-center py-16 text-on-surface-variant">Loading...</div>
+        <div role="status" className="overflow-x-auto">
+          <span className="sr-only">Loading...</span>
+          <table className="w-full text-sm">
+            <tbody>
+              {Array.from({ length: 5 }, (_, index) => (
+                <tr key={index} className="border-b border-outline-variant/10">
+                  <td className="py-3 pr-4"><Skeleton className="h-4 w-40" /></td>
+                  <td className="hidden py-3 pr-4 sm:table-cell"><Skeleton className="h-4 w-20" /></td>
+                  <td className="hidden py-3 pr-4 md:table-cell"><Skeleton className="h-4 w-24" /></td>
+                  <td className="py-3"><div className="flex gap-2"><Skeleton className="h-8 w-20" /><Skeleton className="h-8 w-16" /><Skeleton className="h-8 w-16" /></div></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       ) : (
         <table className="w-full text-sm">
           <thead>
@@ -312,7 +327,19 @@ function MemberManager({
       {error && <div className="mb-6 p-4 bg-error/10 border border-error/30 rounded-lg text-sm text-error">{error}</div>}
 
       {loadingMembers ? (
-        <div className="text-center py-16 text-on-surface-variant">Loading...</div>
+        <div role="status" className="divide-y divide-outline-variant/20 border-t border-outline-variant/20">
+          <span className="sr-only">Loading...</span>
+          {Array.from({ length: 4 }, (_, index) => (
+            <div key={index} className="flex items-center gap-4 py-4">
+              <Skeleton className="h-12 w-12 rounded-full" />
+              <div className="min-w-0 flex-1 space-y-2">
+                <Skeleton className="h-4 w-1/3" />
+                <Skeleton className="h-3 w-1/4" />
+              </div>
+              <div className="flex gap-2"><Skeleton className="h-8 w-16" /><Skeleton className="h-8 w-16" /></div>
+            </div>
+          ))}
+        </div>
       ) : members.length === 0 ? (
         <div className="text-center py-16 text-on-surface-variant">No members yet.</div>
       ) : (

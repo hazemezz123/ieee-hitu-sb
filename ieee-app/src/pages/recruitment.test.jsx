@@ -9,7 +9,10 @@ import ContactPage from './ContactPage'
 import TechnicalResources from '../components/TechnicalResources'
 import { committees } from '../data/committees'
 
-const { fetchEventsResult } = vi.hoisted(() => ({ fetchEventsResult: vi.fn() }))
+const { fetchEventsResult, fetchCommitteesResult } = vi.hoisted(() => ({
+  fetchEventsResult: vi.fn(),
+  fetchCommitteesResult: vi.fn(),
+}))
 
 globalThis.IntersectionObserver = class {
   observe() {}
@@ -18,6 +21,7 @@ globalThis.IntersectionObserver = class {
 }
 
 vi.mock('../data/eventsSource', () => ({ fetchEventsResult }))
+vi.mock('../data/committeeSource', () => ({ fetchCommitteesResult }))
 
 const events = [
   { slug: 'later', title: 'Later Lab', date: '2026-10-01T10:00:00Z', excerpt: 'Later', location: 'HITU' },
@@ -34,6 +38,8 @@ describe('recruitment pages', () => {
     vi.setSystemTime(new Date('2026-08-17T00:00:00Z'))
     fetchEventsResult.mockReset()
     fetchEventsResult.mockResolvedValue({ events, source: 'remote' })
+    fetchCommitteesResult.mockReset()
+    fetchCommitteesResult.mockResolvedValue({ committees: structuredClone(committees), source: 'remote' })
   })
 
   afterEach(() => {
@@ -146,7 +152,7 @@ describe('recruitment pages', () => {
     fetchEventsResult.mockReturnValue(new Promise(() => {}))
     renderPage(<Home />)
 
-    expect(screen.getByRole('status').textContent).toContain('Loading event records')
+    expect(screen.getAllByRole('status').some(el => el.textContent.includes('Loading event records'))).toBe(true)
     expect(screen.queryByLabelText('0 events')).toBeNull()
   })
 

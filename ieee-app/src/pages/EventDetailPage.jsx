@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import PageLayout from '../components/PageLayout'
 import MasonryGallery from '../components/MasonryGallery'
 import { fetchEventBySlugResult } from '../data/eventsSource'
+import Skeleton from '../components/Skeleton'
 
 const formatDate = date => { const parsed = new Date(date); return Number.isFinite(parsed.getTime()) ? parsed.toLocaleDateString('en-US', { dateStyle: 'long', timeZone: 'UTC' }) : 'Date unavailable' }
 
@@ -21,7 +22,7 @@ function EventDetail({ slug }) {
     return () => { active = false }
   }, [slug])
 
-  if (state.status === 'loading') return <PageLayout><p role="status" className="container mx-auto max-w-5xl px-6 py-24 text-center text-on-surface-variant">Loading event record...</p></PageLayout>
+  if (state.status === 'loading') return <PageLayout><article className="container mx-auto max-w-5xl px-6 py-16 md:px-12 md:py-24"><div role="status" className="space-y-6"><span className="sr-only">Loading event record...</span><Skeleton className="h-4 w-24" /><Skeleton className="aspect-[21/9] w-full rounded-none" /><div className="space-y-3 py-4"><Skeleton className="h-3 w-40" /><Skeleton className="h-10 w-3/4 md:h-14" /><Skeleton className="h-5 w-full max-w-2xl" /></div><dl className="grid gap-6 border-y border-outline-variant/30 py-8 sm:grid-cols-2"><div className="space-y-2"><Skeleton className="h-3 w-16" /><Skeleton className="h-4 w-40" /></div><div className="space-y-2"><Skeleton className="h-3 w-16" /><Skeleton className="h-4 w-40" /></div></dl></div></article></PageLayout>
   if (state.status === 'error') return <PageLayout><div role="alert" className="container mx-auto max-w-5xl px-6 py-24 text-center"><h1 className="text-3xl font-bold text-on-surface">Event record could not be loaded</h1><p className="mt-3 text-on-surface-variant">Please try again later.</p></div></PageLayout>
   if (!state.event) return <PageLayout><div className="container mx-auto max-w-5xl px-6 py-24 text-center"><h1 className="text-4xl font-black text-on-surface">Event not found</h1><p className="mt-3 text-on-surface-variant">The event page you are looking for does not exist.</p><Link className="mt-8 inline-flex min-h-11 items-center text-xs font-bold uppercase tracking-widest text-primary" to="/events">Back to events</Link></div></PageLayout>
 

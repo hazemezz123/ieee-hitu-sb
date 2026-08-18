@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { fetchEvents, createEvent, updateEvent } from '../data/eventsSource'
 import { slugify } from '../lib/slugify'
+import Skeleton from '../components/Skeleton'
 
 const categories = [
   { value: 'workshops', label: 'Workshops' },
@@ -103,7 +104,18 @@ export default function EventFormPage() {
           <div className="mb-6 p-4 bg-error/10 border border-error/30 rounded-lg text-sm text-error">{error}</div>
         )}
 
-        {editLoading && <p role="status" className="mb-6 text-sm text-on-surface-variant">Loading event data...</p>}
+        {editLoading && (
+          <div role="status" className="mb-6 space-y-4">
+            <span className="sr-only">Loading event data...</span>
+            <Skeleton className="h-5 w-24" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-5 w-24" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-5 w-24" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-32" />
+          </div>
+        )}
 
         <form onSubmit={handleSave}>
           <fieldset disabled={editLoading} className="space-y-4 border-0 p-0 m-0">

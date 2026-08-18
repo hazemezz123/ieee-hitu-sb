@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom'
 import PageLayout from '../components/PageLayout'
 import Hero from '../components/Hero'
 import { fetchEventsResult } from '../data/eventsSource'
+import { fetchCommitteesResult } from '../data/committeeSource'
 import { getNextEvents, getRecentEvents, sortEvents } from '../data/presentation'
-import { committees } from '../data/committees'
+import Skeleton from '../components/Skeleton'
+import CommitteeIcon from '../components/CommitteeIcon'
 import { communityPartners } from '../data/partners'
 
 const formatDate = date => new Date(date).toLocaleDateString('en-US', { dateStyle: 'medium' })
@@ -24,10 +26,47 @@ function EventRecord({ event, tone = 'light' }) {
 }
 
 function CommitteeDirectory() {
+  const [result, setResult] = useState({ committees: [], source: null, status: 'loading' })
+
+  useEffect(() => {
+    let active = true
+    fetchCommitteesResult().then(data => {
+      if (active) setResult({ ...data, status: 'ready' })
+    }).catch(() => {
+      if (active) setResult({ committees: [], source: null, status: 'error' })
+    })
+    return () => { active = false }
+  }, [])
+
   return (
     <section className="container mx-auto grid max-w-6xl gap-12 px-6 py-16 md:grid-cols-[0.8fr_1.2fr] md:px-12">
       <div><p className="section-label">Branch structure</p><h2 className="mt-3 text-3xl font-bold text-on-surface">Committee directory</h2><Link className="mt-5 inline-flex text-xs font-bold uppercase tracking-widest text-primary" to="/committees">Open directory</Link></div>
-      <ol className="divide-y divide-outline-variant/30 border-t border-outline-variant/30">{committees.map(committee => <li key={committee.slug} className="flex gap-4 py-3 text-on-surface"><Link to={`/committees/${committee.slug}`}>{committee.name}</Link><span className="ml-auto text-xs text-on-surface-variant">{committee.category}</span></li>)}</ol>
+      {result.status === 'loading' && (
+        <div role="status" className="divide-y divide-outline-variant/30 border-t border-outline-variant/30">
+          <span className="sr-only">Loading committee directory...</span>
+          {Array.from({ length: 5 }, (_, index) => (
+            <div key={index} className="flex gap-4 py-3">
+              <Skeleton className="h-4 w-1/3" />
+              <Skeleton className="ml-auto h-3 w-16" />
+            </div>
+          ))}
+        </div>
+      )}
+      {result.status === 'error' && <p className="text-sm text-on-surface-variant">Committee directory could not be loaded.</p>}
+      {result.status === 'ready' && (
+        <div>
+          {result.source === 'fallback' && <p className="mb-3 bg-secondary-container px-6 py-3 text-center text-sm text-on-secondary-container">Showing the static committee archive while live committee data is unavailable.</p>}
+          <ol className="divide-y divide-outline-variant/30 border-t border-outline-variant/30">
+            {result.committees.map(committee => (
+              <li key={committee.slug} className="flex items-center gap-3 py-3 text-on-surface">
+                <CommitteeIcon slug={committee.slug} className="h-4 w-4 shrink-0 text-primary" />
+                <Link to={`/committees/${committee.slug}`}>{committee.name}</Link>
+                <span className="ml-auto text-xs text-on-surface-variant">{committee.categoryLabel}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
     </section>
   )
 }
@@ -83,7 +122,25 @@ export default function Home() {
     <PageLayout variant="home">
       <Hero />
       <div>
-        {result.status === 'loading' && <p role="status" aria-live="polite" className="container mx-auto max-w-6xl px-6 py-16 text-on-surface-variant md:px-12">Loading event records...</p>}
+        {result.status === 'loading' && <div role="status" className="container mx-auto max-w-6xl px-6 py-16 md:px-12">
+          <span className="sr-only">Loading event records...</span>
+          <div className="space-y-3 border-l border-primary/40 pl-5">
+            <Skeleton className="h-6 w-32" />
+            <Skeleton className="h-6 w-2/3" />
+            <Skeleton className="h-4 w-1/2" />
+          </div>
+          <div className="mt-10">
+            {Array.from({ length: 3 }, (_, index) => (
+              <div key={index} className="border-b border-outline-variant/40 py-5">
+                <div className="flex items-baseline justify-between gap-2">
+                  <Skeleton className="h-5 w-1/2" />
+                  <Skeleton className="h-3 w-24" />
+                </div>
+                <Skeleton className="mt-3 h-4 w-2/3" />
+              </div>
+            ))}
+          </div>
+        </div>}
         {result.status === 'ready' && <>
           {featuredEvent && <section className="container mx-auto max-w-6xl px-6 py-16 md:px-12"><div className="border-l border-primary/40 pl-5"><h2 className="text-2xl font-bold text-on-surface">Featured next event</h2>{result.source === 'fallback' && <p className="mt-3 text-sm text-on-surface-variant">Showing the static event archive while live event data is unavailable.</p>}<EventRecord event={featuredEvent} /></div></section>}
         </>}

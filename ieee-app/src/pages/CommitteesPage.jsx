@@ -5,6 +5,8 @@ import AnimatedSection from '../components/AnimatedSection'
 import { committeeCategories } from '../data/committees'
 import { findCommitteeLeaders } from '../data/presentation'
 import { fetchAllMembersResult, fetchCommitteesResult } from '../data/committeeSource'
+import Skeleton from '../components/Skeleton'
+import CommitteeIcon from '../components/CommitteeIcon'
 
 const CommitteeGroup = ({ title, committees, members }) => (
   <section>
@@ -15,7 +17,7 @@ const CommitteeGroup = ({ title, committees, members }) => (
         return (
           <li key={committee.slug} className="grid gap-4 py-8 md:grid-cols-[minmax(0,1fr)_10rem] md:gap-8">
             <div>
-              <h3 className="text-xl font-bold text-on-surface">{committee.name}</h3>
+              <h3 className="flex items-center gap-2 text-xl font-bold text-on-surface"><CommitteeIcon slug={committee.slug} className="h-5 w-5 shrink-0 text-primary" />{committee.name}</h3>
               <p className="mt-2 max-w-3xl leading-relaxed text-on-surface-variant">{committee.shortDescription}</p>
               {leaders.length > 0 && <p className="mt-3 flex flex-wrap gap-x-2 text-sm text-on-surface-variant"><span className="font-semibold text-on-surface">Leadership:</span> {leaders.map(leader => <span key={`${leader.name}-${leader.position}`}>{leader.name}</span>)}</p>}
             </div>
@@ -41,7 +43,31 @@ export default function CommitteesPage() {
     return () => { active = false }
   }, [])
 
-  if (!data) return null
+  if (!data) return (
+    <PageLayout>
+      <div role="status" className="container mx-auto max-w-6xl px-6 py-16 sm:px-8 md:px-12 md:py-24">
+        <span className="sr-only">Loading committee records...</span>
+        <Skeleton className="h-12 w-2/3 md:h-16" />
+        <Skeleton className="mt-6 h-5 w-1/2" />
+        <Skeleton className="mt-8 h-8 w-40" />
+        <div className="mt-8 divide-y divide-outline-variant/30 border-t border-outline-variant/30">
+          {Array.from({ length: 5 }, (_, index) => (
+            <div key={index} className="grid gap-4 py-8 md:grid-cols-[minmax(0,1fr)_10rem]">
+              <div className="space-y-3">
+                <Skeleton className="h-6 w-1/3" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-2/3" />
+              </div>
+              <div className="space-y-3 md:text-right">
+                <Skeleton className="h-3 w-24 md:ml-auto" />
+                <Skeleton className="h-4 w-20 md:ml-auto" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </PageLayout>
+  )
 
   const technical = data.committees.filter(committee => committee.category === 'technical')
   const nonTechnical = data.committees.filter(committee => committee.category === 'non-technical')

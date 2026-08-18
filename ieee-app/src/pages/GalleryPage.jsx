@@ -6,6 +6,7 @@ import PageLayout from '../components/PageLayout'
 import { aggregateGallery } from '../data/presentation'
 import { fetchEventsResult } from '../data/eventsSource'
 import { fetchGalleryPhotosResult } from '../data/gallerySource'
+import Skeleton from '../components/Skeleton'
 
 const eventsLink = <Link className="mt-4 inline-flex min-h-11 items-center gap-2 font-bold text-primary" to="/events">Browse events<span className="material-symbols-outlined text-lg" aria-hidden="true">arrow_forward</span></Link>
 
@@ -39,7 +40,7 @@ export default function GalleryPage() {
 
         <section className="pb-20 md:pb-24 lg:pb-32" aria-label="Event photography archive">
           <div className="container mx-auto max-w-7xl px-6 sm:px-8 md:px-12">
-            {status === 'loading' && <div role="status" className="py-16 text-center text-on-surface-variant"><p>Loading event photos...</p>{eventsLink}</div>}
+            {status === 'loading' && <div role="status" className="py-16"><span className="sr-only">Loading event photos...</span><div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">{Array.from({ length: 8 }, (_, index) => <Skeleton key={index} className={index % 3 === 0 ? 'aspect-[3/4] rounded-none' : 'aspect-square rounded-none'} />)}</div>{eventsLink}</div>}
             {status === 'error' && <div role="alert" className="py-16 text-center text-on-surface-variant"><p>Event photos could not be loaded.</p>{eventsLink}</div>}
             {status === 'ready' && <>
               {source === 'fallback' && <p className="mb-8 bg-secondary-container px-6 py-3 text-center text-sm text-on-secondary-container">Showing saved fallback event information while live event data is unavailable.</p>}

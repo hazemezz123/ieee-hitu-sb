@@ -99,6 +99,8 @@ describe('presentation selectors', () => {
       'pr-oc': ['Shahd Rady El-sayed', 'Seif Allah Hany'],
       robotics: ['Ahmed Hamdy', 'Mariam Mohamed Khedr'],
       web: ['Hazem Mohammed'],
+      cs: ['Abdelrhman Saleh Amin', 'Bassam Hossam', 'Omnia Osama Mohammed'],
+      ds: ['Moustafa Maher'],
       'cyber-defensive': [],
       'cyber-offensive': [],
     }

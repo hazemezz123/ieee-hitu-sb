@@ -3,6 +3,8 @@ import { slugify } from '../lib/slugify'
 const committeeAliases = {
   ai: ['AI'],
   automations: ['Automation'],
+  cs: ['CS'],
+  ds: ['DS'],
   embedded: ['Embedded'],
   'hr-td': ['HR', 'T&D'],
   marketing: ['Marketing'],

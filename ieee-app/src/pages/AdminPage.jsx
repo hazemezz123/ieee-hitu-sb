@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { fetchEvents, deleteEvent } from "../data/eventsSource";
 import { ensureSchema } from "../lib/turso";
 import ConfirmDialog from "../components/ConfirmDialog";
+import Skeleton from "../components/Skeleton";
 import GalleryTab from "./admin/GalleryTab";
 import CommitteesTab from "./admin/CommitteesTab";
 
@@ -189,8 +190,21 @@ export default function AdminPage() {
         ) : tab === "committees" ? (
           <CommitteesTab />
         ) : loading ? (
-          <div className="text-center py-16 text-on-surface-variant">
-            Loading...
+          <div role="status" className="overflow-x-auto">
+            <span className="sr-only">Loading...</span>
+            <table className="w-full text-sm">
+              <tbody>
+                {Array.from({ length: 5 }, (_, index) => (
+                  <tr key={index} className="border-b border-outline-variant/10">
+                    <td className="py-3 pr-4"><Skeleton className="h-4 w-40" /></td>
+                    <td className="hidden py-3 pr-4 sm:table-cell"><Skeleton className="h-4 w-24" /></td>
+                    <td className="hidden py-3 pr-4 md:table-cell"><Skeleton className="h-4 w-20" /></td>
+                    <td className="hidden py-3 pr-4 lg:table-cell"><Skeleton className="h-4 w-16" /></td>
+                    <td className="py-3"><div className="flex gap-2"><Skeleton className="h-8 w-16" /><Skeleton className="h-8 w-16" /></div></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         ) : (
           <div className="overflow-x-auto">

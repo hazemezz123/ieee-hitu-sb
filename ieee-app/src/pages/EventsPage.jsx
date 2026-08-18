@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import PageLayout from '../components/PageLayout'
 import EventCard from '../components/EventCard'
+import Skeleton, { EventCardSkeleton } from '../components/Skeleton'
 import { fetchEventsResult } from '../data/eventsSource'
 import { sortEvents } from '../data/presentation'
 
@@ -17,7 +18,17 @@ export default function EventsPage() {
     return () => { active = false }
   }, [])
 
-  if (result.status === 'loading') return <PageLayout><p role="status" className="container mx-auto max-w-6xl px-6 py-24 text-center text-on-surface-variant">Loading event records...</p></PageLayout>
+  if (result.status === 'loading') return <PageLayout>
+    <div className="min-h-screen">
+      <section className="container mx-auto max-w-6xl px-6 py-20 md:px-12 md:py-28"><Skeleton className="h-12 w-2/3 md:h-16" /><Skeleton className="mt-5 h-5 w-1/2" /></section>
+      <div role="status" className="container mx-auto max-w-6xl px-6 pb-16 md:px-12">
+        <span className="sr-only">Loading event records...</span>
+        <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+          {Array.from({ length: 6 }, (_, index) => <EventCardSkeleton key={index} />)}
+        </div>
+      </div>
+    </div>
+  </PageLayout>
   if (result.status === 'error') return <PageLayout><div role="alert" className="container mx-auto max-w-6xl px-6 py-24 text-center"><h1 className="text-3xl font-bold text-on-surface">Event data could not be loaded</h1><p className="mt-3 text-on-surface-variant">Please try the event archive again later.</p></div></PageLayout>
 
   const events = sortEvents(result.events)

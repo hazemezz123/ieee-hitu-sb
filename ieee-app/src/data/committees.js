@@ -90,6 +90,20 @@ export const committees = [
     shortDescription: 'Supports visibility, audience growth, and campaign planning with focused promotional work.',
   }),
   createCommittee({
+    name: 'CS',
+    slug: 'cs',
+    category: 'technical',
+    memberCount: 3,
+    shortDescription: 'Builds strong computer science foundations through problem-solving, algorithms, and hands-on software practice.',
+  }),
+  createCommittee({
+    name: 'DS',
+    slug: 'ds',
+    category: 'technical',
+    memberCount: 1,
+    shortDescription: 'Turns raw data into insight through statistics, analysis, and practical machine learning work.',
+  }),
+  createCommittee({
     name: 'HR - T&D',
     slug: 'hr-td',
     category: 'non-technical',

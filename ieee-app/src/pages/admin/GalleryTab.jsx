@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { addGalleryPhoto, deleteGalleryPhoto, fetchGalleryPhotos } from '../../lib/turso'
 import { uploadToCloudinary } from '../../lib/upload'
 import ConfirmDialog from '../../components/ConfirmDialog'
+import Skeleton from '../../components/Skeleton'
 import PhotoInput from './PhotoInput'
 
 export default function GalleryTab() {
@@ -92,7 +93,18 @@ export default function GalleryTab() {
       </form>
 
       {loading ? (
-        <div className="text-center py-16 text-on-surface-variant">Loading...</div>
+        <div role="status">
+          <span className="sr-only">Loading...</span>
+          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }, (_, index) => (
+              <li key={index} className="card p-4">
+                <Skeleton className="h-44 w-full rounded-none" />
+                <Skeleton className="mt-3 h-4 w-2/3" />
+                <div className="mt-3 flex justify-end"><Skeleton className="h-8 w-16" /></div>
+              </li>
+            ))}
+          </ul>
+        </div>
       ) : photos.length === 0 ? (
         <div className="text-center py-16 text-on-surface-variant">No photos yet.</div>
       ) : (
