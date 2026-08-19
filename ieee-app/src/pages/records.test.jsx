@@ -211,35 +211,22 @@ describe('event records', () => {
     expect(screen.queryByText(/fallback event information/i)).toBeNull()
   })
 
-  it('sorts records, deduplicates slugs, exposes filters, and links titled records', async () => {
+  it('sorts records, deduplicates slugs, and links titled records', async () => {
     fetchEventsResult.mockResolvedValue({ events: [events[0], events[1], { ...events[0], title: 'Duplicate' }], source: 'remote' })
     renderEventRoute('/events')
 
     expect(await screen.findByText('Earlier Event')).toBeTruthy()
     expect(screen.getAllByTestId('event-record').map(row => row.dataset.slug)).toEqual(['earlier', 'later'])
     expect(screen.getByRole('link', { name: /later event/i }).getAttribute('href')).toBe('/events/later')
-    expect(screen.getByRole('combobox', { name: 'Filter by category' })).toBeTruthy()
+    expect(screen.queryByRole('combobox')).toBeNull()
     const records = screen.getByRole('heading', { level: 2, name: 'Event records' })
     expect(records.compareDocumentPosition(screen.getAllByRole('heading', { level: 3 })[0]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
-  it('filters committee values from organizerCommittee', async () => {
-    fetchEventsResult.mockResolvedValue({ events, source: 'remote' })
-    renderEventRoute('/events')
-    const committee = await screen.findByRole('combobox', { name: 'Filter by committee' })
-    expect(within(committee).getByRole('option', { name: 'Web' })).toBeTruthy()
-    fireEvent.change(committee, { target: { value: 'Web' } })
-    expect(screen.getByText('Later Event')).toBeTruthy()
-    expect(screen.queryByText('Earlier Event')).toBeNull()
-  })
-
-  it('shows fallback, remote-empty, and filtered-empty states distinctly', async () => {
+  it('shows fallback and remote-empty states distinctly', async () => {
     fetchEventsResult.mockResolvedValue({ events, source: 'fallback' })
     renderEventRoute('/events')
     expect(await screen.findByText(/showing saved fallback event information/i)).toBeTruthy()
-    fireEvent.change(screen.getByRole('combobox', { name: 'Filter by category' }), { target: { value: 'social' } })
-    fireEvent.change(screen.getByRole('combobox', { name: 'Filter by location' }), { target: { value: 'Lab' } })
-    expect(screen.getByText(/no events match this filter/i)).toBeTruthy()
 
     cleanup()
     fetchEventsResult.mockResolvedValue({ events: [], source: 'remote' })
@@ -341,7 +328,7 @@ describe('event records', () => {
     consoleError.mockRestore()
   })
 
-  it('does not transfer failed media state between slugless records when filtering', async () => {
+  it('does not transfer failed media state between slugless records', async () => {
     const records = [
       { title: 'Broken Workshop', date: '2026-09-01T10:00:00Z', location: 'Lab', category: 'workshops', coverImage: '/broken.jpg' },
       { title: 'Working Social', date: '2026-10-01T10:00:00Z', location: 'Hall', category: 'social', coverImage: '/working.jpg' },
@@ -350,9 +337,9 @@ describe('event records', () => {
     renderEventRoute('/events')
     const broken = (await screen.findByText('Broken Workshop')).closest('article')
     fireEvent.error(within(broken).getByRole('img', { name: 'Broken Workshop' }))
-    fireEvent.change(screen.getByRole('combobox', { name: 'Filter by category' }), { target: { value: 'social' } })
-    expect(screen.queryByRole('img', { name: 'Broken Workshop image unavailable' })).toBeNull()
+    expect(screen.queryByRole('img', { name: 'Broken Workshop image unavailable' })).toBeTruthy()
     expect(screen.getByRole('img', { name: 'Working Social' })).toBeTruthy()
+    expect(screen.queryByRole('img', { name: 'Working Social image unavailable' })).toBeNull()
   })
 
   it('formats detail dates in UTC near midnight', async () => {
