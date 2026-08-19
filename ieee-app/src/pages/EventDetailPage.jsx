@@ -120,7 +120,7 @@ function EventDetail({ slug }) {
           Image unavailable
         </div>
       ) : null}
-      <article className="container mx-auto max-w-5xl px-6 py-16 md:px-12 md:py-14">
+      <article className="container mx-auto max-w-5xl px-6 py-6 md:px-12 md:py-14">
         {state.source === "fallback" && (
           <p className="mt-6 bg-secondary-container px-6 py-3 text-center text-sm text-on-secondary-container">
             Showing saved fallback event information while live event data is
