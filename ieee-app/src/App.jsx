@@ -15,6 +15,7 @@ import GalleryPage from './pages/GalleryPage'
 import ContactPage from './pages/ContactPage'
 import AdminPage from './pages/AdminPage'
 import EventFormPage from './pages/EventFormPage'
+import NotFoundPage from './pages/NotFoundPage'
 
 function AnimatedRoutes() {
   const location = useLocation()
@@ -35,6 +36,7 @@ function AnimatedRoutes() {
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/admin/events/new" element={<EventFormPage />} />
         <Route path="/admin/events/:id/edit" element={<EventFormPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>
   )
