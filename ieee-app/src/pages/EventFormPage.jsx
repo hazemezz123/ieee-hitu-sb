@@ -11,6 +11,7 @@ const categories = [
   { value: 'social', label: 'Social' },
   { value: 'orientation', label: 'Orientation' },
   { value: 'outreach', label: 'Outreach' },
+  { value: 'summit', label: 'Summit' },
 ]
 
 const emptyForm = {
