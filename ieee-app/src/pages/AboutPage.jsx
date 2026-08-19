@@ -1,9 +1,21 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import PageLayout from '../components/PageLayout'
 import { boardMembers } from '../data/boardMembers'
+import { communityPartners } from '../data/partners'
+import { fetchPartners } from '../data/partnersSource'
 
 export default function AboutPage() {
   const leadership = boardMembers.filter(member => /^(Head|Vice Head)$/.test(member.position))
+  const [partnerCount, setPartnerCount] = useState(communityPartners.length)
+
+  useEffect(() => {
+    let active = true
+    fetchPartners()
+      .then(list => { if (active) setPartnerCount(list.length) })
+      .catch(() => {})
+    return () => { active = false }
+  }, [])
 
   return (
     <PageLayout>
@@ -17,7 +29,7 @@ export default function AboutPage() {
         <section className="grid gap-10 border-b border-outline-variant/40 py-12 md:grid-cols-[1fr_1.4fr]">
           <div><p className="section-label">The branch at a glance</p><h2 className="mt-3 text-3xl font-bold text-on-surface">A campus bridge to IEEE</h2></div>
           <div>
-            <div className="grid grid-cols-2 gap-4"><p aria-label="more than 60 sessions"><strong className="block text-3xl text-primary">60+</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">Sessions across all committees</span></p><p aria-label="5 community partnerships"><strong className="block text-3xl text-primary">5</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">Community partnerships</span></p></div>
+            <div className="grid grid-cols-2 gap-4"><p aria-label="more than 60 sessions"><strong className="block text-3xl text-primary">60+</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">Sessions across all committees</span></p><p aria-label={`${partnerCount} community partnerships`}><strong className="block text-3xl text-primary">{partnerCount}</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">Community partnerships</span></p></div>
           </div>
         </section>
 

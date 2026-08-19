@@ -3,16 +3,20 @@ import {
   addGalleryPhoto,
   createCommittee,
   createCommitteeMember,
+  createPartner,
   deleteCommittee,
   deleteCommitteeMember,
   deleteGalleryPhoto,
+  deletePartner,
   ensureSchema,
   fetchAllMembers,
   fetchCommitteeMembers,
   fetchCommittees,
   fetchGalleryPhotos,
+  fetchPartners,
   updateCommittee,
   updateCommitteeMember,
+  updatePartner,
 } from './turso'
 
 function selectResult(cols, rows) {
@@ -32,20 +36,22 @@ function lastBody() {
 }
 
 describe('ensureSchema', () => {
-  it('creates the three tables if they do not exist', async () => {
+  it('creates the four tables if they do not exist', async () => {
     fetchMock.mockResolvedValue({ json: async () => ({ results: [{ type: 'ok', response: { result: { last_insert_rowid: 1, rows_affected: 0 } } }] }) })
     await ensureSchema()
 
-    expect(fetchMock).toHaveBeenCalledTimes(4)
+    expect(fetchMock).toHaveBeenCalledTimes(5)
     const sqls = fetchMock.mock.calls.map(([, options]) => JSON.parse(options.body).requests[0].stmt.sql)
     expect(sqls.join('\n')).toContain('CREATE TABLE IF NOT EXISTS gallery_photos')
     expect(sqls.join('\n')).toContain('CREATE TABLE IF NOT EXISTS committees')
     expect(sqls.join('\n')).toContain('CREATE TABLE IF NOT EXISTS committee_members')
-    expect(sqls[3]).toContain("FROM sqlite_master WHERE type = 'table' AND name = 'events'")
+    expect(sqls.join('\n')).toContain('CREATE TABLE IF NOT EXISTS partners')
+    expect(sqls[4]).toContain("FROM sqlite_master WHERE type = 'table' AND name = 'events'")
   })
 
   it('adds the event_link column when the events table is missing it', async () => {
     const generic = { json: async () => ({ results: [{ type: 'ok', response: { result: { last_insert_rowid: 1, rows_affected: 0 } } }] }) }
+    fetchMock.mockResolvedValueOnce(generic)
     fetchMock.mockResolvedValueOnce(generic)
     fetchMock.mockResolvedValueOnce(generic)
     fetchMock.mockResolvedValueOnce(generic)
@@ -54,7 +60,7 @@ describe('ensureSchema', () => {
     fetchMock.mockResolvedValueOnce(generic)
     await ensureSchema()
 
-    expect(fetchMock).toHaveBeenCalledTimes(6)
+    expect(fetchMock).toHaveBeenCalledTimes(7)
     expect(lastBody().sql).toBe('ALTER TABLE events ADD COLUMN event_link TEXT')
   })
 
@@ -63,11 +69,12 @@ describe('ensureSchema', () => {
     fetchMock.mockResolvedValueOnce(generic)
     fetchMock.mockResolvedValueOnce(generic)
     fetchMock.mockResolvedValueOnce(generic)
+    fetchMock.mockResolvedValueOnce(generic)
     fetchMock.mockResolvedValueOnce({ json: async () => selectResult([{ name: 'name' }], [[text('events')]]) })
     fetchMock.mockResolvedValueOnce({ json: async () => selectResult([{ name: 'name' }], [[text('event_link')]]) })
     await ensureSchema()
 
-    expect(fetchMock).toHaveBeenCalledTimes(5)
+    expect(fetchMock).toHaveBeenCalledTimes(6)
     expect(JSON.parse(fetchMock.mock.calls.at(-1)[1].body).requests[0].stmt.sql).toBe('PRAGMA table_info(events)')
   })
 })
@@ -188,5 +195,35 @@ describe('committee members', () => {
 
     await deleteCommitteeMember(6)
     expect(lastBody().sql).toBe('DELETE FROM committee_members WHERE id = ?')
+  })
+})
+
+describe('partners', () => {
+  it('lists partners with mapped rows', async () => {
+    fetchMock.mockResolvedValue({ json: async () => selectResult(
+      [{ name: 'id' }, { name: 'name' }, { name: 'logo' }],
+      [[integer(1), text('Risk Solutions'), text('https://res.cloudinary.com/dweqigxnz/risks.webp')]],
+    ) })
+    await expect(fetchPartners()).resolves.toEqual([
+      { _id: 1, name: 'Risk Solutions', logo: 'https://res.cloudinary.com/dweqigxnz/risks.webp' },
+    ])
+    expect(lastBody().sql).toContain('SELECT * FROM partners ORDER BY id')
+  })
+
+  it('creates, updates, and deletes a partner', async () => {
+    fetchMock.mockResolvedValue({ json: async () => ({ results: [{ type: 'ok', response: { result: { last_insert_rowid: 7 } } }] }) })
+    await createPartner({ name: 'Make X', logo: 'https://res.cloudinary.com/dweqigxnz/makex.webp' })
+    expect(lastBody().sql).toContain('INSERT INTO partners')
+    expect(lastBody().args).toEqual([
+      { type: 'text', value: 'Make X' }, { type: 'text', value: 'https://res.cloudinary.com/dweqigxnz/makex.webp' },
+    ])
+
+    await updatePartner(7, { name: 'Make X 2026', logo: '' })
+    expect(lastBody().sql).toContain('UPDATE partners SET')
+    expect(lastBody().args.at(-1)).toEqual({ type: 'integer', value: '7' })
+
+    await deletePartner(7)
+    expect(lastBody().sql).toBe('DELETE FROM partners WHERE id = ?')
+    expect(lastBody().args).toEqual([{ type: 'integer', value: '7' }])
   })
 })

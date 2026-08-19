@@ -26,6 +26,10 @@ const turso = vi.hoisted(() => ({
   createCommitteeMember: vi.fn(),
   updateCommitteeMember: vi.fn(),
   deleteCommitteeMember: vi.fn(),
+  fetchPartners: vi.fn(),
+  createPartner: vi.fn(),
+  updatePartner: vi.fn(),
+  deletePartner: vi.fn(),
 }))
 vi.mock('../lib/turso', () => turso)
 vi.mock('../lib/upload', () => ({ uploadToCloudinary: vi.fn() }))
@@ -89,6 +93,8 @@ beforeEach(() => {
   turso.fetchCommittees.mockResolvedValue([])
   turso.fetchCommitteeMembers.mockReset()
   turso.fetchCommitteeMembers.mockResolvedValue([])
+  turso.fetchPartners.mockReset()
+  turso.fetchPartners.mockResolvedValue([])
 })
 
 afterEach(cleanup)
@@ -258,7 +264,7 @@ describe('admin tabs', () => {
     expect(turso.ensureSchema).toHaveBeenCalledOnce()
   })
 
-  it('switches to the gallery and committees tabs', async () => {
+  it('switches to the gallery, committees, and partners tabs', async () => {
     sessionStorage.setItem('admin_auth', 'ieee2026')
     fetchEvents.mockResolvedValue([])
     renderRoute('/admin')
@@ -269,5 +275,8 @@ describe('admin tabs', () => {
 
     fireEvent.click(screen.getByRole('tab', { name: 'Committees' }))
     expect(screen.getByRole('heading', { name: 'Manage Committees' })).toBeTruthy()
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Partners' }))
+    expect(await screen.findByRole('heading', { name: 'Manage Partners' })).toBeTruthy()
   })
 })

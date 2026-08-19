@@ -138,6 +138,11 @@ const SCHEMA_STATEMENTS = [
      phone TEXT,
      img TEXT
    )`,
+  `CREATE TABLE IF NOT EXISTS partners (
+     id INTEGER PRIMARY KEY AUTOINCREMENT,
+     name TEXT NOT NULL,
+     logo TEXT
+   )`,
 ]
 
 export async function ensureSchema() {
@@ -270,4 +275,36 @@ export async function updateCommitteeMember(id, data) {
 
 export async function deleteCommitteeMember(id) {
   await execute('DELETE FROM committee_members WHERE id = ?', [id])
+}
+
+function rowToPartner(row) {
+  return {
+    _id: Number(row.id) || 0,
+    name: String(row.name || ''),
+    logo: row.logo || '',
+  }
+}
+
+export async function fetchPartners() {
+  const result = await execute('SELECT * FROM partners ORDER BY id')
+  return (result?.rows || []).map(rowToPartner)
+}
+
+export async function createPartner(data) {
+  const result = await execute(
+    'INSERT INTO partners (name, logo) VALUES (?, ?)',
+    [data.name, data.logo || '']
+  )
+  return result?.last_insert_rowid
+}
+
+export async function updatePartner(id, data) {
+  await execute(
+    'UPDATE partners SET name = ?, logo = ? WHERE id = ?',
+    [data.name, data.logo || '', id]
+  )
+}
+
+export async function deletePartner(id) {
+  await execute('DELETE FROM partners WHERE id = ?', [id])
 }

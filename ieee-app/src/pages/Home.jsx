@@ -7,7 +7,7 @@ import { fetchCommitteesResult } from '../data/committeeSource'
 import { getNextEvents, getRecentEvents, sortEvents } from '../data/presentation'
 import Skeleton from '../components/Skeleton'
 import CommitteeIcon from '../components/CommitteeIcon'
-import { communityPartners } from '../data/partners'
+import { fetchPartnersResult } from '../data/partnersSource'
 
 const formatDate = date => new Date(date).toLocaleDateString('en-US', { dateStyle: 'medium' })
 
@@ -73,10 +73,24 @@ function CommitteeDirectory() {
 
 
 function PartnershipCarousel() {
+  const [result, setResult] = useState({ partners: [], source: null, status: 'loading' })
+
+  useEffect(() => {
+    let active = true
+    fetchPartnersResult().then(data => {
+      if (active) setResult({ ...data, status: 'ready' })
+    }).catch(() => {
+      if (active) setResult({ partners: [], source: null, status: 'error' })
+    })
+    return () => { active = false }
+  }, [])
+
+  if (result.status !== 'ready' || result.partners.length === 0) return null
+
   const row = isClone => (
     <ul className="partners-row" aria-hidden={isClone}>
-      {communityPartners.map(partner => (
-        <li key={partner.name} className="partner-tile" aria-label={partner.name}>
+      {result.partners.map(partner => (
+        <li key={partner._id ? partner._id : partner.name} className="partner-tile" aria-label={partner.name}>
           {partner.logo ? <img src={partner.logo} alt={partner.name} /> : <span>{partner.name}</span>}
         </li>
       ))}

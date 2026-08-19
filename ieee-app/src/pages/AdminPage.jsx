@@ -6,6 +6,7 @@ import ConfirmDialog from "../components/ConfirmDialog";
 import Skeleton from "../components/Skeleton";
 import GalleryTab from "./admin/GalleryTab";
 import CommitteesTab from "./admin/CommitteesTab";
+import PartnersTab from "./admin/PartnersTab";
 
 const ADMIN_PASSWORD = "ieee2026";
 
@@ -161,7 +162,7 @@ export default function AdminPage() {
         </div>
 
         <div role="tablist" className="mb-8 flex gap-2 border-b border-outline-variant/20">
-          {["events", "gallery", "committees"].map((name) => (
+          {["events", "gallery", "committees", "partners"].map((name) => (
             <button
               key={name}
               role="tab"
@@ -174,7 +175,7 @@ export default function AdminPage() {
                   : "text-on-surface-variant hover:text-on-surface")
               }
             >
-              {name === "events" ? "Events" : name === "gallery" ? "Gallery" : "Committees"}
+              {name === "events" ? "Events" : name === "gallery" ? "Gallery" : name === "committees" ? "Committees" : "Partners"}
             </button>
           ))}
         </div>
@@ -189,6 +190,8 @@ export default function AdminPage() {
           <GalleryTab />
         ) : tab === "committees" ? (
           <CommitteesTab />
+        ) : tab === "partners" ? (
+          <PartnersTab />
         ) : loading ? (
           <div role="status" className="overflow-x-auto">
             <span className="sr-only">Loading...</span>

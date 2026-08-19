@@ -8,10 +8,13 @@ import JoinUsPage from './JoinUsPage'
 import ContactPage from './ContactPage'
 import TechnicalResources from '../components/TechnicalResources'
 import { committees } from '../data/committees'
+import { communityPartners } from '../data/partners'
 
-const { fetchEventsResult, fetchCommitteesResult } = vi.hoisted(() => ({
+const { fetchEventsResult, fetchCommitteesResult, fetchPartnersResult, fetchPartners } = vi.hoisted(() => ({
   fetchEventsResult: vi.fn(),
   fetchCommitteesResult: vi.fn(),
+  fetchPartnersResult: vi.fn(),
+  fetchPartners: vi.fn(),
 }))
 
 globalThis.IntersectionObserver = class {
@@ -22,6 +25,7 @@ globalThis.IntersectionObserver = class {
 
 vi.mock('../data/eventsSource', () => ({ fetchEventsResult }))
 vi.mock('../data/committeeSource', () => ({ fetchCommitteesResult }))
+vi.mock('../data/partnersSource', () => ({ fetchPartnersResult, fetchPartners }))
 
 const events = [
   { slug: 'later', title: 'Later Lab', date: '2026-10-01T10:00:00Z', excerpt: 'Later', location: 'HITU' },
@@ -40,6 +44,10 @@ describe('recruitment pages', () => {
     fetchEventsResult.mockResolvedValue({ events, source: 'remote' })
     fetchCommitteesResult.mockReset()
     fetchCommitteesResult.mockResolvedValue({ committees: structuredClone(committees), source: 'remote' })
+    fetchPartnersResult.mockReset()
+    fetchPartnersResult.mockResolvedValue({ partners: structuredClone(communityPartners), source: 'remote' })
+    fetchPartners.mockReset()
+    fetchPartners.mockResolvedValue(structuredClone(communityPartners))
   })
 
   afterEach(() => {
@@ -68,6 +76,14 @@ describe('recruitment pages', () => {
     expect(screen.getByRole('heading', { level: 3, name: 'Later Lab' })).toBeTruthy()
     const recent = screen.getByRole('heading', { level: 2, name: 'Recent events' }).parentElement.textContent
     expect(recent.indexOf('Recent Workshop')).toBeLessThan(recent.indexOf('Older Workshop'))
+  })
+
+  it('renders community partners from the source in the partnerships carousel', async () => {
+    renderPage(<Home />)
+
+    expect(await screen.findAllByLabelText('Risk Solutions')).toHaveLength(2)
+    expect(screen.getAllByLabelText('IEEE HSB')).toHaveLength(2)
+    expect(screen.getByRole('heading', { name: 'Partners we build with' })).toBeTruthy()
   })
 
   it('orders Home bands as identity, featured, counts, next, directory, and recent', async () => {
