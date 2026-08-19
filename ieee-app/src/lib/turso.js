@@ -24,7 +24,8 @@ async function execute(sql, params = []) {
   const result = item?.response?.result
 
   if (item?.type === 'error') {
-    throw new Error(item.response.error.message)
+    const message = item.response?.error?.message || item.error?.message || 'Database error'
+    throw new Error(message)
   }
 
   if (result?.cols && result?.rows) {

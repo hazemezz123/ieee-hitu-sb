@@ -72,6 +72,15 @@ describe('ensureSchema', () => {
   })
 })
 
+describe('turso error handling', () => {
+  it('surfaces the real message from a top-level error result', async () => {
+    fetchMock.mockResolvedValue({ json: async () => ({
+      results: [{ type: 'error', error: { message: 'SQLite error: table events has no column named event_link', code: 'SQLITE_UNKNOWN' } }],
+    }) })
+    await expect(addGalleryPhoto('https://cdn/x.jpg', 'Caption here')).rejects.toThrow('SQLite error: table events has no column named event_link')
+  })
+})
+
 describe('gallery photos', () => {
   it('maps rows to photo objects', async () => {
     fetchMock.mockResolvedValue({ json: async () => selectResult(
