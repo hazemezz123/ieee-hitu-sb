@@ -148,6 +148,25 @@ describe('event form', () => {
     expect(createEvent).not.toHaveBeenCalled()
   })
 
+  it('uploads a chosen card image file to Cloudinary and saves its URL', async () => {
+    renderRoute()
+    fillRequiredFields()
+    fireEvent.change(screen.getByLabelText('Card Image'), {
+      target: { files: [new File(['x'], 'card.png', { type: 'image/png' })] },
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Create Event' }))
+    await waitFor(() => expect(createEvent).toHaveBeenCalledWith(expect.objectContaining({ cardImage: 'https://cdn/cover.jpg' })))
+  })
+
+  it('skips upload and uses a pasted card image URL', async () => {
+    renderRoute()
+    fillRequiredFields()
+    fireEvent.change(photoUrlInput('Card Image'), { target: { value: 'https://cdn/pasted-card.jpg' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Create Event' }))
+    await waitFor(() => expect(createEvent).toHaveBeenCalledWith(expect.objectContaining({ cardImage: 'https://cdn/pasted-card.jpg' })))
+    expect(uploadToCloudinary).not.toHaveBeenCalled()
+  })
+
   it('adds a gallery image from a pasted URL with caption and saves it', async () => {
     renderRoute()
     fillRequiredFields()

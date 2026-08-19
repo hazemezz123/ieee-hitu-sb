@@ -19,7 +19,7 @@ const categories = [
 
 const emptyForm = {
   title: '', slug: '', date: '', endDate: '', location: '', category: 'workshops',
-  coverImage: '', description: '', gallery: [], organizerCommittee: '', eventLink: '',
+  coverImage: '', cardImage: '', description: '', gallery: [], organizerCommittee: '', eventLink: '',
 }
 
 const normalizeGallery = items => (items || []).map(item => typeof item === 'string'
@@ -34,6 +34,7 @@ export default function EventFormPage() {
   const [hydratedId, setHydratedId] = useState(null)
   const [committees, setCommittees] = useState([])
   const [file, setFile] = useState(null)
+  const [cardFile, setCardFile] = useState(null)
   const [galleryFile, setGalleryFile] = useState(null)
   const [galleryUrl, setGalleryUrl] = useState('')
   const [galleryCaption, setGalleryCaption] = useState('')
@@ -66,6 +67,7 @@ export default function EventFormPage() {
           location: ev.location,
           category: ev.category,
           coverImage: ev.coverImage,
+          cardImage: ev.cardImage || '',
           excerpt: ev.excerpt,
           description: ev.description,
           gallery: normalizeGallery(ev.gallery),
@@ -127,6 +129,16 @@ export default function EventFormPage() {
       }
     }
 
+    let cardImage = form.cardImage.trim()
+    if (cardFile) {
+      try {
+        cardImage = await uploadToCloudinary(cardFile)
+      } catch (err) {
+        setError(err.message)
+        return
+      }
+    }
+
     const gallery = []
     for (const item of form.gallery) {
       if (!item.file) {
@@ -141,7 +153,7 @@ export default function EventFormPage() {
       }
     }
 
-    const data = { ...form, endDate: form.endDate || null, gallery, coverImage, organizerCommittee: form.organizerCommittee || null }
+    const data = { ...form, endDate: form.endDate || null, gallery, coverImage, cardImage, organizerCommittee: form.organizerCommittee || null }
 
     try {
       if (isEdit) {
@@ -218,6 +230,12 @@ export default function EventFormPage() {
           <div>
             <label htmlFor="event-cover-image" className="form-label">Cover Image</label>
             <PhotoInput id="event-cover-image" file={file} setFile={setFile} url={form.coverImage} setUrl={u => setForm({ ...form, coverImage: u })} />
+            <p className="mt-2 text-xs text-on-surface-variant">Shown as the full-width header image on the event page.</p>
+          </div>
+          <div>
+            <label htmlFor="event-card-image" className="form-label">Card Image</label>
+            <PhotoInput id="event-card-image" file={cardFile} setFile={setCardFile} url={form.cardImage} setUrl={u => setForm({ ...form, cardImage: u })} />
+            <p className="mt-2 text-xs text-on-surface-variant">Shown on the event card in the events list.</p>
           </div>
           <div>
             <label htmlFor="event-description" className="form-label">Description</label>

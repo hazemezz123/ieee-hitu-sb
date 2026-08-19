@@ -60,10 +60,12 @@ describe('ensureSchema', () => {
     fetchMock.mockResolvedValueOnce({ json: async () => selectResult([{ name: 'name' }], [[text('title')]]) })
     fetchMock.mockResolvedValueOnce(generic)
     fetchMock.mockResolvedValueOnce(generic)
+    fetchMock.mockResolvedValueOnce(generic)
     await ensureSchema()
 
-    expect(fetchMock).toHaveBeenCalledTimes(8)
+    expect(fetchMock).toHaveBeenCalledTimes(9)
     expect(JSON.parse(fetchMock.mock.calls[6][1].body).requests[0].stmt.sql).toBe('ALTER TABLE events ADD COLUMN event_link TEXT')
+    expect(JSON.parse(fetchMock.mock.calls[7][1].body).requests[0].stmt.sql).toBe('ALTER TABLE events ADD COLUMN card_image TEXT')
   })
 
   it('skips the ALTER when the event_link column already exists', async () => {
@@ -75,10 +77,28 @@ describe('ensureSchema', () => {
     fetchMock.mockResolvedValueOnce({ json: async () => selectResult([{ name: 'name' }], [[text('events')]]) })
     fetchMock.mockResolvedValueOnce({ json: async () => selectResult([{ name: 'name' }], [[text('event_link')]]) })
     fetchMock.mockResolvedValueOnce(generic)
+    fetchMock.mockResolvedValueOnce(generic)
+    await ensureSchema()
+
+    expect(fetchMock).toHaveBeenCalledTimes(8)
+    expect(JSON.parse(fetchMock.mock.calls[5][1].body).requests[0].stmt.sql).toBe('PRAGMA table_info(events)')
+    expect(JSON.parse(fetchMock.mock.calls[6][1].body).requests[0].stmt.sql).toBe('ALTER TABLE events ADD COLUMN card_image TEXT')
+  })
+
+  it('skips both ALTERs when event_link and card_image already exist', async () => {
+    const generic = { json: async () => ({ results: [{ type: 'ok', response: { result: { last_insert_rowid: 1, rows_affected: 0 } } }] }) }
+    fetchMock.mockResolvedValueOnce(generic)
+    fetchMock.mockResolvedValueOnce(generic)
+    fetchMock.mockResolvedValueOnce(generic)
+    fetchMock.mockResolvedValueOnce(generic)
+    fetchMock.mockResolvedValueOnce({ json: async () => selectResult([{ name: 'name' }], [[text('events')]]) })
+    fetchMock.mockResolvedValueOnce({ json: async () => selectResult([{ name: 'name' }], [[text('event_link')], [text('card_image')]]) })
+    fetchMock.mockResolvedValueOnce(generic)
     await ensureSchema()
 
     expect(fetchMock).toHaveBeenCalledTimes(7)
-    expect(JSON.parse(fetchMock.mock.calls[5][1].body).requests[0].stmt.sql).toBe('PRAGMA table_info(events)')
+    const sqls = fetchMock.mock.calls.map(([, options]) => JSON.parse(options.body).requests[0].stmt.sql)
+    expect(sqls.join('\n')).not.toContain('ALTER TABLE')
   })
 
   it('adds the logo_dark column when the partners table is missing it', async () => {

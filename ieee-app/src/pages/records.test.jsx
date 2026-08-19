@@ -261,6 +261,22 @@ describe('event records', () => {
     expect(screen.queryByRole('link', { name: 'Attend' })).toBeNull()
   })
 
+  it('uses the card image on cards and the cover image in the detail header', async () => {
+    fetchEventsResult.mockResolvedValue({
+      events: [{ ...events[0], cardImage: '/later-card.jpg', coverImage: '/later-cover.jpg' }],
+      source: 'remote',
+    })
+    renderEventRoute('/events')
+    expect(await screen.findByRole('img', { name: 'Later Event' }).then(img => img.getAttribute('src'))).toBe('/later-card.jpg')
+
+    cleanup()
+    fetchEventBySlugResult.mockResolvedValue({ event: { ...events[0], cardImage: '/later-card.jpg', coverImage: '/later-cover.jpg' }, source: 'remote' })
+    renderEventRoute('/events/later')
+    const header = await screen.findByRole('img', { name: 'Later Event' })
+    expect(header.getAttribute('src')).toBe('/later-cover.jpg')
+    expect(header.parentElement.classList.contains('container')).toBe(false)
+  })
+
   it('renders detail loading, fallback provenance, and a stable failed cover', async () => {
     let resolve
     fetchEventBySlugResult.mockReturnValue(new Promise(done => { resolve = done }))
