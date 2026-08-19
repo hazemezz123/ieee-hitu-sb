@@ -196,7 +196,7 @@ describe('event form', () => {
 
   it('associates every label, marks required fields, and generates a slug', () => {
     renderRoute('/admin/events/new')
-    for (const label of ['Title', 'Slug', 'Date', 'End Date', 'Location', 'Category', 'Cover Image', 'Description', 'Gallery Image', 'Caption (optional)', 'Organizer Committee (optional)']) {
+    for (const label of ['Title', 'Slug', 'Date', 'End Date', 'Location', 'Category', 'Event Link (optional)', 'Cover Image', 'Description', 'Gallery Image', 'Caption (optional)', 'Organizer Committee (optional)']) {
       expect(screen.getByLabelText(label).id).not.toBe('')
     }
     for (const label of ['Title', 'Slug', 'Date', 'Location']) expect(screen.getByLabelText(label).required).toBe(true)

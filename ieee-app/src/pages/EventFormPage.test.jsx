@@ -208,4 +208,17 @@ describe('event form', () => {
     expect(await screen.findByText('Gallery upload failed')).toBeTruthy()
     expect(createEvent).not.toHaveBeenCalled()
   })
+
+  it('saves an event link and hydrates it on edit', async () => {
+    renderRoute()
+    fillRequiredFields()
+    fireEvent.change(screen.getByLabelText('Event Link (optional)'), { target: { value: 'https://forms.example/register' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Create Event' }))
+    await waitFor(() => expect(createEvent).toHaveBeenCalledWith(expect.objectContaining({ eventLink: 'https://forms.example/register' })))
+
+    cleanup()
+    fetchEvents.mockResolvedValue([{ ...event, eventLink: 'https://forms.example/register' }])
+    renderRoute('/admin/events/7/edit')
+    expect(await screen.findByDisplayValue('https://forms.example/register')).toBeTruthy()
+  })
 })

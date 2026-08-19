@@ -71,6 +71,7 @@ function rowToEvent(row) {
     description: row.description || '',
     gallery: parsedGallery,
     organizerCommittee: row.organizer_committee || null,
+    eventLink: row.event_link || '',
     status,
   }
 }
@@ -89,11 +90,11 @@ export async function fetchEventBySlug(slug) {
 
 export async function createEvent(data) {
   const result = await execute(
-    `INSERT INTO events (title, slug, date, end_date, location, category, cover_image, excerpt, description, gallery, organizer_committee)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO events (title, slug, date, end_date, location, category, cover_image, excerpt, description, gallery, organizer_committee, event_link)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [data.title, data.slug, data.date, data.endDate || null, data.location, data.category,
      data.coverImage || '', data.excerpt || '', data.description || '', JSON.stringify(data.gallery || []),
-     data.organizerCommittee || null]
+     data.organizerCommittee || null, data.eventLink || '']
   )
   return result?.last_insert_rowid
 }
@@ -101,11 +102,11 @@ export async function createEvent(data) {
 export async function updateEvent(id, data) {
   await execute(
     `UPDATE events SET title = ?, slug = ?, date = ?, end_date = ?, location = ?, category = ?,
-     cover_image = ?, excerpt = ?, description = ?, gallery = ?, organizer_committee = ?, updated_at = datetime('now')
+     cover_image = ?, excerpt = ?, description = ?, gallery = ?, organizer_committee = ?, event_link = ?, updated_at = datetime('now')
      WHERE id = ?`,
     [data.title, data.slug, data.date, data.endDate || null, data.location, data.category,
      data.coverImage || '', data.excerpt || '', data.description || '', JSON.stringify(data.gallery || []),
-     data.organizerCommittee || null, id]
+     data.organizerCommittee || null, data.eventLink || '', id]
   )
 }
 
@@ -140,6 +141,14 @@ const SCHEMA_STATEMENTS = [
 
 export async function ensureSchema() {
   for (const sql of SCHEMA_STATEMENTS) await execute(sql)
+
+  const tableResult = await execute("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'events'")
+  if ((tableResult?.rows || []).length > 0) {
+    const info = await execute('PRAGMA table_info(events)')
+    if (!(info?.rows || []).some(row => row.name === 'event_link')) {
+      await execute('ALTER TABLE events ADD COLUMN event_link TEXT')
+    }
+  }
 }
 
 function rowToPhoto(row) {

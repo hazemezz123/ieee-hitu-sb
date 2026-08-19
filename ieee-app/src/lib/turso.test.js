@@ -36,11 +36,39 @@ describe('ensureSchema', () => {
     fetchMock.mockResolvedValue({ json: async () => ({ results: [{ type: 'ok', response: { result: { last_insert_rowid: 1, rows_affected: 0 } } }] }) })
     await ensureSchema()
 
-    expect(fetchMock).toHaveBeenCalledTimes(3)
+    expect(fetchMock).toHaveBeenCalledTimes(4)
     const sqls = fetchMock.mock.calls.map(([, options]) => JSON.parse(options.body).requests[0].stmt.sql)
     expect(sqls.join('\n')).toContain('CREATE TABLE IF NOT EXISTS gallery_photos')
     expect(sqls.join('\n')).toContain('CREATE TABLE IF NOT EXISTS committees')
     expect(sqls.join('\n')).toContain('CREATE TABLE IF NOT EXISTS committee_members')
+    expect(sqls[3]).toContain("FROM sqlite_master WHERE type = 'table' AND name = 'events'")
+  })
+
+  it('adds the event_link column when the events table is missing it', async () => {
+    const generic = { json: async () => ({ results: [{ type: 'ok', response: { result: { last_insert_rowid: 1, rows_affected: 0 } } }] }) }
+    fetchMock.mockResolvedValueOnce(generic)
+    fetchMock.mockResolvedValueOnce(generic)
+    fetchMock.mockResolvedValueOnce(generic)
+    fetchMock.mockResolvedValueOnce({ json: async () => selectResult([{ name: 'name' }], [[text('events')]]) })
+    fetchMock.mockResolvedValueOnce({ json: async () => selectResult([{ name: 'name' }], [[text('title')]]) })
+    fetchMock.mockResolvedValueOnce(generic)
+    await ensureSchema()
+
+    expect(fetchMock).toHaveBeenCalledTimes(6)
+    expect(lastBody().sql).toBe('ALTER TABLE events ADD COLUMN event_link TEXT')
+  })
+
+  it('skips the ALTER when the event_link column already exists', async () => {
+    const generic = { json: async () => ({ results: [{ type: 'ok', response: { result: { last_insert_rowid: 1, rows_affected: 0 } } }] }) }
+    fetchMock.mockResolvedValueOnce(generic)
+    fetchMock.mockResolvedValueOnce(generic)
+    fetchMock.mockResolvedValueOnce(generic)
+    fetchMock.mockResolvedValueOnce({ json: async () => selectResult([{ name: 'name' }], [[text('events')]]) })
+    fetchMock.mockResolvedValueOnce({ json: async () => selectResult([{ name: 'name' }], [[text('event_link')]]) })
+    await ensureSchema()
+
+    expect(fetchMock).toHaveBeenCalledTimes(5)
+    expect(JSON.parse(fetchMock.mock.calls.at(-1)[1].body).requests[0].stmt.sql).toBe('PRAGMA table_info(events)')
   })
 })
 

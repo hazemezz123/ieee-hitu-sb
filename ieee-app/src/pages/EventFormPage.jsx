@@ -19,7 +19,7 @@ const categories = [
 
 const emptyForm = {
   title: '', slug: '', date: '', endDate: '', location: '', category: 'workshops',
-  coverImage: '', description: '', gallery: [], organizerCommittee: '',
+  coverImage: '', description: '', gallery: [], organizerCommittee: '', eventLink: '',
 }
 
 const normalizeGallery = items => (items || []).map(item => typeof item === 'string'
@@ -70,6 +70,7 @@ export default function EventFormPage() {
           description: ev.description,
           gallery: normalizeGallery(ev.gallery),
           organizerCommittee: ev.organizerCommittee || '',
+          eventLink: ev.eventLink || '',
         })
         setHydratedId(id)
       } catch (err) {
@@ -209,6 +210,10 @@ export default function EventFormPage() {
                 {categories.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
               </select>
             </div>
+          </div>
+          <div>
+            <label htmlFor="event-link" className="form-label">Event Link (optional)</label>
+            <input id="event-link" type="url" className="form-input" placeholder="https://" value={form.eventLink} onChange={e => setForm({ ...form, eventLink: e.target.value })} />
           </div>
           <div>
             <label htmlFor="event-cover-image" className="form-label">Cover Image</label>

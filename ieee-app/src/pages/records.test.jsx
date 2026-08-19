@@ -260,6 +260,20 @@ describe('event records', () => {
     expect(screen.queryByRole('img')).toBeNull()
   })
 
+  it('renders an Attend link when the event has a link and omits it otherwise', async () => {
+    fetchEventBySlugResult.mockResolvedValue({ event: { ...events[0], eventLink: 'https://forms.example/register' }, source: 'remote' })
+    renderEventRoute('/events/later')
+    const attend = await screen.findByRole('link', { name: 'Attend' })
+    expect(attend.getAttribute('href')).toBe('https://forms.example/register')
+    expect(attend.getAttribute('target')).toBe('_blank')
+
+    cleanup()
+    fetchEventBySlugResult.mockResolvedValue({ event: events[0], source: 'remote' })
+    renderEventRoute('/events/later')
+    expect(await screen.findByRole('heading', { name: 'Later Event' })).toBeTruthy()
+    expect(screen.queryByRole('link', { name: 'Attend' })).toBeNull()
+  })
+
   it('renders detail loading, fallback provenance, and a stable failed cover', async () => {
     let resolve
     fetchEventBySlugResult.mockReturnValue(new Promise(done => { resolve = done }))
