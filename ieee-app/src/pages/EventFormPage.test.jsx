@@ -111,4 +111,36 @@ describe('event form', () => {
     expect(await screen.findByRole('option', { name: 'PR & OC' })).toBeTruthy()
     expect(screen.getByLabelText('Organizer Committee (optional)').value).toBe('PR & OC')
   })
+
+  it('uploads a chosen cover file to Cloudinary and saves its URL', async () => {
+    renderRoute()
+    fillRequiredFields()
+    fireEvent.change(screen.getByLabelText('Cover Image'), {
+      target: { files: [new File(['x'], 'cover.png', { type: 'image/png' })] },
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Create Event' }))
+    await waitFor(() => expect(uploadToCloudinary).toHaveBeenCalledOnce())
+    await waitFor(() => expect(createEvent).toHaveBeenCalledWith(expect.objectContaining({ coverImage: 'https://cdn/cover.jpg' })))
+  })
+
+  it('skips upload and uses a pasted cover URL', async () => {
+    renderRoute()
+    fillRequiredFields()
+    fireEvent.change(screen.getByPlaceholderText('Or paste an image URL'), { target: { value: 'https://cdn/pasted.jpg' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Create Event' }))
+    await waitFor(() => expect(createEvent).toHaveBeenCalledWith(expect.objectContaining({ coverImage: 'https://cdn/pasted.jpg' })))
+    expect(uploadToCloudinary).not.toHaveBeenCalled()
+  })
+
+  it('shows upload errors and does not save', async () => {
+    uploadToCloudinary.mockRejectedValueOnce(new Error('Upload failed'))
+    renderRoute()
+    fillRequiredFields()
+    fireEvent.change(screen.getByLabelText('Cover Image'), {
+      target: { files: [new File(['x'], 'cover.png', { type: 'image/png' })] },
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Create Event' }))
+    expect(await screen.findByText('Upload failed')).toBeTruthy()
+    expect(createEvent).not.toHaveBeenCalled()
+  })
 })

@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { fetchEvents, createEvent, updateEvent } from '../data/eventsSource'
 import { fetchCommittees } from '../data/committeeSource'
+import { uploadToCloudinary } from '../lib/upload'
 import { slugify } from '../lib/slugify'
+import PhotoInput from './admin/PhotoInput'
 import Skeleton from '../components/Skeleton'
 
 const categories = [
@@ -28,6 +30,7 @@ export default function EventFormPage() {
   const [galleryError, setGalleryError] = useState(null)
   const [hydratedId, setHydratedId] = useState(null)
   const [committees, setCommittees] = useState([])
+  const [file, setFile] = useState(null)
 
   const isEdit = Boolean(id)
   const editLoading = isEdit && hydratedId !== id
@@ -101,7 +104,17 @@ export default function EventFormPage() {
       return
     }
 
-    const data = { ...form, endDate: form.endDate || null, gallery, organizerCommittee: form.organizerCommittee || null }
+    let coverImage = form.coverImage.trim()
+    if (file) {
+      try {
+        coverImage = await uploadToCloudinary(file)
+      } catch (err) {
+        setError(err.message)
+        return
+      }
+    }
+
+    const data = { ...form, endDate: form.endDate || null, gallery, coverImage, organizerCommittee: form.organizerCommittee || null }
 
     try {
       if (isEdit) {
@@ -172,8 +185,8 @@ export default function EventFormPage() {
             </div>
           </div>
           <div>
-            <label htmlFor="event-cover-image" className="form-label">Cover Image URL</label>
-            <input id="event-cover-image" className="form-input" value={form.coverImage} onChange={e => setForm({ ...form, coverImage: e.target.value })} />
+            <label htmlFor="event-cover-image" className="form-label">Cover Image</label>
+            <PhotoInput id="event-cover-image" file={file} setFile={setFile} url={form.coverImage} setUrl={u => setForm({ ...form, coverImage: u })} />
           </div>
           <div>
             <label htmlFor="event-excerpt" className="form-label">Excerpt</label>
