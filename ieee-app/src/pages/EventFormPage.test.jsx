@@ -73,4 +73,42 @@ describe('event form', () => {
     const values = [...screen.getByLabelText('Category').options].map(o => o.value)
     expect(values).toContain('summit')
   })
+
+  it('lists fetched committees in the organizer select with None first', async () => {
+    renderRoute()
+    const select = screen.getByLabelText('Organizer Committee (optional)')
+    expect(await screen.findByRole('option', { name: 'Web' })).toBeTruthy()
+    expect(select.options[0].value).toBe('')
+    expect(select.options[0].text).toBe('None')
+  })
+
+  it('saves the selected committee name', async () => {
+    renderRoute()
+    await screen.findByRole('option', { name: 'Web' })
+    fillRequiredFields()
+    fireEvent.change(screen.getByLabelText('Organizer Committee (optional)'), { target: { value: 'Web' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Create Event' }))
+    await waitFor(() => expect(createEvent).toHaveBeenCalledWith(expect.objectContaining({ organizerCommittee: 'Web' })))
+  })
+
+  it('saves organizerCommittee as null when None is chosen', async () => {
+    renderRoute()
+    fillRequiredFields()
+    fireEvent.click(screen.getByRole('button', { name: 'Create Event' }))
+    await waitFor(() => expect(createEvent).toHaveBeenCalledWith(expect.objectContaining({ organizerCommittee: null })))
+  })
+
+  it('hydrates the organizer select from the event', async () => {
+    fetchEvents.mockResolvedValue([event])
+    renderRoute('/admin/events/7/edit')
+    expect(await screen.findByDisplayValue('Robotics Workshop')).toBeTruthy()
+    expect(screen.getByLabelText('Organizer Committee (optional)').value).toBe('Web')
+  })
+
+  it('keeps a saved committee that no longer exists as an extra option', async () => {
+    fetchEvents.mockResolvedValue([{ ...event, organizerCommittee: 'PR & OC' }])
+    renderRoute('/admin/events/7/edit')
+    expect(await screen.findByRole('option', { name: 'PR & OC' })).toBeTruthy()
+    expect(screen.getByLabelText('Organizer Committee (optional)').value).toBe('PR & OC')
+  })
 })

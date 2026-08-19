@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { fetchEvents, createEvent, updateEvent } from '../data/eventsSource'
+import { fetchCommittees } from '../data/committeeSource'
 import { slugify } from '../lib/slugify'
 import Skeleton from '../components/Skeleton'
 
@@ -26,9 +27,14 @@ export default function EventFormPage() {
   const [error, setError] = useState(null)
   const [galleryError, setGalleryError] = useState(null)
   const [hydratedId, setHydratedId] = useState(null)
+  const [committees, setCommittees] = useState([])
 
   const isEdit = Boolean(id)
   const editLoading = isEdit && hydratedId !== id
+
+  const committeeOptions = form.organizerCommittee && !committees.some(c => c.name === form.organizerCommittee)
+    ? [...committees, { name: form.organizerCommittee }]
+    : committees
 
   useEffect(() => {
     if (!isEdit) return
@@ -68,6 +74,20 @@ export default function EventFormPage() {
     return () => { active = false }
   }, [id, isEdit])
 
+  useEffect(() => {
+    let active = true
+    async function loadCommittees() {
+      try {
+        const items = await fetchCommittees()
+        if (active) setCommittees(items)
+      } catch {
+        // keep the empty list; "None" remains a valid choice
+      }
+    }
+    loadCommittees()
+    return () => { active = false }
+  }, [])
+
   async function handleSave(e) {
     e.preventDefault()
     setError(null)
@@ -81,7 +101,7 @@ export default function EventFormPage() {
       return
     }
 
-    const data = { ...form, endDate: form.endDate || null, gallery }
+    const data = { ...form, endDate: form.endDate || null, gallery, organizerCommittee: form.organizerCommittee || null }
 
     try {
       if (isEdit) {
@@ -169,8 +189,11 @@ export default function EventFormPage() {
             {galleryError && <p id="event-gallery-error" className="mt-2 text-sm text-error">{galleryError}</p>}
           </div>
           <div>
-            <label htmlFor="event-organizer" className="form-label">Organizer Committee</label>
-            <input id="event-organizer" className="form-input" value={form.organizerCommittee} onChange={e => setForm({ ...form, organizerCommittee: e.target.value })} />
+            <label htmlFor="event-organizer" className="form-label">Organizer Committee (optional)</label>
+            <select id="event-organizer" className="form-select" value={form.organizerCommittee} onChange={e => setForm({ ...form, organizerCommittee: e.target.value })}>
+              <option value="">None</option>
+              {committeeOptions.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
+            </select>
           </div>
           <div className="flex gap-3 pt-2">
             <button type="submit" className="btn btn-primary">{isEdit ? 'Update Event' : 'Create Event'}</button>
