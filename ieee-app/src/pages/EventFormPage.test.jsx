@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import EventFormPage from './EventFormPage'
@@ -67,6 +67,10 @@ function fillRequiredFields() {
   fireEvent.change(screen.getByLabelText('Location'), { target: { value: 'Hall A' } })
 }
 
+function photoUrlInput(label) {
+  return within(screen.getByLabelText(label).parentElement.parentElement).getByPlaceholderText('Or paste an image URL')
+}
+
 describe('event form', () => {
   it('offers Summit in the category dropdown', () => {
     renderRoute()
@@ -126,7 +130,7 @@ describe('event form', () => {
   it('skips upload and uses a pasted cover URL', async () => {
     renderRoute()
     fillRequiredFields()
-    fireEvent.change(screen.getByPlaceholderText('Or paste an image URL'), { target: { value: 'https://cdn/pasted.jpg' } })
+    fireEvent.change(photoUrlInput('Cover Image'), { target: { value: 'https://cdn/pasted.jpg' } })
     fireEvent.click(screen.getByRole('button', { name: 'Create Event' }))
     await waitFor(() => expect(createEvent).toHaveBeenCalledWith(expect.objectContaining({ coverImage: 'https://cdn/pasted.jpg' })))
     expect(uploadToCloudinary).not.toHaveBeenCalled()
@@ -141,6 +145,67 @@ describe('event form', () => {
     })
     fireEvent.click(screen.getByRole('button', { name: 'Create Event' }))
     expect(await screen.findByText('Upload failed')).toBeTruthy()
+    expect(createEvent).not.toHaveBeenCalled()
+  })
+
+  it('adds a gallery image from a pasted URL with caption and saves it', async () => {
+    renderRoute()
+    fillRequiredFields()
+    fireEvent.change(photoUrlInput('Gallery Image'), { target: { value: 'https://cdn/g.jpg' } })
+    fireEvent.change(screen.getByLabelText('Caption (optional)'), { target: { value: 'Group photo' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Add Image' }))
+    expect(screen.getByText('Group photo')).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: 'Create Event' }))
+    await waitFor(() => expect(createEvent).toHaveBeenCalledWith(expect.objectContaining({
+      gallery: [{ src: 'https://cdn/g.jpg', caption: 'Group photo' }],
+    })))
+    expect(uploadToCloudinary).not.toHaveBeenCalled()
+  })
+
+  it('uploads a gallery file to Cloudinary on save', async () => {
+    renderRoute()
+    fillRequiredFields()
+    fireEvent.change(screen.getByLabelText('Gallery Image'), {
+      target: { files: [new File(['x'], 'g.png', { type: 'image/png' })] },
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Add Image' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Create Event' }))
+    await waitFor(() => expect(uploadToCloudinary).toHaveBeenCalledOnce())
+    await waitFor(() => expect(createEvent).toHaveBeenCalledWith(expect.objectContaining({
+      gallery: [{ src: 'https://cdn/cover.jpg', caption: '' }],
+    })))
+  })
+
+  it('removes a gallery image from the list', async () => {
+    renderRoute()
+    fireEvent.change(photoUrlInput('Gallery Image'), { target: { value: 'https://cdn/one.jpg' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Add Image' }))
+    fireEvent.change(photoUrlInput('Gallery Image'), { target: { value: 'https://cdn/two.jpg' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Add Image' }))
+    expect(screen.getAllByText('No caption')).toHaveLength(2)
+    fireEvent.click(screen.getAllByRole('button', { name: 'Remove' })[0])
+    expect(screen.getByText('https://cdn/two.jpg')).toBeTruthy()
+    expect(screen.queryByText('https://cdn/one.jpg')).toBeNull()
+  })
+
+  it('hydrates gallery strings and objects into the image list', async () => {
+    fetchEvents.mockResolvedValue([{ ...event, gallery: ['/one.jpg', { src: '/two.jpg', caption: 'Object photo' }] }])
+    renderRoute('/admin/events/7/edit')
+    expect(await screen.findByText('Object photo')).toBeTruthy()
+    expect(screen.getByText('/one.jpg')).toBeTruthy()
+    expect(screen.getByText('/two.jpg')).toBeTruthy()
+  })
+
+  it('shows a gallery upload error and does not save', async () => {
+    uploadToCloudinary.mockRejectedValueOnce(new Error('Gallery upload failed'))
+    renderRoute()
+    fillRequiredFields()
+    fireEvent.change(screen.getByLabelText('Gallery Image'), {
+      target: { files: [new File(['x'], 'g.png', { type: 'image/png' })] },
+    })
+    fireEvent.click(screen.getByRole('button', { name: 'Add Image' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Create Event' }))
+    expect(await screen.findByText('Gallery upload failed')).toBeTruthy()
     expect(createEvent).not.toHaveBeenCalled()
   })
 })

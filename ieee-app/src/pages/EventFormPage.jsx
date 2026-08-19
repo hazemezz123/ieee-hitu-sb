@@ -19,18 +19,24 @@ const categories = [
 
 const emptyForm = {
   title: '', slug: '', date: '', endDate: '', location: '', category: 'workshops',
-  coverImage: '', excerpt: '', description: '', gallery: '[]', organizerCommittee: '',
+  coverImage: '', description: '', gallery: [], organizerCommittee: '',
 }
+
+const normalizeGallery = items => (items || []).map(item => typeof item === 'string'
+  ? { src: item, caption: '' }
+  : { src: item.src || '', caption: item.caption || '' })
 
 export default function EventFormPage() {
   const { id } = useParams()
   const navigate = useNavigate()
   const [form, setForm] = useState(emptyForm)
   const [error, setError] = useState(null)
-  const [galleryError, setGalleryError] = useState(null)
   const [hydratedId, setHydratedId] = useState(null)
   const [committees, setCommittees] = useState([])
   const [file, setFile] = useState(null)
+  const [galleryFile, setGalleryFile] = useState(null)
+  const [galleryUrl, setGalleryUrl] = useState('')
+  const [galleryCaption, setGalleryCaption] = useState('')
 
   const isEdit = Boolean(id)
   const editLoading = isEdit && hydratedId !== id
@@ -62,7 +68,7 @@ export default function EventFormPage() {
           coverImage: ev.coverImage,
           excerpt: ev.excerpt,
           description: ev.description,
-          gallery: JSON.stringify(ev.gallery, null, 2),
+          gallery: normalizeGallery(ev.gallery),
           organizerCommittee: ev.organizerCommittee || '',
         })
         setHydratedId(id)
@@ -91,23 +97,43 @@ export default function EventFormPage() {
     return () => { active = false }
   }, [])
 
+  function handleAddGalleryImage() {
+    if (!galleryFile && !galleryUrl.trim()) return
+    const src = galleryUrl.trim() || URL.createObjectURL(galleryFile)
+    setForm({ ...form, gallery: [...form.gallery, { src, caption: galleryCaption.trim(), ...(galleryFile ? { file: galleryFile } : {}) }] })
+    setGalleryFile(null)
+    setGalleryUrl('')
+    setGalleryCaption('')
+  }
+
+  function handleRemoveGalleryImage(index) {
+    const target = form.gallery[index]
+    if (target.src.startsWith('blob:')) URL.revokeObjectURL(target.src)
+    setForm({ ...form, gallery: form.gallery.filter((_, i) => i !== index) })
+  }
+
   async function handleSave(e) {
     e.preventDefault()
     setError(null)
-    setGalleryError(null)
-    let gallery
-    try {
-      gallery = JSON.parse(form.gallery)
-      if (!Array.isArray(gallery)) throw new Error()
-    } catch {
-      setGalleryError('Gallery must be valid JSON containing an array.')
-      return
-    }
 
     let coverImage = form.coverImage.trim()
     if (file) {
       try {
         coverImage = await uploadToCloudinary(file)
+      } catch (err) {
+        setError(err.message)
+        return
+      }
+    }
+
+    const gallery = []
+    for (const item of form.gallery) {
+      if (!item.file) {
+        gallery.push({ src: item.src, caption: item.caption || '' })
+        continue
+      }
+      try {
+        gallery.push({ src: await uploadToCloudinary(item.file), caption: item.caption || '' })
       } catch (err) {
         setError(err.message)
         return
@@ -189,17 +215,29 @@ export default function EventFormPage() {
             <PhotoInput id="event-cover-image" file={file} setFile={setFile} url={form.coverImage} setUrl={u => setForm({ ...form, coverImage: u })} />
           </div>
           <div>
-            <label htmlFor="event-excerpt" className="form-label">Excerpt</label>
-            <textarea id="event-excerpt" className="form-textarea" style={{ minHeight: '60px' }} value={form.excerpt} onChange={e => setForm({ ...form, excerpt: e.target.value })} />
-          </div>
-          <div>
             <label htmlFor="event-description" className="form-label">Description</label>
             <textarea id="event-description" className="form-textarea" style={{ minHeight: '100px' }} value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} />
           </div>
           <div>
-            <label htmlFor="event-gallery" className="form-label">Gallery (JSON array)</label>
-            <textarea id="event-gallery" className="form-textarea font-mono text-xs" style={{ minHeight: '80px' }} value={form.gallery} onChange={e => { setForm({ ...form, gallery: e.target.value }); setGalleryError(null) }} aria-describedby={galleryError ? 'event-gallery-error' : undefined} aria-invalid={Boolean(galleryError)} />
-            {galleryError && <p id="event-gallery-error" className="mt-2 text-sm text-error">{galleryError}</p>}
+            <label htmlFor="event-gallery-photo" className="form-label">Gallery Image</label>
+            <PhotoInput id="event-gallery-photo" file={galleryFile} setFile={setGalleryFile} url={galleryUrl} setUrl={setGalleryUrl} />
+            <label htmlFor="event-gallery-caption" className="form-label mt-4">Caption (optional)</label>
+            <input id="event-gallery-caption" className="form-input" value={galleryCaption} onChange={e => setGalleryCaption(e.target.value)} />
+            <button type="button" className="btn btn-secondary mt-4" disabled={!galleryFile && !galleryUrl.trim()} onClick={handleAddGalleryImage}>Add Image</button>
+            {form.gallery.length > 0 && (
+              <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+                {form.gallery.map((item, index) => (
+                  <li key={`${item.src}:${index}`} className="card flex items-center gap-3 p-3">
+                    <img src={item.src} alt={item.caption || 'Gallery image'} className="h-16 w-16 rounded-lg object-cover" />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm text-on-surface">{item.caption || 'No caption'}</p>
+                      <p className="truncate text-xs text-on-surface-variant">{item.src}</p>
+                    </div>
+                    <button type="button" className="btn btn-ghost text-xs text-error" onClick={() => handleRemoveGalleryImage(index)}>Remove</button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
           <div>
             <label htmlFor="event-organizer" className="form-label">Organizer Committee (optional)</label>

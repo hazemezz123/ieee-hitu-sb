@@ -67,6 +67,10 @@ function fillRequiredFields() {
   fireEvent.change(screen.getByLabelText('Location'), { target: { value: 'Hall A' } })
 }
 
+function photoUrlInput(label) {
+  return within(screen.getByLabelText(label).parentElement.parentElement).getByPlaceholderText('Or paste an image URL')
+}
+
 beforeEach(() => {
   sessionStorage.clear()
   fetchEvents.mockReset()
@@ -192,7 +196,7 @@ describe('event form', () => {
 
   it('associates every label, marks required fields, and generates a slug', () => {
     renderRoute('/admin/events/new')
-    for (const label of ['Title', 'Slug', 'Date', 'End Date', 'Location', 'Category', 'Cover Image', 'Excerpt', 'Description', 'Gallery (JSON array)', 'Organizer Committee (optional)']) {
+    for (const label of ['Title', 'Slug', 'Date', 'End Date', 'Location', 'Category', 'Cover Image', 'Description', 'Gallery Image', 'Caption (optional)', 'Organizer Committee (optional)']) {
       expect(screen.getByLabelText(label).id).not.toBe('')
     }
     for (const label of ['Title', 'Slug', 'Date', 'Location']) expect(screen.getByLabelText(label).required).toBe(true)
@@ -201,34 +205,25 @@ describe('event form', () => {
     expect(screen.getByLabelText('Slug').value).toBe('ai-robotics-101')
   })
 
-  it('hydrates an edit form and updates valid gallery data', async () => {
+  it('hydrates an edit form and updates gallery data', async () => {
     fetchEvents.mockResolvedValue([event])
     renderRoute('/admin/events/7/edit')
     expect(await screen.findByDisplayValue('Robotics Workshop')).toBeTruthy()
-    expect(screen.getByLabelText('Gallery (JSON array)').value).toContain('/one.jpg')
-    fireEvent.change(screen.getByLabelText('Gallery (JSON array)'), { target: { value: '["/new.jpg"]' } })
+    expect(screen.getByText('/one.jpg')).toBeTruthy()
+    fireEvent.change(photoUrlInput('Gallery Image'), { target: { value: 'https://cdn/new.jpg' } })
+    fireEvent.change(screen.getByLabelText('Caption (optional)'), { target: { value: 'New photo' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Add Image' }))
     fireEvent.click(screen.getByRole('button', { name: 'Update Event' }))
-    expect(updateEvent).toHaveBeenCalledWith(7, expect.objectContaining({ gallery: ['/new.jpg'] }))
+    expect(updateEvent).toHaveBeenCalledWith(7, expect.objectContaining({ gallery: [{ src: '/one.jpg', caption: '' }, { src: 'https://cdn/new.jpg', caption: 'New photo' }] }))
   })
 
-  it('creates an event with valid gallery JSON', async () => {
+  it('creates an event with gallery images', async () => {
     renderRoute('/admin/events/new')
     fillRequiredFields()
-    fireEvent.change(screen.getByLabelText('Gallery (JSON array)'), { target: { value: '["/gallery.jpg"]' } })
+    fireEvent.change(photoUrlInput('Gallery Image'), { target: { value: 'https://cdn/gallery.jpg' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Add Image' }))
     fireEvent.click(screen.getByRole('button', { name: 'Create Event' }))
-    expect(createEvent).toHaveBeenCalledWith(expect.objectContaining({ slug: 'new-ai-session', gallery: ['/gallery.jpg'] }))
-  })
-
-  it.each(['{bad json', '{"image":"/one.jpg"}'])('keeps invalid gallery input and blocks save: %s', input => {
-    renderRoute('/admin/events/new')
-    fillRequiredFields()
-    const gallery = screen.getByLabelText('Gallery (JSON array)')
-    fireEvent.change(gallery, { target: { value: input } })
-    fireEvent.click(screen.getByRole('button', { name: 'Create Event' }))
-    const message = screen.getByText(/gallery must be valid json containing an array/i)
-    expect(message.previousElementSibling).toBe(gallery)
-    expect(gallery.value).toBe(input)
-    expect(createEvent).not.toHaveBeenCalled()
+    expect(createEvent).toHaveBeenCalledWith(expect.objectContaining({ slug: 'new-ai-session', gallery: [{ src: 'https://cdn/gallery.jpg', caption: '' }] }))
   })
 
   it('retains form data after an API failure', async () => {
