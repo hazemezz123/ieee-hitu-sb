@@ -325,6 +325,7 @@ a { text-underline-offset: 0.2em; }
 .carousel-track:hover { animation-play-state: paused; }
 .partners-row { display: flex; gap: 1rem; padding-inline: 0.5rem; }
 .partner-tile { display: flex; min-width: 14rem; height: 6rem; align-items: center; justify-content: center; padding-inline: 1.5rem; color: var(--text-muted); font-weight: 700; letter-spacing: 0.05em; }
+.partner-tile--dark { background: var(--surface-inverse); border-radius: 0.75rem; }
 .partner-tile img { max-height: 5rem; max-width: 12rem; object-fit: contain; }
 @keyframes marquee { to { transform: translateX(-50%); } }
 

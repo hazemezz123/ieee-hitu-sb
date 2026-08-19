@@ -86,6 +86,20 @@ describe('recruitment pages', () => {
     expect(screen.getByRole('heading', { name: 'Partners we build with' })).toBeTruthy()
   })
 
+  it('gives light-colored logos a dark tile', async () => {
+    fetchPartnersResult.mockResolvedValue({
+      partners: [{ name: 'White Logo Co', logo: 'https://cdn/white.png', logoDark: true }],
+      source: 'remote',
+    })
+    renderPage(<Home />)
+
+    const tiles = await screen.findAllByLabelText('White Logo Co')
+    expect(tiles).toHaveLength(2)
+    for (const tile of tiles) {
+      expect(tile.className).toContain('partner-tile--dark')
+    }
+  })
+
   it('orders Home bands as identity, featured, counts, next, directory, and recent', async () => {
     renderPage(<Home />)
 

@@ -35,7 +35,7 @@ describe('partners tab', () => {
   })
 
   it('creates a partner with an uploaded logo', async () => {
-    fetchPartners.mockResolvedValueOnce([]).mockResolvedValueOnce([{ _id: 2, name: 'Make X', logo: 'https://cdn/uploaded.jpg' }])
+    fetchPartners.mockResolvedValueOnce([]).mockResolvedValueOnce([{ _id: 2, name: 'Make X', logo: 'https://cdn/uploaded.jpg', logoDark: true }])
     render(<PartnersTab />)
     await screen.findByText('0 partners')
 
@@ -44,11 +44,12 @@ describe('partners tab', () => {
     fireEvent.change(screen.getByLabelText('Logo'), {
       target: { files: [new File(['x'], 'makex.png', { type: 'image/png' })] },
     })
+    fireEvent.click(screen.getByLabelText('Dark logo background'))
     fireEvent.click(screen.getByRole('button', { name: 'Save Partner' }))
 
     expect(await screen.findByText('Make X')).toBeTruthy()
     expect(uploadToCloudinary).toHaveBeenCalledOnce()
-    expect(createPartner).toHaveBeenCalledWith({ name: 'Make X', logo: 'https://cdn/uploaded.jpg' })
+    expect(createPartner).toHaveBeenCalledWith({ name: 'Make X', logo: 'https://cdn/uploaded.jpg', logoDark: true })
   })
 
   it('creates a partner from a pasted logo URL when no file is chosen', async () => {
@@ -63,11 +64,11 @@ describe('partners tab', () => {
 
     await screen.findByText('0 partners')
     expect(uploadToCloudinary).not.toHaveBeenCalled()
-    expect(createPartner).toHaveBeenCalledWith({ name: 'Pasted Co', logo: 'https://cdn/pasted.png' })
+    expect(createPartner).toHaveBeenCalledWith({ name: 'Pasted Co', logo: 'https://cdn/pasted.png', logoDark: false })
   })
 
   it('edits a partner and replaces its logo', async () => {
-    fetchPartners.mockResolvedValueOnce([partner]).mockResolvedValueOnce([{ ...partner, name: 'Risk Solutions Ltd', logo: 'https://cdn/uploaded.jpg' }])
+    fetchPartners.mockResolvedValueOnce([partner]).mockResolvedValueOnce([{ ...partner, name: 'Risk Solutions Ltd', logo: 'https://cdn/uploaded.jpg', logoDark: true }])
     render(<PartnersTab />)
     await screen.findByText('Risk Solutions')
 
@@ -76,11 +77,12 @@ describe('partners tab', () => {
     fireEvent.change(screen.getByLabelText('Logo'), {
       target: { files: [new File(['x'], 'new.png', { type: 'image/png' })] },
     })
+    fireEvent.click(screen.getByLabelText('Dark logo background'))
     fireEvent.click(screen.getByRole('button', { name: 'Save Partner' }))
 
     expect(await screen.findByText('Risk Solutions Ltd')).toBeTruthy()
     expect(uploadToCloudinary).toHaveBeenCalledOnce()
-    expect(updatePartner).toHaveBeenCalledWith(1, { _id: 1, name: 'Risk Solutions Ltd', logo: 'https://cdn/uploaded.jpg' })
+    expect(updatePartner).toHaveBeenCalledWith(1, { _id: 1, name: 'Risk Solutions Ltd', logo: 'https://cdn/uploaded.jpg', logoDark: true })
   })
 
   it('shows upload errors and keeps the form open', async () => {

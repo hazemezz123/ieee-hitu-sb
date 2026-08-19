@@ -40,13 +40,14 @@ describe('ensureSchema', () => {
     fetchMock.mockResolvedValue({ json: async () => ({ results: [{ type: 'ok', response: { result: { last_insert_rowid: 1, rows_affected: 0 } } }] }) })
     await ensureSchema()
 
-    expect(fetchMock).toHaveBeenCalledTimes(5)
+    expect(fetchMock).toHaveBeenCalledTimes(6)
     const sqls = fetchMock.mock.calls.map(([, options]) => JSON.parse(options.body).requests[0].stmt.sql)
     expect(sqls.join('\n')).toContain('CREATE TABLE IF NOT EXISTS gallery_photos')
     expect(sqls.join('\n')).toContain('CREATE TABLE IF NOT EXISTS committees')
     expect(sqls.join('\n')).toContain('CREATE TABLE IF NOT EXISTS committee_members')
     expect(sqls.join('\n')).toContain('CREATE TABLE IF NOT EXISTS partners')
     expect(sqls[4]).toContain("FROM sqlite_master WHERE type = 'table' AND name = 'events'")
+    expect(sqls[5]).toContain("FROM sqlite_master WHERE type = 'table' AND name = 'partners'")
   })
 
   it('adds the event_link column when the events table is missing it', async () => {
@@ -58,10 +59,11 @@ describe('ensureSchema', () => {
     fetchMock.mockResolvedValueOnce({ json: async () => selectResult([{ name: 'name' }], [[text('events')]]) })
     fetchMock.mockResolvedValueOnce({ json: async () => selectResult([{ name: 'name' }], [[text('title')]]) })
     fetchMock.mockResolvedValueOnce(generic)
+    fetchMock.mockResolvedValueOnce(generic)
     await ensureSchema()
 
-    expect(fetchMock).toHaveBeenCalledTimes(7)
-    expect(lastBody().sql).toBe('ALTER TABLE events ADD COLUMN event_link TEXT')
+    expect(fetchMock).toHaveBeenCalledTimes(8)
+    expect(JSON.parse(fetchMock.mock.calls[6][1].body).requests[0].stmt.sql).toBe('ALTER TABLE events ADD COLUMN event_link TEXT')
   })
 
   it('skips the ALTER when the event_link column already exists', async () => {
@@ -72,10 +74,27 @@ describe('ensureSchema', () => {
     fetchMock.mockResolvedValueOnce(generic)
     fetchMock.mockResolvedValueOnce({ json: async () => selectResult([{ name: 'name' }], [[text('events')]]) })
     fetchMock.mockResolvedValueOnce({ json: async () => selectResult([{ name: 'name' }], [[text('event_link')]]) })
+    fetchMock.mockResolvedValueOnce(generic)
     await ensureSchema()
 
-    expect(fetchMock).toHaveBeenCalledTimes(6)
-    expect(JSON.parse(fetchMock.mock.calls.at(-1)[1].body).requests[0].stmt.sql).toBe('PRAGMA table_info(events)')
+    expect(fetchMock).toHaveBeenCalledTimes(7)
+    expect(JSON.parse(fetchMock.mock.calls[5][1].body).requests[0].stmt.sql).toBe('PRAGMA table_info(events)')
+  })
+
+  it('adds the logo_dark column when the partners table is missing it', async () => {
+    const generic = { json: async () => ({ results: [{ type: 'ok', response: { result: { last_insert_rowid: 1, rows_affected: 0 } } }] }) }
+    fetchMock.mockResolvedValueOnce(generic)
+    fetchMock.mockResolvedValueOnce(generic)
+    fetchMock.mockResolvedValueOnce(generic)
+    fetchMock.mockResolvedValueOnce(generic)
+    fetchMock.mockResolvedValueOnce(generic)
+    fetchMock.mockResolvedValueOnce({ json: async () => selectResult([{ name: 'name' }], [[text('partners')]]) })
+    fetchMock.mockResolvedValueOnce({ json: async () => selectResult([{ name: 'name' }], [[text('id')]]) })
+    fetchMock.mockResolvedValueOnce(generic)
+    await ensureSchema()
+
+    expect(fetchMock).toHaveBeenCalledTimes(8)
+    expect(lastBody().sql).toBe('ALTER TABLE partners ADD COLUMN logo_dark INTEGER DEFAULT 0')
   })
 })
 
@@ -201,26 +220,28 @@ describe('committee members', () => {
 describe('partners', () => {
   it('lists partners with mapped rows', async () => {
     fetchMock.mockResolvedValue({ json: async () => selectResult(
-      [{ name: 'id' }, { name: 'name' }, { name: 'logo' }],
-      [[integer(1), text('Risk Solutions'), text('https://res.cloudinary.com/dweqigxnz/risks.webp')]],
+      [{ name: 'id' }, { name: 'name' }, { name: 'logo' }, { name: 'logo_dark' }],
+      [[integer(1), text('Risk Solutions'), text('https://res.cloudinary.com/dweqigxnz/risks.webp'), text('1')]],
     ) })
     await expect(fetchPartners()).resolves.toEqual([
-      { _id: 1, name: 'Risk Solutions', logo: 'https://res.cloudinary.com/dweqigxnz/risks.webp' },
+      { _id: 1, name: 'Risk Solutions', logo: 'https://res.cloudinary.com/dweqigxnz/risks.webp', logoDark: true },
     ])
     expect(lastBody().sql).toContain('SELECT * FROM partners ORDER BY id')
   })
 
   it('creates, updates, and deletes a partner', async () => {
     fetchMock.mockResolvedValue({ json: async () => ({ results: [{ type: 'ok', response: { result: { last_insert_rowid: 7 } } }] }) })
-    await createPartner({ name: 'Make X', logo: 'https://res.cloudinary.com/dweqigxnz/makex.webp' })
+    await createPartner({ name: 'Make X', logo: 'https://res.cloudinary.com/dweqigxnz/makex.webp', logoDark: true })
     expect(lastBody().sql).toContain('INSERT INTO partners')
     expect(lastBody().args).toEqual([
-      { type: 'text', value: 'Make X' }, { type: 'text', value: 'https://res.cloudinary.com/dweqigxnz/makex.webp' },
+      { type: 'text', value: 'Make X' }, { type: 'text', value: 'https://res.cloudinary.com/dweqigxnz/makex.webp' }, { type: 'integer', value: '1' },
     ])
 
-    await updatePartner(7, { name: 'Make X 2026', logo: '' })
+    await updatePartner(7, { name: 'Make X 2026', logo: '', logoDark: false })
     expect(lastBody().sql).toContain('UPDATE partners SET')
-    expect(lastBody().args.at(-1)).toEqual({ type: 'integer', value: '7' })
+    expect(lastBody().args).toEqual([
+      { type: 'text', value: 'Make X 2026' }, { type: 'text', value: '' }, { type: 'integer', value: '0' }, { type: 'integer', value: '7' },
+    ])
 
     await deletePartner(7)
     expect(lastBody().sql).toBe('DELETE FROM partners WHERE id = ?')

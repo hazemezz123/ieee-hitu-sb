@@ -141,7 +141,8 @@ const SCHEMA_STATEMENTS = [
   `CREATE TABLE IF NOT EXISTS partners (
      id INTEGER PRIMARY KEY AUTOINCREMENT,
      name TEXT NOT NULL,
-     logo TEXT
+     logo TEXT,
+     logo_dark INTEGER DEFAULT 0
    )`,
 ]
 
@@ -153,6 +154,14 @@ export async function ensureSchema() {
     const info = await execute('PRAGMA table_info(events)')
     if (!(info?.rows || []).some(row => row.name === 'event_link')) {
       await execute('ALTER TABLE events ADD COLUMN event_link TEXT')
+    }
+  }
+
+  const partnerTableResult = await execute("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'partners'")
+  if ((partnerTableResult?.rows || []).length > 0) {
+    const info = await execute('PRAGMA table_info(partners)')
+    if (!(info?.rows || []).some(row => row.name === 'logo_dark')) {
+      await execute('ALTER TABLE partners ADD COLUMN logo_dark INTEGER DEFAULT 0')
     }
   }
 }
@@ -282,6 +291,7 @@ function rowToPartner(row) {
     _id: Number(row.id) || 0,
     name: String(row.name || ''),
     logo: row.logo || '',
+    logoDark: Boolean(Number(row.logo_dark)),
   }
 }
 
@@ -292,16 +302,16 @@ export async function fetchPartners() {
 
 export async function createPartner(data) {
   const result = await execute(
-    'INSERT INTO partners (name, logo) VALUES (?, ?)',
-    [data.name, data.logo || '']
+    'INSERT INTO partners (name, logo, logo_dark) VALUES (?, ?, ?)',
+    [data.name, data.logo || '', data.logoDark ? 1 : 0]
   )
   return result?.last_insert_rowid
 }
 
 export async function updatePartner(id, data) {
   await execute(
-    'UPDATE partners SET name = ?, logo = ? WHERE id = ?',
-    [data.name, data.logo || '', id]
+    'UPDATE partners SET name = ?, logo = ?, logo_dark = ? WHERE id = ?',
+    [data.name, data.logo || '', data.logoDark ? 1 : 0, id]
   )
 }
 

@@ -90,7 +90,7 @@ function PartnershipCarousel() {
   const row = isClone => (
     <ul className="partners-row" aria-hidden={isClone}>
       {result.partners.map(partner => (
-        <li key={partner._id ? partner._id : partner.name} className="partner-tile" aria-label={partner.name}>
+        <li key={partner._id ? partner._id : partner.name} className={`partner-tile${partner.logoDark ? ' partner-tile--dark' : ''}`} aria-label={partner.name}>
           {partner.logo ? <img src={partner.logo} alt={partner.name} /> : <span>{partner.name}</span>}
         </li>
       ))}

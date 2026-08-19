@@ -5,7 +5,7 @@ import ConfirmDialog from '../../components/ConfirmDialog'
 import Skeleton from '../../components/Skeleton'
 import PhotoInput from './PhotoInput'
 
-const emptyForm = { name: '', logo: '' }
+const emptyForm = { name: '', logo: '', logoDark: false }
 
 export default function PartnersTab() {
   const [partners, setPartners] = useState([])
@@ -99,6 +99,16 @@ export default function PartnersTab() {
           url={logoUrl}
           setUrl={setLogoUrl}
         />
+        <label className="mt-4 flex items-center gap-2 text-sm font-medium text-on-surface" htmlFor="partner-logo-dark">
+          <input
+            id="partner-logo-dark"
+            type="checkbox"
+            className="h-4 w-4 accent-primary"
+            checked={!!partnerForm.logoDark}
+            onChange={e => setPartnerForm({ ...partnerForm, logoDark: e.target.checked })}
+          />
+          Dark logo background
+        </label>
         <button type="submit" className="btn btn-primary mt-6" disabled={saving}>
           {saving ? 'Saving...' : 'Save Partner'}
         </button>
