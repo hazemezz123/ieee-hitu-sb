@@ -78,6 +78,19 @@ describe('recruitment pages', () => {
     expect(recent.indexOf('Recent Workshop')).toBeLessThan(recent.indexOf('Older Workshop'))
   })
 
+  it('shows the featured event image clearly on the home page', async () => {
+    fetchEventsResult.mockResolvedValue({
+      events: [{ ...events[0], cardImage: '/later-card.jpg', coverImage: '/later-cover.jpg' }],
+      source: 'remote',
+    })
+    renderPage(<Home />)
+
+    const featured = await screen.findByRole('img', { name: 'Later Lab' })
+    expect(featured.getAttribute('src')).toBe('/later-card.jpg')
+    expect(featured.closest('article').className).toContain('grid')
+    expect(screen.getByRole('link', { name: 'Read Later Lab event record' }).getAttribute('href')).toBe('/events/later')
+  })
+
   it('renders community partners from the source in the partnerships carousel', async () => {
     renderPage(<Home />)
 
