@@ -1,7 +1,7 @@
-import { communityPartners as staticPartners } from './partners'
-import { fetchPartners as tursoFetchPartners } from '../lib/turso'
+import { communityPartners as staticPartners } from '../data/partners'
+import { fetchPartners as tursoFetchPartners } from '@/lib/turso'
 
-export { createPartner, updatePartner, deletePartner } from '../lib/turso'
+export { createPartner, updatePartner, deletePartner } from '@/lib/turso'
 
 export async function fetchPartnersResult() {
   try {

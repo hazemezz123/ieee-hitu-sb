@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { boardMembers } from '@/data/boardMembers'
-import { committees } from '@/data/committees'
+import { boardMembers } from '@/features/about/data/boardMembers'
+import { committees } from '@/features/committees/data/committees'
 import {
   aggregateGallery,
   findCommitteeLeaders,

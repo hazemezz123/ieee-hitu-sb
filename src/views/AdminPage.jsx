@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { fetchEvents, deleteEvent } from "../data/eventsSource";
+import { fetchEvents, deleteEvent } from "@/features/events/hooks/useEvents";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import Skeleton from "@/components/ui/Skeleton";
 import GalleryTab from "./admin/GalleryTab";

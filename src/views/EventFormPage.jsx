@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { fetchEvents, createEvent, updateEvent } from '../data/eventsSource'
-import { fetchCommittees } from '../data/committeeSource'
+import { fetchEvents, createEvent, updateEvent } from '@/features/events/hooks/useEvents'
+import { fetchCommittees } from '@/features/committees/hooks/useCommittees'
 import { uploadToCloudinary } from '../lib/upload'
 import { slugify } from '../lib/slugify'
 import PhotoInput from './admin/PhotoInput'

@@ -46,7 +46,7 @@ const { fetchEvents, createEvent, updateEvent, deleteEvent } = vi.hoisted(() => 
   deleteEvent: vi.fn(),
 }))
 
-vi.mock('../data/eventsSource', () => ({ fetchEvents, createEvent, updateEvent, deleteEvent }))
+vi.mock('@/features/events/hooks/useEvents', () => ({ fetchEvents, createEvent, updateEvent, deleteEvent }))
 
 const turso = vi.hoisted(() => ({
   ensureSchema: vi.fn(),

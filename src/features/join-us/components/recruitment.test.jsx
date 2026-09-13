@@ -1,13 +1,13 @@
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import Home from './Home'
-import AboutPage from './AboutPage'
-import MembershipPage from './MembershipPage'
+import Home from '@/views/Home'
+import AboutPage from '@/features/about/components/AboutPage'
+import MembershipPage from '@/features/membership/components/MembershipPage'
 import JoinUsPage from './JoinUsPage'
-import ContactPage from './ContactPage'
+import ContactPage from '@/features/contact/components/ContactPage'
 import TechnicalResources from '@/components/ui/TechnicalResources'
-import { committees } from '../data/committees'
-import { communityPartners } from '../data/partners'
+import { committees } from '@/features/committees/data/committees'
+import { communityPartners } from '@/features/home/data/partners'
 
 const { fetchEventsResult, fetchCommitteesResult, fetchPartnersResult, fetchPartners } = vi.hoisted(() => ({
   fetchEventsResult: vi.fn(),
@@ -26,9 +26,9 @@ vi.mock('next/link', () => ({
   default: ({ href, children, ...rest }) => <a href={href} {...rest}>{children}</a>,
 }))
 
-vi.mock('../data/eventsSource', () => ({ fetchEventsResult }))
-vi.mock('../data/committeeSource', () => ({ fetchCommitteesResult }))
-vi.mock('../data/partnersSource', () => ({ fetchPartnersResult, fetchPartners }))
+vi.mock('@/features/events/hooks/useEvents', () => ({ fetchEventsResult }))
+vi.mock('@/features/committees/hooks/useCommittees', () => ({ fetchCommitteesResult }))
+vi.mock('@/features/home/hooks/usePartners', () => ({ fetchPartnersResult, fetchPartners }))
 
 const events = [
   { slug: 'later', title: 'Later Lab', date: '2026-10-01T10:00:00Z', excerpt: 'Later', location: 'HITU' },

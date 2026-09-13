@@ -3,12 +3,12 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Hero from '@/components/ui/Hero'
-import { fetchEventsResult } from '../data/eventsSource'
-import { fetchCommitteesResult } from '../data/committeeSource'
+import { fetchEventsResult } from '@/features/events/hooks/useEvents'
+import { fetchCommitteesResult } from '@/features/committees/hooks/useCommittees'
 import { getNextEvents, getRecentEvents, sortEvents } from '@/lib/presentation'
 import Skeleton from '@/components/ui/Skeleton'
 import CommitteeIcon from '@/components/ui/CommitteeIcon'
-import { fetchPartnersResult } from '../data/partnersSource'
+import { fetchPartnersResult } from '@/features/home/hooks/usePartners'
 
 const formatDate = date => new Date(date).toLocaleDateString('en-US', { dateStyle: 'medium' })
 

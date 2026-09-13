@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { boardMembers } from '../data/boardMembers'
-import { communityPartners } from '../data/partners'
-import { fetchPartners } from '../data/partnersSource'
+import { boardMembers } from '@/features/about/data/boardMembers'
+import { communityPartners } from '@/features/home/data/partners'
+import { fetchPartners } from '@/features/home/hooks/usePartners'
 
 export default function AboutPage() {
   const leadership = boardMembers.filter(member => /^(Head|Vice Head)$/.test(member.position))

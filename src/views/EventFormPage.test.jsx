@@ -17,8 +17,8 @@ const { fetchEvents, createEvent, updateEvent, fetchCommittees, uploadToCloudina
   uploadToCloudinary: vi.fn(),
 }))
 
-vi.mock('../data/eventsSource', () => ({ fetchEvents, createEvent, updateEvent }))
-vi.mock('../data/committeeSource', () => ({ fetchCommittees }))
+vi.mock('@/features/events/hooks/useEvents', () => ({ fetchEvents, createEvent, updateEvent }))
+vi.mock('@/features/committees/hooks/useCommittees', () => ({ fetchCommittees }))
 vi.mock('../lib/upload', () => ({ uploadToCloudinary }))
 
 const committees = [

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { communityPartners as staticPartners } from './partners'
+import { communityPartners as staticPartners } from '../data/partners'
 
 const turso = vi.hoisted(() => ({
   createPartner: vi.fn(),
@@ -8,7 +8,7 @@ const turso = vi.hoisted(() => ({
   updatePartner: vi.fn(),
 }))
 
-vi.mock('../lib/turso', () => turso)
+vi.mock('@/lib/turso', () => turso)
 
 import {
   createPartner,
@@ -16,7 +16,7 @@ import {
   fetchPartners,
   fetchPartnersResult,
   updatePartner,
-} from './partnersSource'
+} from './usePartners'
 
 describe('partner source', () => {
   beforeEach(() => vi.clearAllMocks())
