@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import EventCard from '@/components/ui/EventCard'
 import Skeleton, { EventCardSkeleton } from '@/components/ui/Skeleton'
 import { fetchEventsResult } from '../data/eventsSource'
-import { sortEvents } from '../data/presentation'
+import { sortEvents } from '@/lib/presentation'
 
 export default function EventsPage() {
   const [result, setResult] = useState({ events: [], source: null, status: 'loading' })

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { committees } from '../../data/committees'
+import { committees } from '@/data/committees'
 
 const initialForm = { name: '', email: '', phone: '', committee: '', message: '' }
 

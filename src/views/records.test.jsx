@@ -2,7 +2,7 @@ import { act, cleanup, fireEvent, render, screen, within } from '@testing-librar
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { boardMembers } from '../data/boardMembers'
 import { committees } from '../data/committees'
-import { findCommitteeLeaders } from '../data/presentation'
+import { findCommitteeLeaders } from '@/lib/presentation'
 import CommitteesPage from './CommitteesPage'
 import CommitteeDetailPage from './CommitteeDetailPage'
 import EventsPage from './EventsPage'

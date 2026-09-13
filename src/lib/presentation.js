@@ -1,4 +1,4 @@
-import { slugify } from '../lib/slugify'
+import { slugify } from './slugify'
 
 const committeeAliases = {
   ai: ['AI'],
