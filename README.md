@@ -1,16 +1,98 @@
-# React + Vite
+# IEEE App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern web application built with React 19, Vite, and TailwindCSS.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- ⚡ **Fast Development** - Powered by Vite with HMR (Hot Module Replacement)
+- 🎨 **Modern Styling** - Built with TailwindCSS v4
+- 🧭 **Routing** - React Router DOM for navigation
+- 🎯 **UI Components** - Lucide React icons
+- 📜 **Smooth Scrolling** - Lenis for buttery smooth scroll animations
+- ✅ **Testing** - Vitest for unit testing
+- 🔍 **Code Quality** - ESLint with React Hooks plugin
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **React** 19.2.4
+- **Vite** 8.0.4
+- **TailwindCSS** 4.2.2
+- **React Router DOM** 7.14.0
+- **Lucide React** 1.31.0
+- **Lenis** 1.3.25
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Prerequisites
+
+- Node.js (v18 or higher recommended)
+- npm or yarn
+
+### Installation
+
+```bash
+cd ieee-app
+npm install
+```
+
+### Development
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+### Build
+
+Create a production build:
+
+```bash
+npm run build
+```
+
+### Preview
+
+Preview the production build locally:
+
+```bash
+npm run preview
+```
+
+### Testing
+
+Run tests:
+
+```bash
+npm test
+```
+
+### Linting
+
+Check code quality:
+
+```bash
+npm run lint
+```
+
+## Project Structure
+
+```
+ieee-app/
+├── src/              # Source files
+├── public/           # Static assets
+├── docs/             # Documentation
+├── scripts/          # Build scripts
+├── index.html        # HTML entry point
+├── package.json      # Dependencies and scripts
+├── vite.config.js    # Vite configuration
+└── eslint.config.js  # ESLint configuration
+```
+
+## Deployment
+
+This app is configured for deployment on [Vercel](https://vercel.com). See `vercel.json` for deployment configuration.
+
+## License
+
+Private project.
