@@ -1,5 +1,5 @@
-import AnimatedSection from '../components/AnimatedSection'
-import InterestForm from '../components/InterestForm'
+import AnimatedSection from '@/components/ui/AnimatedSection'
+import InterestForm from '@/components/ui/InterestForm'
 import { committees } from '../data/committees'
 
 export default function ContactPage() {

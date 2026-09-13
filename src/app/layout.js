@@ -1,7 +1,7 @@
 import './globals.css'
 import Script from 'next/script'
-import Navbar from '@/components/Navbar'
-import Footer from '@/components/Footer'
+import Navbar from '@/components/navbar'
+import Footer from '@/components/footer'
 import LenisProvider from '@/lib/LenisProvider'
 
 export const metadata = {

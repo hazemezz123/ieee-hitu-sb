@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import AnimatedSection from '../components/AnimatedSection'
-import MasonryGallery from '../components/MasonryGallery'
+import AnimatedSection from '@/components/ui/AnimatedSection'
+import MasonryGallery from '@/components/ui/MasonryGallery'
 import { aggregateGallery } from '../data/presentation'
 import { fetchEventsResult } from '../data/eventsSource'
 import { fetchGalleryPhotosResult } from '../data/gallerySource'
-import Skeleton from '../components/Skeleton'
+import Skeleton from '@/components/ui/Skeleton'
 
 const eventsLink = <Link className="mt-4 inline-flex min-h-11 items-center gap-2 font-bold text-primary" href="/events">Browse events<span className="material-symbols-outlined text-lg" aria-hidden="true">arrow_forward</span></Link>
 

@@ -5,7 +5,7 @@ import AboutPage from './AboutPage'
 import MembershipPage from './MembershipPage'
 import JoinUsPage from './JoinUsPage'
 import ContactPage from './ContactPage'
-import TechnicalResources from '../components/TechnicalResources'
+import TechnicalResources from '@/components/ui/TechnicalResources'
 import { committees } from '../data/committees'
 import { communityPartners } from '../data/partners'
 

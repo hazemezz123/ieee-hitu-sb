@@ -13,8 +13,8 @@ import {
 } from '../../lib/turso'
 import { uploadToCloudinary } from '../../lib/upload'
 import { slugify } from '../../lib/slugify'
-import ConfirmDialog from '../../components/ConfirmDialog'
-import Skeleton from '../../components/Skeleton'
+import ConfirmDialog from '@/components/ui/ConfirmDialog'
+import Skeleton from '@/components/ui/Skeleton'
 import PhotoInput from './PhotoInput'
 
 const emptyCommittee = { name: '', slug: '', category: 'technical', shortDescription: '' }

@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import AnimatedSection from '../components/AnimatedSection'
+import AnimatedSection from '@/components/ui/AnimatedSection'
 import { committeeCategories } from '../data/committees'
 import { findCommitteeLeaders } from '../data/presentation'
 import { fetchAllMembersResult, fetchCommitteesResult } from '../data/committeeSource'
-import Skeleton from '../components/Skeleton'
-import CommitteeIcon from '../components/CommitteeIcon'
+import Skeleton from '@/components/ui/Skeleton'
+import CommitteeIcon from '@/components/ui/CommitteeIcon'
 
 const CommitteeGroup = ({ title, committees, members }) => (
   <section>

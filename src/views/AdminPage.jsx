@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { fetchEvents, deleteEvent } from "../data/eventsSource";
-import ConfirmDialog from "../components/ConfirmDialog";
-import Skeleton from "../components/Skeleton";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import Skeleton from "@/components/ui/Skeleton";
 import GalleryTab from "./admin/GalleryTab";
 import CommitteesTab from "./admin/CommitteesTab";
 import PartnersTab from "./admin/PartnersTab";

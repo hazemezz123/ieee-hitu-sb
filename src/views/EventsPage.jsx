@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import EventCard from '../components/EventCard'
-import Skeleton, { EventCardSkeleton } from '../components/Skeleton'
+import EventCard from '@/components/ui/EventCard'
+import Skeleton, { EventCardSkeleton } from '@/components/ui/Skeleton'
 import { fetchEventsResult } from '../data/eventsSource'
 import { sortEvents } from '../data/presentation'
 

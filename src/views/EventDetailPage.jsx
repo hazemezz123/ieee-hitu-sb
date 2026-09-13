@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import MasonryGallery from "../components/MasonryGallery";
+import MasonryGallery from "@/components/ui/MasonryGallery";
 import { fetchEventBySlugResult } from "../data/eventsSource";
-import Skeleton from "../components/Skeleton";
+import Skeleton from "@/components/ui/Skeleton";
 
 const formatDate = (date) => {
   const parsed = new Date(date);

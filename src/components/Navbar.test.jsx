@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import Navbar from './Navbar'
+import Navbar from './navbar'
 
 const nav = vi.hoisted(() => ({ pathname: '/' }))
 vi.mock('next/navigation', () => ({

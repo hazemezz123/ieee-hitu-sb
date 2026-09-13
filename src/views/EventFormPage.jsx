@@ -7,7 +7,7 @@ import { fetchCommittees } from '../data/committeeSource'
 import { uploadToCloudinary } from '../lib/upload'
 import { slugify } from '../lib/slugify'
 import PhotoInput from './admin/PhotoInput'
-import Skeleton from '../components/Skeleton'
+import Skeleton from '@/components/ui/Skeleton'
 
 const categories = [
   { value: 'workshops', label: 'Workshops' },
