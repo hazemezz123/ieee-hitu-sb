@@ -1,5 +1,8 @@
+'use client'
+
 import { useEffect, useRef, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import logo from '../assets/logo.png'
 
 const navLinks = [
@@ -13,9 +16,9 @@ const navLinks = [
 
 export default function Navbar() {
   const [openPath, setOpenPath] = useState(null)
-  const location = useLocation()
+  const pathname = usePathname()
   const menuButtonRef = useRef(null)
-  const isMenuOpen = openPath === location.pathname
+  const isMenuOpen = openPath === pathname
 
   useEffect(() => {
     const desktop = window.matchMedia?.('(min-width: 768px)')
@@ -47,7 +50,7 @@ export default function Navbar() {
     return () => { document.body.style.overflow = previousOverflow }
   }, [isMenuOpen])
 
-  const isActive = path => location.pathname === path || (path !== '/' && location.pathname.startsWith(`${path}/`))
+  const isActive = path => pathname === path || (path !== '/' && pathname.startsWith(`${path}/`))
   const dismissAfterNavigation = () => {
     setOpenPath(null)
     menuButtonRef.current?.focus()
@@ -56,7 +59,7 @@ export default function Navbar() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-outline-variant bg-surface-container-lowest">
       <nav className="mx-auto flex h-[var(--navbar-height)] max-w-7xl items-center gap-6 px-5 sm:px-8" aria-label="Primary navigation">
-        <Link to="/" className="mr-auto flex items-center" aria-label="IEEE HITU Student Branch home">
+        <Link href="/" className="mr-auto flex items-center" aria-label="IEEE HITU Student Branch home">
           <img src={logo} alt="IEEE HITU Student Branch" className="h-9 w-auto" />
         </Link>
 
@@ -64,7 +67,7 @@ export default function Navbar() {
           {navLinks.map(link => (
             <Link
               key={link.name}
-              to={link.href}
+              href={link.href}
               aria-current={isActive(link.href) ? 'page' : undefined}
               className="nav-link"
             >
@@ -73,7 +76,7 @@ export default function Navbar() {
           ))}
         </div>
 
-        <Link to="/membership" className="btn btn-primary hidden md:inline-flex">Join IEEE</Link>
+        <Link href="/membership" className="btn btn-primary hidden md:inline-flex">Join IEEE</Link>
         <button
           ref={menuButtonRef}
           type="button"
@@ -81,7 +84,7 @@ export default function Navbar() {
           aria-controls="mobile-navigation"
           aria-label={isMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
           className="nav-menu-button md:hidden"
-          onClick={() => setOpenPath(isMenuOpen ? null : location.pathname)}
+          onClick={() => setOpenPath(isMenuOpen ? null : pathname)}
         >
           <span className="material-symbols-outlined" aria-hidden="true">{isMenuOpen ? 'close' : 'menu'}</span>
         </button>
@@ -92,7 +95,7 @@ export default function Navbar() {
           {navLinks.map(link => (
             <Link
               key={link.name}
-              to={link.href}
+              href={link.href}
               aria-current={isActive(link.href) ? 'page' : undefined}
               className="nav-link-mobile"
               onClick={dismissAfterNavigation}
@@ -100,7 +103,7 @@ export default function Navbar() {
               {link.name}
             </Link>
           ))}
-          <Link to="/membership" className="btn btn-primary mt-3" onClick={dismissAfterNavigation}>Join IEEE</Link>
+          <Link href="/membership" className="btn btn-primary mt-3" onClick={dismissAfterNavigation}>Join IEEE</Link>
         </nav>
       </div>
     </header>

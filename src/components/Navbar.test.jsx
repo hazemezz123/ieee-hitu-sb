@@ -1,7 +1,18 @@
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import Navbar from './Navbar'
+
+const nav = vi.hoisted(() => ({ pathname: '/' }))
+vi.mock('next/navigation', () => ({
+  useParams: () => ({}),
+  usePathname: () => nav.pathname,
+  useRouter: () => ({ push: vi.fn() }),
+}))
+vi.mock('next/link', () => ({
+  default: ({ href, children, ...rest }) => <a href={href} {...rest}>{children}</a>,
+}))
+
+beforeEach(() => { nav.pathname = '/' })
 
 afterEach(() => {
   cleanup()
@@ -10,7 +21,8 @@ afterEach(() => {
 
 describe('Navbar', () => {
   it('marks nested routes active and closes the mobile menu after navigation', () => {
-    render(<MemoryRouter initialEntries={['/committees/web']}><Navbar /></MemoryRouter>)
+    nav.pathname = '/committees/web'
+    render(<Navbar />)
 
     const primary = screen.getByRole('navigation', { name: 'Primary navigation' })
     expect(within(primary).getByRole('link', { name: 'Committees' }).getAttribute('aria-current')).toBe('page')
@@ -23,7 +35,8 @@ describe('Navbar', () => {
   })
 
   it('does not mark path-prefix collisions active', () => {
-    render(<MemoryRouter initialEntries={['/events-archive']}><Navbar /></MemoryRouter>)
+    nav.pathname = '/events-archive'
+    render(<Navbar />)
 
     const primary = screen.getByRole('navigation', { name: 'Primary navigation' })
     expect(within(primary).getByRole('link', { name: 'Events' }).getAttribute('aria-current')).toBe(null)
@@ -31,7 +44,7 @@ describe('Navbar', () => {
 
   it('restores the prior body overflow value when the menu closes', () => {
     document.body.style.overflow = 'clip'
-    render(<MemoryRouter><Navbar /></MemoryRouter>)
+    render(<Navbar />)
 
     const menu = screen.getByRole('button', { name: /open navigation menu/i })
     fireEvent.click(menu)
@@ -42,7 +55,7 @@ describe('Navbar', () => {
   })
 
   it('restores focus to the menu button after link navigation', async () => {
-    render(<MemoryRouter><Navbar /></MemoryRouter>)
+    render(<Navbar />)
 
     const menu = screen.getByRole('button', { name: /open navigation menu/i })
     fireEvent.click(menu)
@@ -53,7 +66,8 @@ describe('Navbar', () => {
   })
 
   it('restores focus when the mobile link keeps the current route', () => {
-    render(<MemoryRouter initialEntries={['/events']}><Navbar /></MemoryRouter>)
+    nav.pathname = '/events'
+    render(<Navbar />)
 
     const menu = screen.getByRole('button', { name: /open navigation menu/i })
     fireEvent.click(menu)
@@ -71,7 +85,7 @@ describe('Navbar', () => {
       removeEventListener: () => {},
     })
     document.body.style.overflow = 'scroll'
-    render(<MemoryRouter><Navbar /></MemoryRouter>)
+    render(<Navbar />)
 
     const menu = screen.getByRole('button', { name: /open navigation menu/i })
     fireEvent.click(menu)
@@ -83,7 +97,7 @@ describe('Navbar', () => {
   })
 
   it('closes with Escape and restores focus to the menu button', () => {
-    render(<MemoryRouter><Navbar /></MemoryRouter>)
+    render(<Navbar />)
 
     const menu = screen.getByRole('button', { name: /open navigation menu/i })
     fireEvent.click(menu)

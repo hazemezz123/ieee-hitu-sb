@@ -1,98 +1,85 @@
-# IEEE App
+# IEEE HITU Student Branch Website
 
-A modern web application built with React 19, Vite, and TailwindCSS.
+Official website of the IEEE Student Branch at Heliopolis International Technological University — a recruitment-first site (home, about, committees, events, gallery, membership, join-us, contact) plus an admin surface for managing content.
 
-## Features
-
-- ⚡ **Fast Development** - Powered by Vite with HMR (Hot Module Replacement)
-- 🎨 **Modern Styling** - Built with TailwindCSS v4
-- 🧭 **Routing** - React Router DOM for navigation
-- 🎯 **UI Components** - Lucide React icons
-- 📜 **Smooth Scrolling** - Lenis for buttery smooth scroll animations
-- ✅ **Testing** - Vitest for unit testing
-- 🔍 **Code Quality** - ESLint with React Hooks plugin
+Full-stack **Next.js 16** (App Router) + **Turso** (libSQL) + **TailwindCSS v4**.
 
 ## Tech Stack
 
-- **React** 19.2.4
-- **Vite** 8.0.4
-- **TailwindCSS** 4.2.2
-- **React Router DOM** 7.14.0
-- **Lucide React** 1.31.0
-- **Lenis** 1.3.25
+- **Next.js** 16 / **React** 19
+- **TailwindCSS** 4 + **Lucide** icons + **Lenis** smooth scroll
+- **Turso** via raw Hrana HTTP (server only — token never leaves the server)
+- **Vitest** + Testing Library, **ESLint**
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js (v18 or higher recommended)
-- npm or yarn
+- Node.js 20.9+ and npm
 
-### Installation
+### Environment
+
+Copy the required keys into `.env` (all server-side; never prefix them with `NEXT_PUBLIC_`):
 
 ```bash
-cd ieee-app
-npm install
+TURSO_DATABASE_URL=https://<db>-<org>.turso.io/v2/pipeline
+TURSO_AUTH_TOKEN=...
+ADMIN_PASSWORD=...
+SESSION_SECRET=...
 ```
+
+`.env.example` lists the same keys with empty values.
 
 ### Development
 
-Start the development server:
-
 ```bash
-npm run dev
+npm install
+npm run dev      # http://localhost:3000
 ```
 
-### Build
-
-Create a production build:
+### Build & Start
 
 ```bash
 npm run build
+npm start
 ```
 
-### Preview
-
-Preview the production build locally:
-
-```bash
-npm run preview
-```
-
-### Testing
-
-Run tests:
+### Testing & Linting
 
 ```bash
 npm test
+npm run lint
 ```
 
-### Linting
-
-Check code quality:
+### Seed committees data
 
 ```bash
-npm run lint
+npm run seed:committees   # needs TURSO_* env vars set
 ```
 
 ## Project Structure
 
 ```
-ieee-app/
-├── src/              # Source files
-├── public/           # Static assets
-├── docs/             # Documentation
-├── scripts/          # Build scripts
-├── index.html        # HTML entry point
-├── package.json      # Dependencies and scripts
-├── vite.config.js    # Vite configuration
-└── eslint.config.js  # ESLint configuration
+src/
+├── app/                 # Next.js routes: pages, layouts, not-found
+│   └── api/             # Route Handlers (auth + events/committees/gallery/members/partners)
+├── views/               # Route components (client components)
+├── components/          # Shared UI (Navbar, Footer, Hero, EventCard, Lightbox, ...)
+├── data/                # Static fallback data + remote-with-fallback sources
+├── lib/                 # Client: apiClient, turso entity layer, upload, slugify
+│   └── server/          # Server-only: db.js (SQL), auth.js (HMAC sessions)
+├── assets/              # Bundled images (logo)
+public/                  # Static files (favicons, manifest)
+scripts/                 # Maintenance scripts (seeding)
+docs/                    # Plans, specs, product/design docs
 ```
+
+## Routes
+
+Public: `/`, `/about`, `/join-us`, `/committees`, `/committees/[slug]`, `/membership`, `/events`, `/events/[slug]`, `/gallery`, `/contact`.
+Admin (password gate, HttpOnly session cookie): `/admin`, `/admin/events/new`, `/admin/events/[id]/edit`.
+API: `/api/auth/*`, `/api/events/*`, `/api/committees/*`, `/api/gallery/*`, `/api/members/*`, `/api/partners/*`.
 
 ## Deployment
 
-This app is configured for deployment on [Vercel](https://vercel.com). See `vercel.json` for deployment configuration.
-
-## License
-
-Private project.
+Standard Next.js hosting (Vercel, or `npm run build && npm start` anywhere Node runs). Provide the four env vars above; no SPA rewrite config needed.

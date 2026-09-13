@@ -1,8 +1,12 @@
 import { committees } from '../src/data/committees.js'
 import { boardMembers } from '../src/data/boardMembers.js'
 
-const DB_URL = 'https://ieee-events-hazemezz123.aws-us-east-1.turso.io/v2/pipeline'
-const DB_TOKEN = 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3ODMyNzY5ODUsImlkIjoiMDE5ZjMzOTctM2QwMS03NThhLTlkMWItNWIwMmI1YmU0ZTQ5Iiwia2lkIjoiYUJMdzFWX3FNMGkxRlU5dEhiS2VMSWxoLWs5WkhSRjBiSjZyU3g4eS1OTSIsInJpZCI6ImYzMjI3MTFlLTRkMDItNGM0Zi1iMzgxLWRmNjY1NGI5NDQ4NiJ9.j4kUCa6FTs6oRcTxVnAJkbo5YHfWuMbHyD21gavDEnpAXUmwtHa-Ln0eWcx7ScLQCGXbRYNH5m2MzpJRIOSVCw'
+const DB_URL = process.env.TURSO_DATABASE_URL
+if (!DB_URL || !process.env.TURSO_AUTH_TOKEN) {
+  console.error('Missing TURSO_DATABASE_URL / TURSO_AUTH_TOKEN env vars.')
+  process.exit(1)
+}
+const DB_TOKEN = process.env.TURSO_AUTH_TOKEN
 
 async function execute(sql, params = []) {
   const body = {

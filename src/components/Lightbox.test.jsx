@@ -1,8 +1,11 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import Lightbox from './Lightbox'
 import MasonryGallery from './MasonryGallery'
+
+vi.mock('next/link', () => ({
+  default: ({ href, children, ...rest }) => <a href={href} {...rest}>{children}</a>,
+}))
 
 const images = [
   { src: '/one.jpg', caption: 'Opening remarks', eventTitle: 'Robotics Day', eventDate: '2026-09-01T23:30:00Z' },
@@ -164,7 +167,7 @@ describe('Lightbox', () => {
 })
 
 describe('MasonryGallery integration', () => {
-  const renderGallery = (galleryImages, props = {}) => render(<MemoryRouter><MasonryGallery images={galleryImages} {...props} /></MemoryRouter>)
+  const renderGallery = (galleryImages, props = {}) => render(<MasonryGallery images={galleryImages} {...props} />)
 
   it('keeps repeated image sources independently actionable and uses stable headings', () => {
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})

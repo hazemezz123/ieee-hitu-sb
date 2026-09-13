@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useRef, useState } from 'react'
 
 function AnimatedSection({ children, trigger = 'inView', className = '' }) {

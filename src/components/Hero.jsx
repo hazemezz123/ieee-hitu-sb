@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import logo from '../assets/logo.png'
 
 export default function Hero() {
@@ -14,8 +14,8 @@ export default function Hero() {
             Technical learning, student-led committees, and IEEE opportunities rooted at HITU.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link className="btn btn-primary" to="/events">View events</Link>
-            <Link className="btn btn-secondary" to="/join-us">Join the branch</Link>
+            <Link className="btn btn-primary" href="/events">View events</Link>
+            <Link className="btn btn-secondary" href="/join-us">Join the branch</Link>
           </div>
         </div>
         <img src={logo} alt="" className="w-full max-w-xs justify-self-start object-contain brightness-0 invert lg:justify-self-end" />

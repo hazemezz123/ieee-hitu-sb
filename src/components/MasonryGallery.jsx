@@ -1,5 +1,7 @@
+'use client'
+
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import Lightbox from './Lightbox'
 
 const formatDate = date => {
@@ -43,7 +45,7 @@ export default function MasonryGallery({ images, headingLevel = 3 }) {
               {image.eventTitle && <Heading className="text-lg font-bold text-on-surface">{image.eventTitle}</Heading>}
               {image.eventDate && <time className="mt-1 block text-sm text-on-surface-variant" dateTime={image.eventDate}>{formatDate(image.eventDate)}</time>}
               {image.caption && <p className="mt-3 text-on-surface-variant">{image.caption}</p>}
-              {image.eventSlug && <Link className="mt-3 inline-flex min-h-11 items-center gap-2 font-bold text-primary" to={`/events/${image.eventSlug}`}>View {image.eventTitle || 'event'}<span className="material-symbols-outlined text-lg" aria-hidden="true">arrow_forward</span></Link>}
+              {image.eventSlug && <Link className="mt-3 inline-flex min-h-11 items-center gap-2 font-bold text-primary" href={`/events/${image.eventSlug}`}>View {image.eventTitle || 'event'}<span className="material-symbols-outlined text-lg" aria-hidden="true">arrow_forward</span></Link>}
             </figcaption>
           </figure>
         })}

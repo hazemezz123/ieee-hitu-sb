@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 import logo from '../assets/logo.png'
 
 const links = [
@@ -23,7 +23,7 @@ export default function Footer() {
         </div>
         <nav aria-label="Footer navigation" className="grid grid-cols-2 gap-x-8 gap-y-3 sm:grid-cols-3 md:grid-cols-2">
           {links.map(link => (
-            <Link key={link.name} to={link.href} className="text-sm text-white/75 underline-offset-4 hover:text-white hover:underline">
+            <Link key={link.name} href={link.href} className="text-sm text-white/75 underline-offset-4 hover:text-white hover:underline">
               {link.name}
             </Link>
           ))}

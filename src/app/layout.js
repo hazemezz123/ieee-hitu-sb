@@ -1,0 +1,47 @@
+import './globals.css'
+import Script from 'next/script'
+import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
+import ScrollToTop from '@/components/ScrollToTop'
+import LenisProvider from '@/lib/LenisProvider'
+
+export const metadata = {
+  title: 'IEEE HITU Student Branch',
+  description: 'The official IEEE student branch at Heliopolis International Technological University.',
+  icons: {
+    icon: ['/favicon-96x96.png', '/favicon.svg', '/favicon.ico'],
+    apple: '/apple-touch-icon.png',
+  },
+  manifest: '/site.webmanifest',
+}
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en" data-theme="dark">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+          rel="stylesheet"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body>
+        <Script async src="https://www.googletagmanager.com/gtag/js?id=G-7FMS8J5THQ" />
+        <Script id="gtag-init">
+          {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-7FMS8J5THQ')`}
+        </Script>
+        <LenisProvider>
+          <ScrollToTop />
+          <Navbar />
+          <main>{children}</main>
+          <Footer />
+        </LenisProvider>
+      </body>
+    </html>
+  )
+}

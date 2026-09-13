@@ -1,5 +1,7 @@
+'use client'
+
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import Link from 'next/link'
 
 function formatDateBadge(dateStr) {
   const date = new Date(dateStr);
@@ -33,7 +35,7 @@ const [imageFailed, setImageFailed] = useState(false)
 
       <div className="p-6">
         <div className="mb-2 flex flex-wrap gap-x-4 gap-y-1 text-xs font-bold uppercase tracking-widest text-primary"><span>{event.categoryLabel || event.category || 'Uncategorised'}</span><span>{event.status || 'status unavailable'}</span></div>
-        <h3 className="mb-2 text-xl font-bold text-on-surface">{hasSlug ? <Link to={`/events/${event.slug}`} aria-label={event.title}>{event.title || 'Untitled event'}</Link> : (event.title || 'Untitled event')}</h3>
+        <h3 className="mb-2 text-xl font-bold text-on-surface">{hasSlug ? <Link href={`/events/${event.slug}`} aria-label={event.title}>{event.title || 'Untitled event'}</Link> : (event.title || 'Untitled event')}</h3>
         {event.excerpt && <p className="mb-4 text-sm leading-relaxed text-on-surface-variant">{event.excerpt}</p>}
         <dl className="space-y-2 text-sm text-on-surface-variant">
           <div><dt className="inline font-semibold text-on-surface">Date: </dt><dd className="inline">{day} {month}</dd></div>

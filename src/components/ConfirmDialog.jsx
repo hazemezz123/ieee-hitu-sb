@@ -1,3 +1,5 @@
+'use client'
+
 export default function ConfirmDialog({ title, onCancel, onConfirm, busy = false, children }) {
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center px-4" onClick={onCancel}>
