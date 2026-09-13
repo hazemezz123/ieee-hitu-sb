@@ -4,6 +4,32 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import AdminPage from './AdminPage'
 import EventFormPage from './EventFormPage'
 
+const fetchMock = vi.hoisted(() => vi.fn())
+vi.stubGlobal('fetch', fetchMock)
+
+function apiAuth({ authed }) {
+  fetchMock.mockImplementation((url) => {
+    if (String(url).endsWith('/api/auth/me')) {
+      return Promise.resolve({ ok: true, json: async () => ({ authed }) })
+    }
+    return Promise.reject(new Error(`unexpected fetch: ${url}`))
+  })
+}
+
+function mockLoginOnce(ok) {
+  fetchMock.mockImplementation((url) => {
+    if (String(url).endsWith('/api/auth/login')) {
+      return Promise.resolve(ok
+        ? { ok: true, json: async () => ({ ok: true }) }
+        : { ok: false, status: 401, json: async () => ({ error: 'Invalid credentials' }) })
+    }
+    if (String(url).endsWith('/api/auth/me')) {
+      return Promise.resolve({ ok: true, json: async () => ({ authed: false }) })
+    }
+    return Promise.reject(new Error(`unexpected fetch: ${url}`))
+  })
+}
+
 const { fetchEvents, createEvent, updateEvent, deleteEvent } = vi.hoisted(() => ({
   fetchEvents: vi.fn(),
   createEvent: vi.fn(),
@@ -76,7 +102,8 @@ function photoUrlInput(label) {
 }
 
 beforeEach(() => {
-  sessionStorage.clear()
+  fetchMock.mockReset()
+  fetchMock.mockRejectedValue(new Error('fetch not mocked'))
   fetchEvents.mockReset()
   createEvent.mockReset()
   updateEvent.mockReset()
@@ -100,29 +127,27 @@ beforeEach(() => {
 afterEach(cleanup)
 
 describe('admin authentication and event list', () => {
-  it('rejects a wrong password, then logs in and stores the session', async () => {
+  it('rejects a wrong password, then logs in via the API', async () => {
+    mockLoginOnce(false)
     renderRoute('/admin')
+    expect(await screen.findByRole('heading', { name: 'Admin Login' })).toBeTruthy()
     fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'wrong' } })
     fireEvent.click(screen.getByRole('button', { name: 'Login' }))
-    expect(screen.getByRole('heading', { name: 'Admin Login' })).toBeTruthy()
-    expect(sessionStorage.getItem('admin_auth')).toBeNull()
-
-    fireEvent.change(screen.getByLabelText('Password'), { target: { value: 'ieee2026' } })
-    fireEvent.click(screen.getByRole('button', { name: 'Login' }))
-    expect(await screen.findByRole('heading', { name: 'Manage Events' })).toBeTruthy()
-    expect(sessionStorage.getItem('admin_auth')).toBe('ieee2026')
+    expect(await screen.findByText('Invalid credentials')).toBeTruthy()
+    expect(screen.queryByRole('heading', { name: 'Manage Events' })).toBeNull()
   })
 
-  it('restores a valid session and loads events', async () => {
-    sessionStorage.setItem('admin_auth', 'ieee2026')
+  it('restores a valid session from /api/auth/me and loads events', async () => {
+    apiAuth({ authed: true })
     fetchEvents.mockResolvedValue([event])
     renderRoute('/admin')
     expect(await screen.findByText('Robotics Workshop')).toBeTruthy()
+    expect(fetchMock).toHaveBeenCalledWith('/api/auth/me', expect.objectContaining({ credentials: 'include' }))
     expect(fetchEvents).toHaveBeenCalledOnce()
   })
 
   it('renders loading, error, and empty list states', async () => {
-    sessionStorage.setItem('admin_auth', 'ieee2026')
+    apiAuth({ authed: true })
     fetchEvents.mockReturnValueOnce(new Promise(() => {}))
     const pending = renderRoute('/admin')
     expect(screen.getByText('Loading...')).toBeTruthy()
@@ -141,7 +166,7 @@ describe('admin authentication and event list', () => {
   })
 
   it('navigates to create and edit routes', async () => {
-    sessionStorage.setItem('admin_auth', 'ieee2026')
+    apiAuth({ authed: true })
     fetchEvents.mockResolvedValue([event])
     const page = renderRoute('/admin')
     await screen.findByText('Robotics Workshop')
@@ -157,7 +182,7 @@ describe('admin authentication and event list', () => {
   })
 
   it('cancels deletion, then confirms it and refreshes the list', async () => {
-    sessionStorage.setItem('admin_auth', 'ieee2026')
+    apiAuth({ authed: true })
     fetchEvents.mockResolvedValueOnce([event]).mockResolvedValueOnce([])
     renderRoute('/admin')
     await screen.findByText('Robotics Workshop')
@@ -251,21 +276,20 @@ describe('event form', () => {
 
     renderRoute('/admin/events/new')
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
-    expect(screen.getByRole('heading', { name: 'Admin Login' })).toBeTruthy()
+    expect(await screen.findByRole('heading', { name: 'Admin Login' })).toBeTruthy()
   })
 })
 
 describe('admin tabs', () => {
   it('bootstraps the schema and keeps the events view as the default tab', async () => {
-    sessionStorage.setItem('admin_auth', 'ieee2026')
+    apiAuth({ authed: true })
     fetchEvents.mockResolvedValue([])
     renderRoute('/admin')
     expect(await screen.findByRole('heading', { name: 'Manage Events' })).toBeTruthy()
-    expect(turso.ensureSchema).toHaveBeenCalledOnce()
   })
 
   it('switches to the gallery, committees, and partners tabs', async () => {
-    sessionStorage.setItem('admin_auth', 'ieee2026')
+    apiAuth({ authed: true })
     fetchEvents.mockResolvedValue([])
     renderRoute('/admin')
     await screen.findByRole('heading', { name: 'Manage Events' })

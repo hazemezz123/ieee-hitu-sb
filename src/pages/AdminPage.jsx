@@ -1,21 +1,30 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchEvents, deleteEvent } from "../data/eventsSource";
-import { ensureSchema } from "../lib/turso";
 import ConfirmDialog from "../components/ConfirmDialog";
 import Skeleton from "../components/Skeleton";
 import GalleryTab from "./admin/GalleryTab";
 import CommitteesTab from "./admin/CommitteesTab";
 import PartnersTab from "./admin/PartnersTab";
 
-const ADMIN_PASSWORD = "ieee2026";
+async function apiAuth(path, body) {
+  const res = await fetch(path, {
+    method: body === undefined ? "GET" : "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+  return data;
+}
 
 export default function AdminPage() {
   const navigate = useNavigate();
-  const [authed, setAuthed] = useState(
-    () => sessionStorage.getItem("admin_auth") === ADMIN_PASSWORD,
-  );
+  const [authed, setAuthed] = useState(false);
+  const [checking, setChecking] = useState(true);
   const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState(null);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -34,37 +43,34 @@ export default function AdminPage() {
   }, []);
 
   useEffect(() => {
+    let active = true;
+    apiAuth("/api/auth/me")
+      .then(({ authed }) => { if (active) setAuthed(authed); })
+      .catch(() => { if (active) setAuthed(false); })
+      .finally(() => { if (active) setChecking(false); });
+    return () => { active = false; };
+  }, []);
+
+  useEffect(() => {
     if (!authed) return;
     let active = true;
-    ensureSchema()
-      .catch((err) => {
-        if (active) setError(err.message);
-      })
-      .finally(() => {
-        if (active) {
-          fetchEvents()
-            .then((data) => {
-              if (active) setEvents(data);
-            })
-            .catch((err) => {
-              if (active) setError(err.message);
-            })
-            .finally(() => {
-              if (active) setLoading(false);
-            });
-        }
-      });
-    return () => {
-      active = false;
-    };
+    fetchEvents()
+      .then((data) => { if (active) setEvents(data); })
+      .catch((err) => { if (active) setError(err.message); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
   }, [authed]);
 
-  function handleLogin(e) {
+  async function handleLogin(e) {
     e.preventDefault();
-    if (password === ADMIN_PASSWORD) {
-      sessionStorage.setItem("admin_auth", password);
+    setLoginError(null);
+    try {
+      await apiAuth("/api/auth/login", { password });
+      setPassword("");
       setLoading(true);
       setAuthed(true);
+    } catch (err) {
+      setLoginError(err.message);
     }
   }
 
@@ -84,9 +90,33 @@ export default function AdminPage() {
     }
   }
 
-  function handleLogout() {
-    sessionStorage.removeItem("admin_auth");
+  async function handleLogout() {
+    try {
+      await apiAuth("/api/auth/logout", {});
+    } catch {
+      // cookie may already be expired; still log out locally
+    }
     setAuthed(false);
+    setPassword("");
+  }
+
+  if (checking) {
+    return (
+      <div
+        className="min-h-screen"
+        style={{ paddingTop: "var(--navbar-height)" }}
+      >
+        <div
+          className="flex items-center justify-center px-6"
+          style={{ minHeight: "calc(100vh - var(--navbar-height))" }}
+        >
+          <div role="status">
+            <span className="sr-only">Loading...</span>
+            <Skeleton className="h-10 w-64" />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (!authed) {
@@ -108,6 +138,11 @@ export default function AdminPage() {
               <label htmlFor="admin-pw" className="form-label">
                 Password
               </label>
+              {loginError && (
+                <div className="mb-4 p-3 bg-error/10 border border-error/30 rounded-lg text-sm text-error">
+                  {loginError}
+                </div>
+              )}
               <input
                 id="admin-pw"
                 type="password"

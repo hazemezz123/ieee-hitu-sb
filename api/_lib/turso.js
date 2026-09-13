@@ -1,5 +1,16 @@
-const DB_URL = 'https://ieee-events-hazemezz123.aws-us-east-1.turso.io/v2/pipeline'
-const DB_TOKEN = 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3ODMyNzY5ODUsImlkIjoiMDE5ZjMzOTctM2QwMS03NThhLTlkMWItNWIwMmI1YmU0ZTQ5Iiwia2lkIjoiYUJMdzFWX3FNMGkxRlU5dEhiS2VMSWxoLWs5WkhSRjBiSjZyU3g4eS1OTSIsInJpZCI6ImYzMjI3MTFlLTRkMDItNGM0Zi1iMzgxLWRmNjY1NGI5NDQ4NiJ9.j4kUCa6FTs6oRcTxVnAJkbo5YHfWuMbHyD21gavDEnpAXUmwtHa-Ln0eWcx7ScLQCGXbRYNH5m2MzpJRIOSVCw'
+// Server-only Turso client. NEVER import this from frontend code —
+// it reads credentials from environment variables.
+function dbUrl() {
+  const url = process.env.TURSO_DATABASE_URL
+  if (!url) throw new Error('Turso is not configured')
+  return url
+}
+
+function dbToken() {
+  const token = process.env.TURSO_AUTH_TOKEN
+  if (!token) throw new Error('Turso is not configured')
+  return token
+}
 
 async function execute(sql, params = []) {
   const body = {
@@ -13,9 +24,9 @@ async function execute(sql, params = []) {
     }],
   }
 
-  const res = await fetch(DB_URL, {
+  const res = await fetch(dbUrl(), {
     method: 'POST',
-    headers: { Authorization: `Bearer ${DB_TOKEN}`, 'Content-Type': 'application/json' },
+    headers: { Authorization: `Bearer ${dbToken()}`, 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   })
 
