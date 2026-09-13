@@ -1,7 +1,7 @@
-import { events as staticEvents, getEventBySlug as getStaticEventBySlug } from './events'
-import { fetchEvents as tursoFetchEvents, fetchEventBySlug as tursoFetchEventBySlug } from '../lib/turso'
+import { events as staticEvents, getEventBySlug as getStaticEventBySlug } from '../data/events'
+import { fetchEvents as tursoFetchEvents, fetchEventBySlug as tursoFetchEventBySlug } from '@/lib/turso'
 
-export { createEvent, updateEvent, deleteEvent } from '../lib/turso'
+export { createEvent, updateEvent, deleteEvent } from '@/lib/turso'
 
 export async function fetchEventsResult() {
   try {

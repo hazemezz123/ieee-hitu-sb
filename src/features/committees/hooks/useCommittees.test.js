@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { boardMembers as staticBoardMembers } from './boardMembers'
-import { committees as staticCommittees } from './committees'
+import { boardMembers as staticBoardMembers } from '@/features/about/data/boardMembers'
+import { committees as staticCommittees } from '../data/committees'
 
 const turso = vi.hoisted(() => ({
   createCommittee: vi.fn(),
@@ -15,7 +15,7 @@ const turso = vi.hoisted(() => ({
   updateCommitteeMember: vi.fn(),
 }))
 
-vi.mock('../lib/turso', () => turso)
+vi.mock('@/lib/turso', () => turso)
 
 import {
   createCommittee,
@@ -29,7 +29,7 @@ import {
   fetchCommitteesResult,
   updateCommittee,
   updateCommitteeMember,
-} from './committeeSource'
+} from './useCommittees'
 
 describe('committee source', () => {
   beforeEach(() => vi.clearAllMocks())

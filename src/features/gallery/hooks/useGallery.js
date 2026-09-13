@@ -1,4 +1,4 @@
-import { fetchGalleryPhotos as tursoFetchGalleryPhotos } from '../lib/turso'
+import { fetchGalleryPhotos as tursoFetchGalleryPhotos } from '@/lib/turso'
 
 export async function fetchGalleryPhotosResult() {
   try {

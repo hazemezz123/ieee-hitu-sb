@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import MasonryGallery from "@/components/ui/MasonryGallery";
-import { fetchEventBySlugResult } from "../data/eventsSource";
+import { fetchEventBySlugResult } from "@/features/events/hooks/useEvents";
 import Skeleton from "@/components/ui/Skeleton";
 
 const formatDate = (date) => {

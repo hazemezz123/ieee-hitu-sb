@@ -1,13 +1,13 @@
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { boardMembers } from '../data/boardMembers'
-import { committees } from '../data/committees'
+import { boardMembers } from '@/features/about/data/boardMembers'
+import { committees } from '@/features/committees/data/committees'
 import { findCommitteeLeaders } from '@/lib/presentation'
-import CommitteesPage from './CommitteesPage'
-import CommitteeDetailPage from './CommitteeDetailPage'
+import CommitteesPage from '@/features/committees/components/CommitteesPage'
+import CommitteeDetailPage from '@/features/committees/components/CommitteeDetailPage'
 import EventsPage from './EventsPage'
 import EventDetailPage from './EventDetailPage'
-import GalleryPage from './GalleryPage'
+import GalleryPage from '@/features/gallery/components/GalleryPage'
 
 const { fetchEventsResult, fetchEventBySlugResult, fetchEvents, fetchEventBySlug } = vi.hoisted(() => ({
   fetchEventsResult: vi.fn(),
@@ -34,9 +34,9 @@ vi.mock('next/link', () => ({
   default: ({ href, children, ...rest }) => <a href={href} {...rest}>{children}</a>,
 }))
 
-vi.mock('../data/eventsSource', () => ({ fetchEventsResult, fetchEventBySlugResult, fetchEvents, fetchEventBySlug }))
-vi.mock('../data/gallerySource', () => ({ fetchGalleryPhotosResult }))
-vi.mock('../data/committeeSource', () => committeeSource)
+vi.mock('@/features/events/hooks/useEvents', () => ({ fetchEventsResult, fetchEventBySlugResult, fetchEvents, fetchEventBySlug }))
+vi.mock('@/features/gallery/hooks/useGallery', () => ({ fetchGalleryPhotosResult }))
+vi.mock('@/features/committees/hooks/useCommittees', () => committeeSource)
 
 globalThis.IntersectionObserver = class {
   observe() {}

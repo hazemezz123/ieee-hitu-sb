@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { events as staticEvents } from './events'
+import { events as staticEvents } from '../data/events'
 
 const turso = vi.hoisted(() => ({
   createEvent: vi.fn(),
@@ -9,7 +9,7 @@ const turso = vi.hoisted(() => ({
   updateEvent: vi.fn(),
 }))
 
-vi.mock('../lib/turso', () => turso)
+vi.mock('@/lib/turso', () => turso)
 
 import {
   createEvent,
@@ -19,7 +19,7 @@ import {
   fetchEvents,
   fetchEventsResult,
   updateEvent,
-} from './eventsSource'
+} from './useEvents'
 
 describe('event source', () => {
   beforeEach(() => vi.clearAllMocks())

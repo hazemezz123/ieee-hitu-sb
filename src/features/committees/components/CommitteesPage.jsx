@@ -3,9 +3,9 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import AnimatedSection from '@/components/ui/AnimatedSection'
-import { committeeCategories } from '../data/committees'
+import { committeeCategories } from '@/features/committees/data/committees'
 import { findCommitteeLeaders } from '@/lib/presentation'
-import { fetchAllMembersResult, fetchCommitteesResult } from '../data/committeeSource'
+import { fetchAllMembersResult, fetchCommitteesResult } from '@/features/committees/hooks/useCommittees'
 import Skeleton from '@/components/ui/Skeleton'
 import CommitteeIcon from '@/components/ui/CommitteeIcon'
 

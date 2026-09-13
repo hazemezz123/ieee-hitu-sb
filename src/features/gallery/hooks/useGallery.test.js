@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const turso = vi.hoisted(() => ({ fetchGalleryPhotos: vi.fn() }))
-vi.mock('../lib/turso', () => turso)
+vi.mock('@/lib/turso', () => turso)
 
-import { fetchGalleryPhotos, fetchGalleryPhotosResult } from './gallerySource'
+import { fetchGalleryPhotos, fetchGalleryPhotosResult } from './useGallery'
 
 describe('gallery source', () => {
   beforeEach(() => vi.clearAllMocks())

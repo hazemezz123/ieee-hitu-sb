@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import EventCard from '@/components/ui/EventCard'
 import Skeleton, { EventCardSkeleton } from '@/components/ui/Skeleton'
-import { fetchEventsResult } from '../data/eventsSource'
+import { fetchEventsResult } from '@/features/events/hooks/useEvents'
 import { sortEvents } from '@/lib/presentation'
 
 export default function EventsPage() {

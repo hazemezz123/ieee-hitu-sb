@@ -1,11 +1,11 @@
-import { boardMembers as staticBoardMembers } from './boardMembers'
-import { committees as staticCommittees } from './committees'
+import { boardMembers as staticBoardMembers } from '@/features/about/data/boardMembers'
+import { committees as staticCommittees } from '../data/committees'
 import {
   fetchAllMembers as tursoFetchAllMembers,
   fetchCommitteeBySlug as tursoFetchCommitteeBySlug,
   fetchCommitteeMembers as tursoFetchCommitteeMembers,
   fetchCommittees as tursoFetchCommittees,
-} from '../lib/turso'
+} from '@/lib/turso'
 
 export {
   createCommittee,
@@ -14,7 +14,7 @@ export {
   deleteCommitteeMember,
   updateCommittee,
   updateCommitteeMember,
-} from '../lib/turso'
+} from '@/lib/turso'
 
 export async function fetchCommitteesResult() {
   try {

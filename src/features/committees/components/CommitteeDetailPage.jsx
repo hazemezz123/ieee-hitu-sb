@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import AnimatedSection from '@/components/ui/AnimatedSection'
 import { findCommitteeLeaders } from '@/lib/presentation'
-import { fetchCommitteeDetailResult } from '../data/committeeSource'
+import { fetchCommitteeDetailResult } from '@/features/committees/hooks/useCommittees'
 import Skeleton from '@/components/ui/Skeleton'
 import CommitteeIcon from '@/components/ui/CommitteeIcon'
 
