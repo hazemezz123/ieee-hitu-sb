@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import AnimatedSection from '../components/AnimatedSection'
 import MasonryGallery from '../components/MasonryGallery'
-import PageLayout from '../components/PageLayout'
 import { aggregateGallery } from '../data/presentation'
 import { fetchEventsResult } from '../data/eventsSource'
 import { fetchGalleryPhotosResult } from '../data/gallerySource'
@@ -29,7 +28,7 @@ export default function GalleryPage() {
   }, [])
 
   return (
-    <PageLayout>
+    <div className="page-enter pt-[var(--navbar-height,6rem)]">
       <div className="min-h-screen">
         <AnimatedSection>
           <header className="py-16 md:py-24 lg:py-32">
@@ -53,6 +52,6 @@ export default function GalleryPage() {
           </div>
         </section>
       </div>
-    </PageLayout>
+    </div>
   )
 }

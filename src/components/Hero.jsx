@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import logo from '../assets/logo.png'
 
 export default function Hero() {
   return (
@@ -18,7 +17,7 @@ export default function Hero() {
             <Link className="btn btn-secondary" href="/join-us">Join the branch</Link>
           </div>
         </div>
-        <img src={logo} alt="" className="w-full max-w-xs justify-self-start object-contain brightness-0 invert lg:justify-self-end" />
+        <img src="/logo.png" alt="" className="w-full max-w-xs justify-self-start object-contain brightness-0 invert lg:justify-self-end" />
       </div>
     </section>
   )

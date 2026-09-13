@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import logo from '../assets/logo.png'
 
 const links = [
   { name: 'About', href: '/about' },
@@ -16,7 +15,7 @@ export default function Footer() {
     <footer className="border-t border-outline-variant bg-inverse-surface text-white">
       <div className="mx-auto grid max-w-7xl gap-10 px-6 py-12 sm:px-8 md:grid-cols-[1.4fr_1fr] md:py-16">
         <div>
-          <img src={logo} alt="IEEE HITU Student Branch" className="mb-5 h-10 w-auto brightness-0 invert" />
+          <img src="/logo.png" alt="IEEE HITU Student Branch" className="mb-5 h-10 w-auto brightness-0 invert" />
           <p className="max-w-xl text-sm leading-6 text-white/75">
             The IEEE Student Branch at Helwan International Technological University, Cairo, Egypt.
           </p>

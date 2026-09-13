@@ -2,7 +2,6 @@ import './globals.css'
 import Script from 'next/script'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
-import ScrollToTop from '@/components/ScrollToTop'
 import LenisProvider from '@/lib/LenisProvider'
 
 export const metadata = {
@@ -36,7 +35,6 @@ export default function RootLayout({ children }) {
           {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-7FMS8J5THQ')`}
         </Script>
         <LenisProvider>
-          <ScrollToTop />
           <Navbar />
           <main>{children}</main>
           <Footer />

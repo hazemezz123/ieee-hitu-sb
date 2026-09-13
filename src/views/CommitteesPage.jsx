@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import PageLayout from '../components/PageLayout'
 import AnimatedSection from '../components/AnimatedSection'
 import { committeeCategories } from '../data/committees'
 import { findCommitteeLeaders } from '../data/presentation'
@@ -46,7 +45,7 @@ export default function CommitteesPage() {
   }, [])
 
   if (!data) return (
-    <PageLayout>
+    <div className="page-enter pt-[var(--navbar-height,6rem)]">
       <div role="status" className="container mx-auto max-w-6xl px-6 py-16 sm:px-8 md:px-12 md:py-24">
         <span className="sr-only">Loading committee records...</span>
         <Skeleton className="h-12 w-2/3 md:h-16" />
@@ -68,14 +67,14 @@ export default function CommitteesPage() {
           ))}
         </div>
       </div>
-    </PageLayout>
+    </div>
   )
 
   const technical = data.committees.filter(committee => committee.category === 'technical')
   const nonTechnical = data.committees.filter(committee => committee.category === 'non-technical')
 
   return (
-    <PageLayout>
+    <div className="page-enter pt-[var(--navbar-height,6rem)]">
       <AnimatedSection>
         <header className="container mx-auto max-w-6xl px-6 py-16 sm:px-8 md:px-12 md:py-24">
           <h1 className="text-4xl font-black text-on-surface md:text-6xl">Committee directory</h1>
@@ -89,6 +88,6 @@ export default function CommitteesPage() {
           <CommitteeGroup title={committeeCategories.nonTechnical} committees={nonTechnical} members={data.members} />
         </div>
       </div>
-    </PageLayout>
+    </div>
   )
 }

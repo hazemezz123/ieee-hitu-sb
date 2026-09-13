@@ -1,10 +1,9 @@
 import Link from 'next/link'
-import PageLayout from '../components/PageLayout'
 import AnimatedSection from '../components/AnimatedSection'
 
 export default function MembershipPage() {
   return (
-    <PageLayout>
+    <div className="page-enter pt-[var(--navbar-height,6rem)]">
       <AnimatedSection>
         <header className="container mx-auto max-w-5xl px-6 py-16 sm:px-8 md:px-12 md:py-24">
           <h1 className="max-w-3xl text-4xl font-black text-on-surface md:text-6xl">Membership and participation</h1>
@@ -25,6 +24,6 @@ export default function MembershipPage() {
       <AnimatedSection delay={2}>
         <section className="container mx-auto max-w-5xl px-6 py-16 sm:px-8 md:px-12"><h2 className="text-2xl font-bold text-on-surface">Current process</h2><p className="mt-4 leading-relaxed text-on-surface-variant">Current participation process details are not published on this site.</p></section>
       </AnimatedSection>
-    </PageLayout>
+    </div>
   )
 }

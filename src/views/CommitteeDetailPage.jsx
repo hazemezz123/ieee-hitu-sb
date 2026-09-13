@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import PageLayout from '../components/PageLayout'
 import AnimatedSection from '../components/AnimatedSection'
 import { findCommitteeLeaders } from '../data/presentation'
 import { fetchCommitteeDetailResult } from '../data/committeeSource'
@@ -23,7 +22,7 @@ export default function CommitteeDetailPage() {
   }, [slug])
 
   if (!detail) return (
-    <PageLayout>
+    <div className="page-enter pt-[var(--navbar-height,6rem)]">
       <div role="status" className="container mx-auto max-w-6xl px-6 py-16 sm:px-8 md:px-12 md:py-24">
         <span className="sr-only">Loading committee record...</span>
         <Skeleton className="h-4 w-28" />
@@ -42,25 +41,25 @@ export default function CommitteeDetailPage() {
           </div>
         </div>
       </div>
-    </PageLayout>
+    </div>
   )
 
   const { committee, members } = detail
 
   if (!committee) return (
-    <PageLayout>
+    <div className="page-enter pt-[var(--navbar-height,6rem)]">
       <section className="container mx-auto flex min-h-[70vh] max-w-3xl flex-col justify-center px-6 py-16 sm:px-8 md:px-12">
         <h1 className="text-4xl font-black text-on-surface md:text-5xl">Committee not found</h1>
         <p className="mt-5 text-on-surface-variant">The requested committee record does not exist.</p>
         <Link className="mt-8 inline-flex min-h-11 items-center text-sm font-bold text-primary" href="/committees">Back to committees</Link>
       </section>
-    </PageLayout>
+    </div>
   )
 
   const leaders = findCommitteeLeaders(committee.slug, members)
 
   return (
-    <PageLayout>
+    <div className="page-enter pt-[var(--navbar-height,6rem)]">
       <AnimatedSection trigger="load">
         <header className="container mx-auto max-w-6xl px-6 py-16 sm:px-8 md:px-12 md:py-24">
           <Link className="inline-flex min-h-11 items-center text-sm font-bold text-primary" href="/committees">All committees</Link>
@@ -87,6 +86,6 @@ export default function CommitteeDetailPage() {
           </div>
         </div>
       </AnimatedSection>
-    </PageLayout>
+    </div>
   )
 }

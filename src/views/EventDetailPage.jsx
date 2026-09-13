@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import PageLayout from "../components/PageLayout";
 import MasonryGallery from "../components/MasonryGallery";
 import { fetchEventBySlugResult } from "../data/eventsSource";
 import Skeleton from "../components/Skeleton";
@@ -43,7 +42,7 @@ function EventDetail({ slug }) {
 
   if (state.status === "loading")
     return (
-      <PageLayout>
+      <div className="page-enter pt-[var(--navbar-height,6rem)]">
         <div
           role="status"
           className="container mx-auto max-w-5xl px-6 py-16 md:px-12 md:py-24"
@@ -66,11 +65,11 @@ function EventDetail({ slug }) {
             </div>
           </dl>
         </div>
-      </PageLayout>
+      </div>
     );
   if (state.status === "error")
     return (
-      <PageLayout>
+      <div className="page-enter pt-[var(--navbar-height,6rem)]">
         <div
           role="alert"
           className="container mx-auto max-w-5xl px-6 py-24 text-center"
@@ -82,11 +81,11 @@ function EventDetail({ slug }) {
             Please try again later.
           </p>
         </div>
-      </PageLayout>
+      </div>
     );
   if (!state.event)
     return (
-      <PageLayout>
+      <div className="page-enter pt-[var(--navbar-height,6rem)]">
         <div className="container mx-auto max-w-5xl px-6 py-24 text-center">
           <h1 className="text-4xl font-black text-on-surface">
             Event not found
@@ -101,12 +100,12 @@ function EventDetail({ slug }) {
             Back to events
           </Link>
         </div>
-      </PageLayout>
+      </div>
     );
 
   const event = state.event;
   return (
-    <PageLayout>
+    <div className="page-enter pt-[var(--navbar-height,6rem)]">
       {event.coverImage && !imageFailed ? (
         <img
           className=" w-full object-cover"
@@ -209,7 +208,7 @@ function EventDetail({ slug }) {
           </section>
         )}
       </article>
-    </PageLayout>
+    </div>
   );
 }
 

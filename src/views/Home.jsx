@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import PageLayout from '../components/PageLayout'
 import Hero from '../components/Hero'
 import { fetchEventsResult } from '../data/eventsSource'
 import { fetchCommitteesResult } from '../data/committeeSource'
@@ -159,7 +158,7 @@ export default function Home() {
   const remainingNextEvents = nextEvents.slice(1)
 
   return (
-    <PageLayout variant="home">
+    <div className="page-enter">
       <Hero />
       <div>
         {result.status === 'loading' && <div role="status" className="container mx-auto max-w-6xl px-6 py-16 md:px-12">
@@ -195,6 +194,6 @@ export default function Home() {
         <CommitteeDirectory />
         {result.status === 'ready' && recentEvents.length > 0 && <section className="border-t border-outline-variant/30 bg-inverse-surface py-16"><div className="container mx-auto max-w-6xl px-6 md:px-12"><h2 className="mb-6 text-2xl font-bold text-[#F0F4F8]">Recent events</h2>{recentEvents.map((event, index) => <EventRecord key={event.slug || index} event={event} tone="inverse" />)}</div></section>}
       </div>
-    </PageLayout>
+    </div>
   )
 }

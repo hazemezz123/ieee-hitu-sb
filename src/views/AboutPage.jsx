@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import PageLayout from '../components/PageLayout'
 import { boardMembers } from '../data/boardMembers'
 import { communityPartners } from '../data/partners'
 import { fetchPartners } from '../data/partnersSource'
@@ -20,7 +19,7 @@ export default function AboutPage() {
   }, [])
 
   return (
-    <PageLayout>
+    <div className="page-enter pt-[var(--navbar-height,6rem)]">
       <div className="container mx-auto max-w-6xl px-6 py-16 md:px-12 md:py-24">
         <header className="max-w-4xl border-b border-outline-variant/40 pb-12">
           <p className="section-label">Branch profile</p>
@@ -42,6 +41,6 @@ export default function AboutPage() {
 
         <section className="flex flex-wrap items-center justify-between gap-6 py-12"><p className="max-w-xl text-on-surface-variant">The public site provides access to branch information, committees, events, gallery content, resources, and contact paths.</p><Link className="btn btn-primary" href="/join-us">Join the branch</Link></section>
       </div>
-    </PageLayout>
+    </div>
   )
 }
