@@ -156,6 +156,24 @@ const SCHEMA_STATEMENTS = [
      logo TEXT,
      logo_dark INTEGER DEFAULT 0
    )`,
+  `CREATE TABLE IF NOT EXISTS recruitment_forms (
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
+   slug TEXT UNIQUE NOT NULL,
+   title TEXT NOT NULL,
+   description TEXT,
+   is_open INTEGER DEFAULT 0,
+   closed_title TEXT,
+   closed_message TEXT,
+   created_at TEXT DEFAULT (datetime('now')),
+   updated_at TEXT DEFAULT (datetime('now'))
+ )`,
+  `CREATE TABLE IF NOT EXISTS recruitment_applications (
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
+   form_id INTEGER NOT NULL,
+   data TEXT NOT NULL,
+   created_at TEXT DEFAULT (datetime('now'))
+ )`,
+  `CREATE INDEX IF NOT EXISTS idx_recruitment_applications_form ON recruitment_applications(form_id, id DESC)`,
 ]
 
 export async function ensureSchema() {
@@ -179,6 +197,14 @@ export async function ensureSchema() {
     if (!(info?.rows || []).some(row => row.name === 'logo_dark')) {
       await execute('ALTER TABLE partners ADD COLUMN logo_dark INTEGER DEFAULT 0')
     }
+  }
+
+  const headsCheck = await execute("SELECT id FROM recruitment_forms WHERE slug = 'heads'")
+  if ((headsCheck?.rows || []).length === 0) {
+    await execute(
+      'INSERT INTO recruitment_forms (slug, title, description, is_open, closed_title, closed_message) VALUES (?, ?, ?, ?, ?, ?)',
+      ['heads', 'Heads & Vice-Heads Recruitment', 'Apply to lead a committee as Head or Vice-Head.', 0, 'Recruitment is Closed', 'Heads recruitment is closed right now. Follow our events and check back for the next wave.'],
+    )
   }
 }
 
@@ -333,4 +359,69 @@ export async function updatePartner(id, data) {
 
 export async function deletePartner(id) {
   await execute('DELETE FROM partners WHERE id = ?', [id])
+}
+
+function rowToRecruitmentForm(row) {
+  return {
+    _id: Number(row.id) || 0,
+    slug: String(row.slug || ''),
+    title: String(row.title || ''),
+    description: row.description || '',
+    isOpen: Number(row.is_open) === 1,
+    closedTitle: row.closed_title || '',
+    closedMessage: row.closed_message || '',
+  }
+}
+
+function rowToRecruitmentApplication(row) {
+  let data = {}
+  try { data = JSON.parse(row.data || '{}') } catch { data = {} }
+  return { _id: Number(row.id) || 0, formId: Number(row.form_id) || 0, data, createdAt: row.created_at || '' }
+}
+
+export async function fetchRecruitmentForms() {
+  const result = await execute('SELECT * FROM recruitment_forms ORDER BY id')
+  return (result?.rows || []).map(rowToRecruitmentForm)
+}
+
+export async function fetchRecruitmentFormBySlug(slug) {
+  const result = await execute('SELECT * FROM recruitment_forms WHERE slug = ?', [slug])
+  const rows = result?.rows || []
+  return rows.length > 0 ? rowToRecruitmentForm(rows[0]) : null
+}
+
+export async function updateRecruitmentForm(slug, patch = {}) {
+  const sets = []
+  const args = []
+  if (patch.title !== undefined) { sets.push('title = ?'); args.push(patch.title) }
+  if (patch.description !== undefined) { sets.push('description = ?'); args.push(patch.description) }
+  if (patch.isOpen !== undefined) { sets.push('is_open = ?'); args.push(patch.isOpen ? 1 : 0) }
+  if (patch.closedTitle !== undefined) { sets.push('closed_title = ?'); args.push(patch.closedTitle) }
+  if (patch.closedMessage !== undefined) { sets.push('closed_message = ?'); args.push(patch.closedMessage) }
+  sets.push("updated_at = datetime('now')")
+  args.push(slug)
+  await execute(`UPDATE recruitment_forms SET ${sets.join(', ')} WHERE slug = ?`, args)
+}
+
+export async function createRecruitmentApplication(formId, data) {
+  const result = await execute(
+    'INSERT INTO recruitment_applications (form_id, data) VALUES (?, ?)',
+    [formId, JSON.stringify(data || {})],
+  )
+  return result?.last_insert_rowid
+}
+
+export async function fetchRecruitmentApplications(formId) {
+  const result = await execute('SELECT * FROM recruitment_applications WHERE form_id = ? ORDER BY id DESC', [formId])
+  return (result?.rows || []).map(rowToRecruitmentApplication)
+}
+
+export async function fetchRecruitmentApplicationById(id) {
+  const result = await execute('SELECT * FROM recruitment_applications WHERE id = ?', [id])
+  const rows = result?.rows || []
+  return rows.length > 0 ? rowToRecruitmentApplication(rows[0]) : null
+}
+
+export async function deleteRecruitmentApplication(id) {
+  await execute('DELETE FROM recruitment_applications WHERE id = ?', [id])
 }
