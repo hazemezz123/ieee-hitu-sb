@@ -207,7 +207,11 @@
   --shadow-2xl: none;
 }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--primary) transparent; }
+::-webkit-scrollbar { width: 0.5rem; height: 0.5rem; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { border-radius: var(--radius-full); background: var(--color-surface-container-highest); }
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
 body {
   margin: 0;
