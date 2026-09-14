@@ -8,6 +8,7 @@ import EventRecord from './EventRecord'
 import FeaturedEvent from './FeaturedEvent'
 import CommitteeDirectory from './CommitteeDirectory'
 import PartnershipCarousel from './PartnershipCarousel'
+import RecruitmentBand from './RecruitmentBand'
 import { useEventsResult } from '../hooks/useEventsResult'
 
 export default function Home() {
@@ -23,6 +24,7 @@ export default function Home() {
   return (
     <div className="page-enter">
       <Hero />
+      <RecruitmentBand />
       <div>
         {result.status === 'loading' && <div role="status" className="container mx-auto max-w-6xl px-6 py-16 md:px-12">
           <span className="sr-only">Loading event records...</span>

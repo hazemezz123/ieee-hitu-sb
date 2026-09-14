@@ -57,7 +57,7 @@ describe('recruitment pages', () => {
     fetchPartners.mockReset()
     fetchPartners.mockResolvedValue(structuredClone(communityPartners))
     fetchRecruitmentForm.mockReset()
-    fetchRecruitmentForm.mockResolvedValue({ slug: 'heads', title: 'Heads', description: '', isOpen: true })
+    fetchRecruitmentForm.mockResolvedValue({ slug: 'heads', title: 'Heads', description: '', isOpen: false })
   })
 
   afterEach(() => {
@@ -137,6 +137,25 @@ describe('recruitment pages', () => {
     nodes.slice(1).forEach((node, index) => {
       expect(nodes[index].compareDocumentPosition(node) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     })
+  })
+
+  it('shows the recruitment band after the hero when open', async () => {
+    fetchRecruitmentForm.mockResolvedValue({ slug: 'heads', title: 'Heads', description: 'Lead description', isOpen: true })
+    renderPage(<Home />)
+
+    const cta = await screen.findByRole('link', { name: /start your application/i })
+    expect(cta.getAttribute('href')).toBe('/join-us')
+    const h1 = screen.getByRole('heading', { level: 1 })
+    const band = screen.getByRole('heading', { name: /lead an ieee hitu committee/i })
+    expect(h1.compareDocumentPosition(band) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it('hides the recruitment band when closed', async () => {
+    fetchRecruitmentForm.mockResolvedValue({ slug: 'heads', title: 'Heads', isOpen: false })
+    renderPage(<Home />)
+
+    await screen.findByText('Next Lab')
+    expect(screen.queryByRole('heading', { name: /lead an ieee hitu committee/i })).toBeNull()
   })
 
   it('renders duplicate slugs only once across Home event records', async () => {
