@@ -15,6 +15,10 @@ import { GET as membersGET, POST as membersPOST } from './members/route.js'
 import { DELETE as memberDELETE, PUT as memberPUT } from './members/[id]/route.js'
 import { GET as partnersGET, POST as partnersPOST } from './partners/route.js'
 import { DELETE as partnerDELETE } from './partners/[id]/route.js'
+import { GET as recruitmentFormsGET } from './recruitment/forms/route.js'
+import { GET as recruitmentFormGET, PUT as recruitmentFormPUT } from './recruitment/forms/[slug]/route.js'
+import { GET as applicationsGET, POST as applicationsPOST } from './recruitment/applications/route.js'
+import { DELETE as applicationDELETE } from './recruitment/applications/[id]/route.js'
 
 const turso = vi.hoisted(() => ({
   ensureSchema: vi.fn(),
@@ -40,6 +44,13 @@ const turso = vi.hoisted(() => ({
   createPartner: vi.fn(),
   updatePartner: vi.fn(),
   deletePartner: vi.fn(),
+  fetchRecruitmentForms: vi.fn(),
+  fetchRecruitmentFormBySlug: vi.fn(),
+  updateRecruitmentForm: vi.fn(),
+  createRecruitmentApplication: vi.fn(),
+  fetchRecruitmentApplications: vi.fn(),
+  fetchRecruitmentApplicationById: vi.fn(),
+  deleteRecruitmentApplication: vi.fn(),
 }))
 vi.mock('@/lib/server/db', () => turso)
 
@@ -196,5 +207,35 @@ describe('committees/gallery/members/partners routes', () => {
 
     const slug = await committeeBySlug(req('/api/committees/by-slug?slug=x'))
     expect(slug.status).toBe(200)
+  })
+})
+
+describe('recruitment routes', () => {
+  it('public form GETs never leak applications', async () => {
+    turso.fetchRecruitmentForms.mockResolvedValue([{ _id: 1, slug: 'heads', isOpen: true }])
+    const res = await recruitmentFormsGET()
+    expect(res.status).toBe(200)
+    expect(JSON.stringify(await res.json())).not.toContain('applications')
+  })
+  it('POST to a closed form returns 410 without inserting', async () => {
+    turso.fetchRecruitmentFormBySlug.mockResolvedValue({ _id: 1, slug: 'heads', isOpen: false })
+    const res = await applicationsPOST(req('/api/recruitment/applications', { method: 'POST', body: { formSlug: 'heads', data: { name: 'A', email: 'a@x.com' } } }))
+    expect(res.status).toBe(410)
+    expect(turso.createRecruitmentApplication).not.toHaveBeenCalled()
+  })
+  it('POST validates required fields with 400 + field', async () => {
+    turso.fetchRecruitmentFormBySlug.mockResolvedValue({ _id: 1, slug: 'heads', isOpen: true })
+    const res = await applicationsPOST(req('/api/recruitment/applications', { method: 'POST', body: { formSlug: 'heads', data: { name: '', email: 'bad' } } }))
+    expect(res.status).toBe(400)
+    expect((await res.json()).field).toBe('name')
+  })
+  it('admin PUT toggles is_open; admin list/delete require auth', async () => {
+    const denied = await recruitmentFormPUT(req('/api/recruitment/forms/heads', { method: 'PUT', body: { isOpen: true } }), { params: Promise.resolve({ slug: 'heads' }) })
+    expect(denied.status).toBe(401)
+    const res = await recruitmentFormPUT(req('/api/recruitment/forms/heads', { method: 'PUT', body: { isOpen: true }, cookie: authedCookie() }), { params: Promise.resolve({ slug: 'heads' }) })
+    expect(res.status).toBe(200)
+    expect(turso.updateRecruitmentForm).toHaveBeenCalledWith('heads', { isOpen: true })
+    expect((await applicationsGET(req('/api/recruitment/applications?form=heads'))).status).toBe(401)
+    expect((await applicationDELETE(req('/api/x', { method: 'DELETE' }), { params: Promise.resolve({ id: '1' }) })).status).toBe(401)
   })
 })
