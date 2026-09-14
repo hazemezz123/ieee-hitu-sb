@@ -11,6 +11,7 @@ import LoginForm from "./LoginForm";
 import GalleryTab from "./GalleryTab";
 import CommitteesTab from "./CommitteesTab";
 import PartnersTab from "./PartnersTab";
+import RecruitmentTab from "./RecruitmentTab";
 
 export default function AdminShell() {
   const router = useRouter();
@@ -143,7 +144,7 @@ export default function AdminShell() {
         </div>
 
         <div role="tablist" className="mb-8 flex gap-2 border-b border-outline-variant/20">
-          {["events", "gallery", "committees", "partners"].map((name) => (
+          {["events", "gallery", "committees", "partners", "recruitment"].map((name) => (
             <button
               key={name}
               role="tab"
@@ -156,7 +157,7 @@ export default function AdminShell() {
                   : "text-on-surface-variant hover:text-on-surface")
               }
             >
-              {name === "events" ? "Events" : name === "gallery" ? "Gallery" : name === "committees" ? "Committees" : "Partners"}
+              {name === "events" ? "Events" : name === "gallery" ? "Gallery" : name === "committees" ? "Committees" : name === "recruitment" ? "Recruitment" : "Partners"}
             </button>
           ))}
         </div>
@@ -173,6 +174,8 @@ export default function AdminShell() {
           <CommitteesTab />
         ) : tab === "partners" ? (
           <PartnersTab />
+        ) : tab === "recruitment" ? (
+          <RecruitmentTab />
         ) : (
           <EventsTable
             events={events}
