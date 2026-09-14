@@ -25,10 +25,10 @@ export default function HeadsApplicationForm({ onClosed }) {
   const [doneId, setDoneId] = useState(null)
   const [options, setOptions] = useState(fallbackCommittees)
 
-  useEffect(() => { try { localStorage.setItem(DRAFT_KEY, JSON.stringify(values)) } catch {} }, [values])
+  useEffect(() => { try { localStorage.setItem(DRAFT_KEY, JSON.stringify(values)) } catch { /* private-mode storage may be unavailable; draft stays in memory */ } }, [values])
   useEffect(() => {
     let active = true
-    fetchCommitteesResult().then(r => { if (active && r?.committees?.length) setOptions(r.committees) }).catch(() => {})
+    fetchCommitteesResult().then(r => { if (active && r?.committees?.length) setOptions(r.committees) }).catch(() => { /* fallback committees stay in use */ })
     return () => { active = false }
   }, [])
 
@@ -61,7 +61,7 @@ export default function HeadsApplicationForm({ onClosed }) {
       const check = validateHeadsApplication(payload)
       if (!check.ok) { setFieldError(check); setUploading(false); return }
       const id = await submitApplication('heads', payload)
-      try { localStorage.removeItem(DRAFT_KEY) } catch {}
+      try { localStorage.removeItem(DRAFT_KEY) } catch { /* draft already gone */ }
       setDoneId(id)
     } catch (err) {
       if (String(err.message || '').toLowerCase().includes('closed') || String(err.message || '').includes('410')) onClosed?.()
@@ -110,14 +110,14 @@ export default function HeadsApplicationForm({ onClosed }) {
       {step === 3 && <>
         <div><label className="form-label" htmlFor="heads-cvFile">CV (PDF file)</label><input id="heads-cvFile" type="file" accept=".pdf,.doc,.docx" onChange={e => setCvFile(e.target.files?.[0] || null)} />{input('…or CV Drive link', 'cvUrl', { type: 'url', placeholder: 'https://drive.google.com/…' })}</div>
         <label className="form-label" htmlFor="heads-notes">Questions / notes<textarea id="heads-notes" className="form-textarea mt-2" rows={4} value={values.notes} onChange={set('notes')} placeholder="Thanks for your time — drop questions here and we'll contact you." /></label>
-        <input type="text" name="company_website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
+        <input type="text" name="company_website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" value={values.company_website || ''} onChange={set('company_website')} />
       </>}
       <div className="flex gap-3">
         {step > 0 && <button type="button" className="btn btn-ghost" onClick={() => setStep(s => s - 1)}>Back</button>}
         {step < 3
           ? <button type="button" className="btn btn-primary btn-wedge" onClick={next}>Continue</button>
           : <button type="submit" className="btn btn-primary btn-wedge" disabled={uploading}>{uploading ? 'Submitting…' : 'Submit application'}</button>}
-        <button type="button" className="btn btn-ghost" onClick={() => { setValues({ ...emptyValues }); setPhotoFile(null); setCvFile(null); try { localStorage.removeItem(DRAFT_KEY) } catch {} }}>Clear</button>
+        <button type="button" className="btn btn-ghost" onClick={() => { setValues({ ...emptyValues }); setPhotoFile(null); setCvFile(null); try { localStorage.removeItem(DRAFT_KEY) } catch { /* nothing to clear */ } }}>Clear</button>
       </div>
     </form>
   )

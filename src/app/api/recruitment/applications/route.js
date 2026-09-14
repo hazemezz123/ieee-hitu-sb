@@ -37,7 +37,7 @@ export async function POST(req) {
     const ip = req.headers.get?.('x-forwarded-for') || 'local'
     if (rateLimited(ip)) return NextResponse.json({ error: 'Too many requests. Try again in a minute.' }, { status: 429 })
     const body = (await req.json().catch(() => ({}))) ?? {}
-    if (body.company_website) return NextResponse.json({ id: 0 }, { status: 201 })
+    if (body.company_website || body.data?.company_website) return NextResponse.json({ id: 0 }, { status: 201 })
     const slug = String(body.formSlug || 'heads')
     await ensureSchema()
     const form = await fetchRecruitmentFormBySlug(slug)
