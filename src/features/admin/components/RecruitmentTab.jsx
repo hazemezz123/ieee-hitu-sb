@@ -1,6 +1,6 @@
 'use client'
 import { useCallback, useEffect, useState } from 'react'
-import { deleteApplication, fetchApplications, fetchRecruitmentForms, updateRecruitmentForm } from '@/lib/recruitment'
+import { deleteApplication, fetchApplication, fetchApplications, fetchRecruitmentForms, updateRecruitmentForm } from '@/lib/recruitment'
 import { fetchCommittees } from '@/lib/turso'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import Skeleton from '@/components/ui/Skeleton'
@@ -29,7 +29,6 @@ export default function RecruitmentTab() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, pref])
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect -- fire-and-forget load
   useEffect(() => { load() }, [load])
 
   async function toggle(form) {
@@ -75,7 +74,7 @@ export default function RecruitmentTab() {
         </div>
         {apps.length === 0 ? <div className="text-center py-16 text-on-surface-variant">No applications yet.</div> : (
           <table className="w-full text-sm"><thead><tr className="border-b border-outline-variant/20 text-left text-xs uppercase tracking-wider text-on-surface-variant"><th className="pb-3 pr-4">Name</th><th className="pb-3 pr-4 hidden sm:table-cell">1st pref</th><th className="pb-3 pr-4 hidden md:table-cell">Email</th><th className="pb-3">Actions</th></tr></thead>
-            <tbody>{apps.map(a => <tr key={a._id} className="border-b border-outline-variant/10"><td className="py-3 pr-4 font-medium">{a.name}</td><td className="py-3 pr-4 hidden sm:table-cell">{a.firstPref || '—'}</td><td className="py-3 pr-4 hidden md:table-cell">{a.email}</td><td className="py-3"><div className="flex gap-2"><button className="btn btn-ghost text-xs" onClick={async () => { const { fetchApplication } = await import('@/lib/recruitment'); setSelected(await fetchApplication(a._id)) }}>View</button><button className="btn btn-ghost text-xs text-error" onClick={() => setDeleteTarget(a)}>Delete</button></div></td></tr>)}</tbody></table>
+            <tbody>{apps.map(a => <tr key={a._id} className="border-b border-outline-variant/10"><td className="py-3 pr-4 font-medium">{a.name}</td><td className="py-3 pr-4 hidden sm:table-cell">{a.firstPref || '—'}</td><td className="py-3 pr-4 hidden md:table-cell">{a.email}</td><td className="py-3"><div className="flex gap-2"><button className="btn btn-ghost text-xs" onClick={async () => setSelected(await fetchApplication(a._id))}>View</button><button className="btn btn-ghost text-xs text-error" onClick={() => setDeleteTarget(a)}>Delete</button></div></td></tr>)}</tbody></table>
         )}
       </>}
       {deleteTarget && !selected && <ConfirmDialog title="Delete Application" onCancel={() => setDeleteTarget(null)} onConfirm={confirmDelete}>Delete application #{deleteTarget._id}? This cannot be undone.</ConfirmDialog>}
