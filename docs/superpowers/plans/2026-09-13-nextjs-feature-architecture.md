@@ -29,13 +29,13 @@ git mv src/assets/logo.png public/logo.png
 Run: `git status --short`
 Expected: `D src/components/ScrollToTop.jsx`, `D src/components/PageLayout.jsx`, `R src/assets/logo.png -> public/logo.png`
 
-- [ ] **Step 3: Fix `src/app/layout.js` — drop ScrollToTop/PageLayout, inline padding**
+- [ ] **Step 3: Fix `src/app/layout.js` — drop ScrollToTop, keep main plain (padding stays per-page to preserve exact behavior)**
 
 ```js
 import './globals.css'
 import Script from 'next/script'
-import Navbar from '@/components/navbar'
-import Footer from '@/components/footer'
+import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 import LenisProvider from '@/lib/LenisProvider'
 
 export const metadata = {
@@ -59,7 +59,7 @@ export default function RootLayout({ children }) {
         <Script id="gtag-init">{`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-7FMS8J5THQ')`}</Script>
         <LenisProvider>
           <Navbar />
-          <main className="pt-[var(--navbar-height,6rem)]">{children}</main>
+          <main>{children}</main>
           <Footer />
         </LenisProvider>
       </body>
@@ -68,7 +68,9 @@ export default function RootLayout({ children }) {
 }
 ```
 
-- [ ] **Step 4: Fix `src/components/Navbar.jsx` logo import**
+- [ ] **Step 3b: Inline `PageLayout` in ALL 11 importers (exact behavior preserved)** — files: `Home.jsx` (variant home), `EventsPage.jsx`, `EventDetailPage.jsx`, `CommitteesPage.jsx`, `CommitteeDetailPage.jsx`, `GalleryPage.jsx`, `AboutPage.jsx`, `ContactPage.jsx`, `MembershipPage.jsx`, `JoinUsPage.jsx`, `NotFoundPage.jsx`. Remove `PageLayout` import; replace `<PageLayout variant="home">` with `<div className="page-enter">`; replace `<PageLayout>` (or `<PageLayout variant="default">`) with `<div className="page-enter pt-[var(--navbar-height,6rem)]">`. Children identical.
+
+- [ ] **Step 4: Fix logo imports in ALL 3 importers (Navbar.jsx, Hero.jsx, Footer.jsx)** — remove `import logo from '../assets/logo.png'`, change `<img src={logo}` → `<img src="/logo.png"` in each. Everything else identical.
 
 ```js
 // before: import logo from '../assets/logo.png'
