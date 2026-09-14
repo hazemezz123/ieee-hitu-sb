@@ -5,6 +5,7 @@ import { fetchCommittees } from '@/lib/turso'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import Skeleton from '@/components/ui/Skeleton'
 import ApplicationDetail from './ApplicationDetail'
+import Select from '@/components/ui/Select'
 
 export default function RecruitmentTab() {
   const [forms, setForms] = useState([])
@@ -68,7 +69,7 @@ export default function RecruitmentTab() {
         {editing && <form onSubmit={saveEdit} className="card p-4 my-4"><label className="form-label" htmlFor="rec-title">Title<input id="rec-title" className="form-input" value={editing.title} onChange={e => setEditing({ ...editing, title: e.target.value })} /></label><label className="form-label mt-3" htmlFor="rec-desc">Description<textarea id="rec-desc" className="form-textarea" rows={2} value={editing.description || ''} onChange={e => setEditing({ ...editing, description: e.target.value })} /></label><label className="form-label mt-3" htmlFor="rec-closed-title">Closed title<input id="rec-closed-title" className="form-input" value={editing.closedTitle || ''} onChange={e => setEditing({ ...editing, closedTitle: e.target.value })} /></label><label className="form-label mt-3" htmlFor="rec-closed-msg">Closed message<textarea id="rec-closed-msg" className="form-textarea" rows={2} value={editing.closedMessage || ''} onChange={e => setEditing({ ...editing, closedMessage: e.target.value })} /></label><div className="mt-3 flex gap-2"><button className="btn btn-primary text-xs" type="submit">Save</button><button className="btn btn-ghost text-xs" type="button" onClick={() => setEditing(null)}>Cancel</button></div></form>}
         <div className="my-4 flex flex-wrap gap-3">
           <input className="form-input max-w-xs" placeholder="Search name or email" value={search} onChange={e => setSearch(e.target.value)} aria-label="Search applications" />
-          <select className="form-select max-w-xs" value={pref} onChange={e => setPref(e.target.value)} aria-label="Filter by preference"><option value="">All preferences</option>{committees.map(c => <option key={c._id || c.slug} value={c.slug}>{c.name}</option>)}</select>
+          <Select id="rec-pref-filter" ariaLabel="Filter by preference" className="max-w-xs" value={pref} onChange={setPref} placeholder="All preferences" options={[{ value: '', label: 'All preferences' }, ...committees.map(c => ({ value: c.slug, label: c.name }))]} />
           <button className="btn btn-secondary text-xs" onClick={load}>Refresh</button>
           <a className="btn btn-ghost text-xs" href="/api/recruitment/applications/export?form=heads">Export CSV</a>
         </div>

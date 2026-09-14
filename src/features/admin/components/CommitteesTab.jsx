@@ -16,6 +16,7 @@ import { slugify } from '@/lib/slugify'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import Skeleton from '@/components/ui/Skeleton'
 import PhotoInput from './PhotoInput'
+import Select from '@/components/ui/Select'
 
 const emptyCommittee = { name: '', slug: '', category: 'technical', shortDescription: '' }
 const emptyMember = { name: '', position: '', email: '', phone: '', img: '' }
@@ -178,16 +179,8 @@ export default function CommitteesTab() {
           required
           onChange={e => setCommitteeForm({ ...committeeForm, slug: e.target.value })}
         />
-        <label className="form-label" htmlFor="committee-category">Category</label>
-        <select
-          id="committee-category"
-          className="form-select mb-4"
-          value={committeeForm.category}
-          onChange={e => setCommitteeForm({ ...committeeForm, category: e.target.value })}
-        >
-          <option value="technical">Technical</option>
-          <option value="non-technical">Non-Technical</option>
-        </select>
+        <label className="form-label" htmlFor="committee-category-trigger">Category</label>
+        <Select id="committee-category" className="mb-4" value={committeeForm.category} onChange={value => setCommitteeForm({ ...committeeForm, category: value })} options={[{ value: 'technical', label: 'Technical' }, { value: 'non-technical', label: 'Non-Technical' }]} />
         <label className="form-label" htmlFor="committee-desc">Short Description</label>
         <textarea
           id="committee-desc"

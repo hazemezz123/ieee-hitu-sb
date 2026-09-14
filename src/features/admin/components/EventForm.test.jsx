@@ -75,23 +75,24 @@ function photoUrlInput(label) {
 describe('event form', () => {
   it('offers Summit in the category dropdown', () => {
     renderRoute()
-    const values = [...screen.getByLabelText('Category').options].map(o => o.value)
-    expect(values).toContain('summit')
+    fireEvent.click(screen.getByRole('combobox', { name: 'Category' }))
+    expect(screen.getByRole('option', { name: 'Summit' })).toBeTruthy()
   })
 
   it('lists fetched committees in the organizer select with None first', async () => {
     renderRoute()
-    const select = screen.getByLabelText('Organizer Committee (optional)')
+    const select = screen.getByRole('combobox', { name: 'Organizer Committee (optional)' })
+    expect(select.textContent).toMatch(/None/)
+    fireEvent.click(select)
     expect(await screen.findByRole('option', { name: 'Web' })).toBeTruthy()
-    expect(select.options[0].value).toBe('')
-    expect(select.options[0].text).toBe('None')
+    expect(screen.getAllByRole('option')[0].textContent).toMatch(/None/)
   })
 
   it('saves the selected committee name', async () => {
     renderRoute()
-    await screen.findByRole('option', { name: 'Web' })
     fillRequiredFields()
-    fireEvent.change(screen.getByLabelText('Organizer Committee (optional)'), { target: { value: 'Web' } })
+    fireEvent.click(screen.getByRole('combobox', { name: 'Organizer Committee (optional)' }))
+    fireEvent.click(await screen.findByRole('option', { name: 'Web' }))
     fireEvent.click(screen.getByRole('button', { name: 'Create Event' }))
     await waitFor(() => expect(createEvent).toHaveBeenCalledWith(expect.objectContaining({ organizerCommittee: 'Web' })))
   })
@@ -107,14 +108,16 @@ describe('event form', () => {
     fetchEvents.mockResolvedValue([event])
     renderRoute('/admin/events/7/edit')
     expect(await screen.findByDisplayValue('Robotics Workshop')).toBeTruthy()
-    expect(screen.getByLabelText('Organizer Committee (optional)').value).toBe('Web')
+    expect(screen.getByRole('combobox', { name: 'Organizer Committee (optional)' }).textContent).toMatch(/Web/)
   })
 
   it('keeps a saved committee that no longer exists as an extra option', async () => {
     fetchEvents.mockResolvedValue([{ ...event, organizerCommittee: 'PR & OC' }])
     renderRoute('/admin/events/7/edit')
+    expect(await screen.findByDisplayValue('Robotics Workshop')).toBeTruthy()
+    expect(screen.getByRole('combobox', { name: 'Organizer Committee (optional)' }).textContent).toMatch(/PR & OC/)
+    fireEvent.click(screen.getByRole('combobox', { name: 'Organizer Committee (optional)' }))
     expect(await screen.findByRole('option', { name: 'PR & OC' })).toBeTruthy()
-    expect(screen.getByLabelText('Organizer Committee (optional)').value).toBe('PR & OC')
   })
 
   it('uploads a chosen cover file to Cloudinary and saves its URL', async () => {

@@ -8,6 +8,7 @@ import { uploadToCloudinary } from '@/lib/upload'
 import { slugify } from '@/lib/slugify'
 import PhotoInput from './PhotoInput'
 import Skeleton from '@/components/ui/Skeleton'
+import Select from '@/components/ui/Select'
 
 const categories = [
   { value: 'workshops', label: 'Workshops' },
@@ -219,10 +220,8 @@ export default function EventForm() {
               <input id="event-location" className="form-input" value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} required />
             </div>
             <div>
-              <label htmlFor="event-category" className="form-label">Category</label>
-              <select id="event-category" className="form-select" value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}>
-                {categories.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
-              </select>
+              <label htmlFor="event-category-trigger" className="form-label">Category</label>
+              <Select id="event-category" value={form.category} onChange={value => setForm({ ...form, category: value })} options={categories} />
             </div>
           </div>
           <div>
@@ -265,11 +264,8 @@ export default function EventForm() {
             )}
           </div>
           <div>
-            <label htmlFor="event-organizer" className="form-label">Organizer Committee (optional)</label>
-            <select id="event-organizer" className="form-select" value={form.organizerCommittee} onChange={e => setForm({ ...form, organizerCommittee: e.target.value })}>
-              <option value="">None</option>
-              {committeeOptions.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
-            </select>
+            <label htmlFor="event-organizer-trigger" className="form-label">Organizer Committee (optional)</label>
+            <Select id="event-organizer" value={form.organizerCommittee} onChange={value => setForm({ ...form, organizerCommittee: value })} placeholder="None" options={[{ value: '', label: 'None' }, ...committeeOptions.map(c => ({ value: c.name, label: c.name }))]} />
           </div>
           <div className="flex gap-3 pt-2">
             <button type="submit" className="btn btn-primary">{isEdit ? 'Update Event' : 'Create Event'}</button>
