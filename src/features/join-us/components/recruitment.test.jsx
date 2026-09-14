@@ -9,11 +9,12 @@ import TechnicalResources from '@/components/ui/TechnicalResources'
 import { committees } from '@/features/committees/data/committees'
 import { communityPartners } from '@/features/home/data/partners'
 
-const { fetchEventsResult, fetchCommitteesResult, fetchPartnersResult, fetchPartners } = vi.hoisted(() => ({
+const { fetchEventsResult, fetchCommitteesResult, fetchPartnersResult, fetchPartners, fetchRecruitmentForm } = vi.hoisted(() => ({
   fetchEventsResult: vi.fn(),
   fetchCommitteesResult: vi.fn(),
   fetchPartnersResult: vi.fn(),
   fetchPartners: vi.fn(),
+  fetchRecruitmentForm: vi.fn(),
 }))
 
 globalThis.IntersectionObserver = class {
@@ -29,6 +30,10 @@ vi.mock('next/link', () => ({
 vi.mock('@/features/events/hooks/useEvents', () => ({ fetchEventsResult }))
 vi.mock('@/features/committees/hooks/useCommittees', () => ({ fetchCommitteesResult }))
 vi.mock('@/features/home/hooks/usePartners', () => ({ fetchPartnersResult, fetchPartners }))
+vi.mock('@/lib/recruitment', () => ({
+  fetchRecruitmentForm: (...args) => fetchRecruitmentForm(...args),
+  submitApplication: vi.fn(),
+}))
 
 const events = [
   { slug: 'later', title: 'Later Lab', date: '2026-10-01T10:00:00Z', excerpt: 'Later', location: 'HITU' },
@@ -51,6 +56,8 @@ describe('recruitment pages', () => {
     fetchPartnersResult.mockResolvedValue({ partners: structuredClone(communityPartners), source: 'remote' })
     fetchPartners.mockReset()
     fetchPartners.mockResolvedValue(structuredClone(communityPartners))
+    fetchRecruitmentForm.mockReset()
+    fetchRecruitmentForm.mockResolvedValue({ slug: 'heads', title: 'Heads', description: '', isOpen: true })
   })
 
   afterEach(() => {
@@ -248,11 +255,9 @@ describe('recruitment pages', () => {
     expect(container.querySelector('.section-label')).toBeNull()
   })
 
-  it.each([
-    ['join', <JoinUsPage />, 'Submit interest'],
-    ['contact', <ContactPage />, 'Record message'],
-  ])('uses committee data, native labels, and an honest local outcome on %s', (_, page, action) => {
-    const { container } = renderPage(page)
+  it('uses committee data, native labels, and an honest local outcome on contact', () => {
+    const { container } = renderPage(<ContactPage />)
+    const action = 'Record message'
     const name = screen.getByLabelText('Full name')
     const email = screen.getByLabelText('Email address')
     const phone = screen.getByLabelText('Phone number')
@@ -282,6 +287,28 @@ describe('recruitment pages', () => {
     expect(screen.getByRole('status').textContent).toMatch(/recorded locally|not transmitted/i)
     expect(screen.queryByText(/message sent|we'll get back|success/i)).toBeNull()
     expect(email.value).toBe('student@hitu.edu.eg')
+  })
+
+  it('loads the heads form status and shows the wizard when open', async () => {
+    fetchRecruitmentForm.mockResolvedValue({ slug: 'heads', title: 'Heads', description: 'Lead description', isOpen: true })
+    const { container } = renderPage(<JoinUsPage />)
+
+    expect(screen.getByRole('heading', { level: 1, name: 'Lead an IEEE HITU Committee' })).toBeTruthy()
+    expect(screen.getByText('Heads & Vice-Heads Recruitment')).toBeTruthy()
+    expect(screen.getByLabelText(`${committees.length} committees`)).toBeTruthy()
+    expect(container.querySelector('main')).toBeNull()
+
+    expect(await screen.findByText(/Step 1\/4/)).toBeTruthy()
+    expect(fetchRecruitmentForm).toHaveBeenCalledWith('heads')
+  })
+
+  it('shows the closed state when heads recruitment is closed', async () => {
+    fetchRecruitmentForm.mockResolvedValue({ slug: 'heads', title: 'Heads', isOpen: false, closedTitle: 'Custom closed', closedMessage: 'Come back later.' })
+    renderPage(<JoinUsPage />)
+
+    expect(await screen.findByText('Custom closed')).toBeTruthy()
+    expect(screen.getByText('Come back later.')).toBeTruthy()
+    expect(screen.queryByText(/Step 1\/4/)).toBeNull()
   })
 
   it('renders technical resources as factual non-linked editorial entries', () => {

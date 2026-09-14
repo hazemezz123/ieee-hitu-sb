@@ -1,14 +1,33 @@
+'use client'
+import { useEffect, useState } from 'react'
 import AnimatedSection from '@/components/ui/AnimatedSection'
-import InterestForm from '@/components/ui/InterestForm'
+import Skeleton from '@/components/ui/Skeleton'
+import HeadsApplicationForm from '@/features/recruitment/components/HeadsApplicationForm'
+import RecruitmentClosed from '@/features/recruitment/components/RecruitmentClosed'
+import { fetchRecruitmentForm } from '@/lib/recruitment'
 import { committees } from '@/features/committees/data/committees'
 
 export default function JoinUsPage() {
+  const [form, setForm] = useState(null)
+  const [status, setStatus] = useState('loading')
+  useEffect(() => {
+    let active = true
+    fetchRecruitmentForm('heads').then(f => { if (active) { setForm(f); setStatus('ready') } }).catch(() => { if (active) setStatus('error') })
+    return () => { active = false }
+  }, [])
   return (
     <div className="page-enter pt-[var(--navbar-height,6rem)]">
-      <AnimatedSection><header className="container mx-auto max-w-4xl px-6 py-16 sm:px-8 md:px-12 md:py-24"><h1 className="text-4xl font-black text-on-surface md:text-6xl">Join IEEE HITU Student Branch</h1><p className="mt-6 max-w-2xl text-lg text-on-surface-variant">Express your interest in a committee and record the details needed for a later conversation with the branch.</p><p className="mt-8" aria-label={`${committees.length} committees`}><strong className="text-3xl text-primary">{committees.length}</strong> <span className="text-on-surface-variant">committees</span></p></header></AnimatedSection>
+      <AnimatedSection><header className="container mx-auto max-w-4xl px-6 py-16 sm:px-8 md:px-12 md:py-24">
+        <p className="text-xs font-bold uppercase tracking-widest text-primary">Heads &amp; Vice-Heads Recruitment</p>
+        <h1 className="mt-3 text-4xl font-black text-on-surface md:text-6xl">Lead an IEEE HITU Committee</h1>
+        <p className="mt-6 max-w-2xl text-lg text-on-surface-variant">{form?.description || 'Apply to lead a committee as Head or Vice-Head.'}</p>
+        <p className="mt-8" aria-label={`${committees.length} committees`}><strong className="text-3xl text-primary">{committees.length}</strong> <span className="text-on-surface-variant">committees</span></p>
+      </header></AnimatedSection>
       <AnimatedSection delay={1}>
-        <section className="border-t border-outline-variant/30 py-16"><div className="container mx-auto max-w-3xl px-6 sm:px-8 md:px-12"><h2 className="text-3xl font-bold">Participation interest</h2>
-          <InterestForm idPrefix="join" note="This form is a local demonstration and does not send an application." submitLabel="Submit interest" successMessage="Your interest was recorded locally in this page only. No application was transmitted." />
+        <section className="py-16"><div className="container mx-auto max-w-3xl px-6 sm:px-8 md:px-12">
+          {status === 'loading' && <div role="status"><span className="sr-only">Loading recruitment status...</span><Skeleton className="h-10 w-64" /><Skeleton className="mt-4 h-40 w-full" /></div>}
+          {status === 'error' && <div role="alert" className="card p-6">Recruitment status could not be loaded. Please try again later.</div>}
+          {status === 'ready' && (form?.isOpen ? <HeadsApplicationForm onClosed={() => setForm({ ...form, isOpen: false })} /> : <RecruitmentClosed form={form} />)}
         </div></section>
       </AnimatedSection>
     </div>
