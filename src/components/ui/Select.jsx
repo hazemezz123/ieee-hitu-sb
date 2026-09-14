@@ -145,6 +145,7 @@ export default function Select({
         className="sr-only"
         name={name}
         required={required}
+        disabled={disabled}
         value={value}
         onChange={() => { /* single source of truth is the custom panel */ }}
       >

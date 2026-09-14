@@ -104,7 +104,7 @@ export default function HeadsApplicationForm({ onClosed }) {
         {values.boardInterest === 'yes' && input('Role', 'role', { required: true, placeholder: 'Head / Vice-Head…' })}
         <Select id="heads-firstPref" label="1st preference" required value={values.firstPref} onChange={set('firstPref')} placeholder="Select a committee" options={toOptions(options)} />
         {errFor('firstPref')}
-        <Select id="heads-secondPref" label="2nd preference" value={values.secondPref} onChange={set('secondPref')} placeholder="None" options={toOptions(options)} />
+        <Select id="heads-secondPref" label="2nd preference" value={values.secondPref} onChange={set('secondPref')} placeholder="None" options={[{ value: '', label: 'None' }, ...toOptions(options)]} />
         <label className="form-label" htmlFor="heads-experience">Your technical experience in this committee<textarea id="heads-experience" className="form-textarea mt-2" rows={4} value={values.experience} onChange={set('experience')} /></label>
       </>}
       {step === 2 && <>
