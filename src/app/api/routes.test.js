@@ -216,6 +216,10 @@ describe('recruitment routes', () => {
     const res = await recruitmentFormsGET()
     expect(res.status).toBe(200)
     expect(JSON.stringify(await res.json())).not.toContain('applications')
+    turso.fetchRecruitmentFormBySlug.mockResolvedValue({ _id: 1, slug: 'heads', isOpen: true })
+    const one = await recruitmentFormGET(req('/api/recruitment/forms/heads'), { params: Promise.resolve({ slug: 'heads' }) })
+    expect(one.status).toBe(200)
+    expect(JSON.stringify(await one.json())).not.toContain('applications')
   })
   it('POST to a closed form returns 410 without inserting', async () => {
     turso.fetchRecruitmentFormBySlug.mockResolvedValue({ _id: 1, slug: 'heads', isOpen: false })
