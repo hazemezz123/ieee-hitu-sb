@@ -44,3 +44,81 @@ describe('Select core', () => {
     expect(native.value).toBe('web')
   })
 })
+
+describe('Select keyboard', () => {
+  const options = [
+    { value: 'ai', label: 'AI' },
+    { value: 'web', label: 'Web' },
+    { value: 'pr-oc', label: 'PR & OC' },
+  ]
+  it('opens with ArrowDown and selects with arrows + Enter', () => {
+    const onChange = vi.fn()
+    render(<Select id="k1" label="Pick" value="" onChange={onChange} options={options} />)
+    const trigger = screen.getByRole('combobox', { name: 'Pick' })
+    fireEvent.keyDown(trigger, { key: 'ArrowDown' })
+    expect(screen.getByRole('listbox')).toBeTruthy()
+    fireEvent.keyDown(screen.getByRole('listbox'), { key: 'ArrowDown' })
+    fireEvent.keyDown(screen.getByRole('listbox'), { key: 'Enter' })
+    expect(onChange).toHaveBeenCalledWith('web')
+  })
+  it('navigates with arrows + Enter on the trigger when search is hidden', () => {
+    const onChange = vi.fn()
+    render(<Select id="k3" label="Pick" value="" onChange={onChange} options={options} />)
+    const trigger = screen.getByRole('combobox', { name: 'Pick' })
+    fireEvent.keyDown(trigger, { key: 'ArrowDown' })
+    expect(screen.getByRole('listbox')).toBeTruthy()
+    fireEvent.keyDown(trigger, { key: 'ArrowDown' })
+    fireEvent.keyDown(trigger, { key: 'Enter' })
+    expect(onChange).toHaveBeenCalledWith('web')
+  })
+  it('type-ahead selects by first letter when search is hidden', () => {
+    const onChange = vi.fn()
+    render(<Select id="k2" label="Pick" value="" onChange={onChange} options={[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }]} />)
+    fireEvent.keyDown(screen.getByRole('combobox', { name: 'Pick' }), { key: 'n' })
+    expect(onChange).toHaveBeenCalledWith('no')
+  })
+})
+
+describe('Select search', () => {
+  const many = Array.from({ length: 8 }, (_, i) => ({ value: `c${i}`, label: `Committee ${i}` }))
+  it('shows search above threshold and filters, with a no-match row', () => {
+    render(<Select id="s5" label="Pick" value="" onChange={() => {}} options={many} />)
+    fireEvent.click(screen.getByRole('combobox', { name: 'Pick' }))
+    const search = screen.getByRole('searchbox', { name: 'Filter options' })
+    expect(search).toBeTruthy()
+    fireEvent.change(search, { target: { value: 'Committee 7' } })
+    expect(screen.getAllByRole('option')).toHaveLength(1)
+    fireEvent.change(search, { target: { value: 'zzz-nope' } })
+    expect(screen.getByText(/No matches for/)).toBeTruthy()
+  })
+  it('hides search for short lists', () => {
+    render(<Select id="s6" label="Pick" value="" onChange={() => {}} options={[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }]} />)
+    fireEvent.click(screen.getByRole('combobox', { name: 'Pick' }))
+    expect(screen.queryByRole('searchbox')).toBeNull()
+  })
+  it('marks the selected option with aria-selected and shows its hint', () => {
+    render(<Select id="s7" label="Pick" value="ai" onChange={() => {}} options={[{ value: 'ai', label: 'AI', hint: 'Smart systems.' }]} />)
+    fireEvent.click(screen.getByRole('combobox', { name: 'Pick' }))
+    expect(screen.getByRole('option', { name: /AI/ }).getAttribute('aria-selected')).toBe('true')
+    expect(screen.getByText('Smart systems.')).toBeTruthy()
+  })
+  it('disables interaction when disabled', () => {
+    render(<Select id="s8" label="Pick" value="" onChange={() => {}} options={[{ value: 'a', label: 'A' }]} disabled />)
+    fireEvent.click(screen.getByRole('combobox', { name: 'Pick' }))
+    expect(screen.queryByRole('listbox')).toBeNull()
+  })
+})
+
+describe('Select contract', () => {
+  it('exposes toOptions mapping slug/name/shortDescription', async () => {
+    const { toOptions } = await import('./Select')
+    expect(toOptions([{ slug: 'ai', name: 'AI', shortDescription: 'Smart.' }])).toEqual([{ value: 'ai', label: 'AI', hint: 'Smart.' }])
+  })
+  it('toggles aria-expanded on open/close', () => {
+    render(<Select id="s9" label="Pick" value="" onChange={() => {}} options={[{ value: 'a', label: 'A' }]} />)
+    const trigger = screen.getByRole('combobox', { name: 'Pick' })
+    expect(trigger.getAttribute('aria-expanded')).toBe('false')
+    fireEvent.click(trigger)
+    expect(trigger.getAttribute('aria-expanded')).toBe('true')
+  })
+})
