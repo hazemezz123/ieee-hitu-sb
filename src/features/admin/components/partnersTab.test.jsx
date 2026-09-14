@@ -11,7 +11,7 @@ const { createPartner, deletePartner, fetchPartners, updatePartner, uploadToClou
 }))
 
 vi.mock('@/features/home/hooks/usePartners', () => ({ createPartner, deletePartner, fetchPartners, updatePartner }))
-vi.mock('../../lib/upload', () => ({ uploadToCloudinary }))
+vi.mock('@/lib/upload', () => ({ uploadToCloudinary }))
 
 const partner = { _id: 1, name: 'Risk Solutions', logo: 'https://cdn/risk.webp' }
 

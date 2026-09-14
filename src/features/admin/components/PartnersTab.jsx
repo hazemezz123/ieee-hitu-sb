@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { createPartner, deletePartner, fetchPartners, updatePartner } from '@/features/home/hooks/usePartners'
-import { uploadToCloudinary } from '../../lib/upload'
+import { uploadToCloudinary } from '@/lib/upload'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import Skeleton from '@/components/ui/Skeleton'
 import PhotoInput from './PhotoInput'

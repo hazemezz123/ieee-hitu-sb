@@ -1,8 +1,8 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { addGalleryPhoto, deleteGalleryPhoto, fetchGalleryPhotos } from '../../lib/turso'
-import { uploadToCloudinary } from '../../lib/upload'
+import { addGalleryPhoto, deleteGalleryPhoto, fetchGalleryPhotos } from '@/lib/turso'
+import { uploadToCloudinary } from '@/lib/upload'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import Skeleton from '@/components/ui/Skeleton'
 import PhotoInput from './PhotoInput'

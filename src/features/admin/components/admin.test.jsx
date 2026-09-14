@@ -1,7 +1,7 @@
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import AdminPage from './AdminPage'
-import EventFormPage from './EventFormPage'
+import AdminShell from './AdminShell'
+import EventForm from './EventForm'
 
 const nav = vi.hoisted(() => ({ params: {}, push: vi.fn() }))
 vi.mock('next/navigation', () => ({
@@ -66,8 +66,8 @@ const turso = vi.hoisted(() => ({
   updatePartner: vi.fn(),
   deletePartner: vi.fn(),
 }))
-vi.mock('../lib/turso', () => turso)
-vi.mock('../lib/upload', () => ({ uploadToCloudinary: vi.fn() }))
+vi.mock('@/lib/turso', () => turso)
+vi.mock('@/lib/upload', () => ({ uploadToCloudinary: vi.fn() }))
 
 const event = {
   _id: 7,
@@ -89,11 +89,11 @@ const event = {
 function renderRoute(route) {
   if (route === '/admin') {
     nav.params = {}
-    return render(<AdminPage />)
+    return render(<AdminShell />)
   }
   const match = route.match(/^\/admin\/events\/(\d+)\/edit$/)
   nav.params = match ? { id: match[1] } : {}
-  return render(<EventFormPage />)
+  return render(<EventForm />)
 }
 
 function fillRequiredFields() {

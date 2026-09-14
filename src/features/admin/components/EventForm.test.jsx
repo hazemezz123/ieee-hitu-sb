@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import EventFormPage from './EventFormPage'
+import EventForm from './EventForm'
 
 const nav = vi.hoisted(() => ({ params: {}, push: vi.fn() }))
 vi.mock('next/navigation', () => ({
@@ -19,7 +19,7 @@ const { fetchEvents, createEvent, updateEvent, fetchCommittees, uploadToCloudina
 
 vi.mock('@/features/events/hooks/useEvents', () => ({ fetchEvents, createEvent, updateEvent }))
 vi.mock('@/features/committees/hooks/useCommittees', () => ({ fetchCommittees }))
-vi.mock('../lib/upload', () => ({ uploadToCloudinary }))
+vi.mock('@/lib/upload', () => ({ uploadToCloudinary }))
 
 const committees = [
   { _id: 1, name: 'Web', slug: 'web', category: 'technical', categoryLabel: 'Technical', shortDescription: '', memberCount: 0 },
@@ -58,7 +58,7 @@ afterEach(cleanup)
 function renderRoute(route = '/admin/events/new') {
   const match = route.match(/^\/admin\/events\/(\d+)\/edit$/)
   nav.params = match ? { id: match[1] } : {}
-  return render(<EventFormPage />)
+  return render(<EventForm />)
 }
 
 function fillRequiredFields() {

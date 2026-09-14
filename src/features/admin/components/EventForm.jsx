@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { fetchEvents, createEvent, updateEvent } from '@/features/events/hooks/useEvents'
 import { fetchCommittees } from '@/features/committees/hooks/useCommittees'
-import { uploadToCloudinary } from '../lib/upload'
-import { slugify } from '../lib/slugify'
-import PhotoInput from './admin/PhotoInput'
+import { uploadToCloudinary } from '@/lib/upload'
+import { slugify } from '@/lib/slugify'
+import PhotoInput from './PhotoInput'
 import Skeleton from '@/components/ui/Skeleton'
 
 const categories = [
@@ -28,7 +28,7 @@ const normalizeGallery = items => (items || []).map(item => typeof item === 'str
   ? { src: item, caption: '' }
   : { src: item.src || '', caption: item.caption || '' })
 
-export default function EventFormPage() {
+export default function EventForm() {
   const { id } = useParams()
   const router = useRouter()
   const [form, setForm] = useState(emptyForm)

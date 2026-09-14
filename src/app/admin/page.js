@@ -1,5 +1,5 @@
-import AdminPage from '@/views/AdminPage'
+import AdminShell from '@/features/admin/components/AdminShell'
 
 export default function Page() {
-  return <AdminPage />
+  return <AdminShell />
 }

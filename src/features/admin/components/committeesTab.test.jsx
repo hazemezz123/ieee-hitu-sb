@@ -13,8 +13,8 @@ const turso = vi.hoisted(() => ({
   updateCommitteeMember: vi.fn(),
 }))
 
-vi.mock('../../lib/turso', () => turso)
-vi.mock('../../lib/upload', () => ({ uploadToCloudinary: vi.fn().mockResolvedValue('https://cdn/uploaded.jpg') }))
+vi.mock('@/lib/turso', () => turso)
+vi.mock('@/lib/upload', () => ({ uploadToCloudinary: vi.fn().mockResolvedValue('https://cdn/uploaded.jpg') }))
 
 const committee = {
   _id: 2, name: 'AI', slug: 'ai', category: 'technical',

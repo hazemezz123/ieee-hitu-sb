@@ -9,8 +9,8 @@ const { addGalleryPhoto, deleteGalleryPhoto, fetchGalleryPhotos, uploadToCloudin
   uploadToCloudinary: vi.fn(),
 }))
 
-vi.mock('../../lib/turso', () => ({ addGalleryPhoto, deleteGalleryPhoto, fetchGalleryPhotos }))
-vi.mock('../../lib/upload', () => ({ uploadToCloudinary }))
+vi.mock('@/lib/turso', () => ({ addGalleryPhoto, deleteGalleryPhoto, fetchGalleryPhotos }))
+vi.mock('@/lib/upload', () => ({ uploadToCloudinary }))
 
 const photo = { _id: 1, src: 'https://cdn/x.jpg', caption: 'Group photo', createdAt: '2026-08-17 10:00:00' }
 

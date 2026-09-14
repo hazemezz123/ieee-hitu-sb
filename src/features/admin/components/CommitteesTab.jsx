@@ -10,9 +10,9 @@ import {
   fetchCommittees,
   updateCommittee,
   updateCommitteeMember,
-} from '../../lib/turso'
-import { uploadToCloudinary } from '../../lib/upload'
-import { slugify } from '../../lib/slugify'
+} from '@/lib/turso'
+import { uploadToCloudinary } from '@/lib/upload'
+import { slugify } from '@/lib/slugify'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import Skeleton from '@/components/ui/Skeleton'
 import PhotoInput from './PhotoInput'

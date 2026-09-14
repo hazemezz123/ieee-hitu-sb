@@ -1,5 +1,5 @@
-import EventFormPage from '@/views/EventFormPage'
+import EventForm from '@/features/admin/components/EventForm'
 
 export default function Page() {
-  return <EventFormPage />
+  return <EventForm />
 }
