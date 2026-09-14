@@ -3,10 +3,24 @@ import { NextResponse } from 'next/server'
 import { ensureSchema, fetchRecruitmentFormBySlug, updateRecruitmentForm } from '@/lib/server/db'
 import { isAuthed } from '@/lib/server/auth'
 
+function isMissingTable(err) {
+  return String(err?.message || '').includes('no such table')
+}
+
+async function getForm(slug) {
+  try {
+    return await fetchRecruitmentFormBySlug(slug)
+  } catch (err) {
+    if (!isMissingTable(err)) throw err
+    await ensureSchema()
+    return await fetchRecruitmentFormBySlug(slug)
+  }
+}
+
 export async function GET(req, { params }) {
   try {
     const { slug } = await params
-    const form = await fetchRecruitmentFormBySlug(slug)
+    const form = await getForm(slug)
     if (!form) return NextResponse.json({ error: 'Not found' }, { status: 404 })
     return NextResponse.json({ form })
   } catch {

@@ -1,6 +1,6 @@
 // src/app/api/recruitment/applications/export/route.js
 import { NextResponse } from 'next/server'
-import { fetchRecruitmentApplications, fetchRecruitmentFormBySlug } from '@/lib/server/db'
+import { ensureSchema, fetchRecruitmentApplications, fetchRecruitmentFormBySlug } from '@/lib/server/db'
 import { isAuthed } from '@/lib/server/auth'
 import { HEADS_CSV_COLUMNS } from '@/lib/recruitmentValidation'
 
@@ -13,7 +13,14 @@ export async function GET(req) {
   try {
     if (!isAuthed(req)) return NextResponse.json({ error: 'Unauthenticated' }, { status: 401 })
     const slug = new URL(req.url).searchParams.get('form') || 'heads'
-    const form = await fetchRecruitmentFormBySlug(slug)
+    let form
+    try {
+      form = await fetchRecruitmentFormBySlug(slug)
+    } catch (err) {
+      if (!String(err?.message || '').includes('no such table')) throw err
+      await ensureSchema()
+      form = await fetchRecruitmentFormBySlug(slug)
+    }
     if (!form) return NextResponse.json({ error: 'Not found' }, { status: 404 })
     const applications = await fetchRecruitmentApplications(form._id)
     const lines = [HEADS_CSV_COLUMNS.join(',')]

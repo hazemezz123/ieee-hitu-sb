@@ -14,11 +14,22 @@ function rateLimited(ip) {
   return false
 }
 
+function isMissingTable(err) {
+  return String(err?.message || '').includes('no such table')
+}
+
 export async function GET(req) {
   try {
     if (!isAuthed(req)) return NextResponse.json({ error: 'Unauthenticated' }, { status: 401 })
     const slug = new URL(req.url).searchParams.get('form') || 'heads'
-    const form = await fetchRecruitmentFormBySlug(slug)
+    let form
+    try {
+      form = await fetchRecruitmentFormBySlug(slug)
+    } catch (err) {
+      if (!isMissingTable(err)) throw err
+      await ensureSchema()
+      form = await fetchRecruitmentFormBySlug(slug)
+    }
     if (!form) return NextResponse.json({ error: 'Not found' }, { status: 404 })
     const applications = await fetchRecruitmentApplications(form._id)
     const q = (new URL(req.url).searchParams.get('q') || '').toLowerCase()
