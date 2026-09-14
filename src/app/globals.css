@@ -305,6 +305,7 @@ a { text-underline-offset: 0.2em; }
 .select-count { color: var(--color-on-primary-container); background: var(--color-primary-fixed); border-radius: var(--radius-full); padding: 0.125rem 0.625rem; font-size: var(--font-size-xs); font-weight: var(--font-weight-bold); white-space: nowrap; }
 .select-list { overflow-y: auto; max-height: 16rem; margin: 0; padding: var(--space-2); list-style: none; }
 .select-option { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: 0.625rem 1rem; border-radius: var(--radius-sm); cursor: pointer; }
+.select-option:hover { background: var(--color-surface-container-low); }
 .select-option--active { background: var(--color-surface-container-low); }
 .select-option--selected .select-option-label { font-weight: var(--font-weight-semibold); color: var(--primary-strong); }
 .select-option--selected::before { content: ''; align-self: stretch; width: 3px; border-radius: 2px; background: var(--primary); }

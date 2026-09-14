@@ -73,14 +73,20 @@ export default function Select({
     function onResize() { measure() }
     document.addEventListener('pointerdown', onPointerDown)
     window.addEventListener('resize', onResize)
+    window.addEventListener('scroll', onResize, true)
     return () => {
       document.removeEventListener('pointerdown', onPointerDown)
       window.removeEventListener('resize', onResize)
+      window.removeEventListener('scroll', onResize, true)
     }
   }, [open]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function onTriggerKeyDown(e) {
     if (disabled) return
+    if (open && ['ArrowUp', 'ArrowDown', 'Enter', 'Escape', 'Tab'].includes(e.key)) {
+      onPanelKeyDown(e)
+      return
+    }
     if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
       e.preventDefault()
       openPanel()
@@ -163,7 +169,7 @@ export default function Select({
             </div>
           )}
           {filtered.length === 0 ? (
-            <p className="select-empty" role="presentation">{q ? `No matches for "${query.trim()}"` : 'No options'}</p>
+            <p className="select-empty" role="status">{q ? `No matches for "${query.trim()}"` : 'No options'}</p>
           ) : (
             <ul className="select-list">
               {filtered.map((o, index) => {
