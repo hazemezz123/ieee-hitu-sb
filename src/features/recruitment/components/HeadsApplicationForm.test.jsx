@@ -22,5 +22,7 @@ describe('HeadsApplicationForm', () => {
     const first = screen.getByRole('combobox', { name: /1st preference/ })
     fireEvent.click(first)
     expect(screen.getAllByRole('option').length).toBe(13)
+    fireEvent.click(screen.getByRole('option', { name: 'Committee 0' }))
+    expect(screen.getByRole('combobox', { name: /1st preference/ }).textContent).toMatch(/Committee 0/)
   })
 })
