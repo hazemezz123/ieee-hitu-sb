@@ -102,6 +102,12 @@ describe('Select search', () => {
     expect(screen.getByRole('option', { name: /AI/ }).getAttribute('aria-selected')).toBe('true')
     expect(screen.getByText('Smart systems.')).toBeTruthy()
   })
+  it('opts the options list out of Lenis smooth-scroll hijacking', () => {
+    render(<Select id="s10" label="Pick" value="" onChange={() => {}} options={[{ value: 'a', label: 'A' }, { value: 'b', label: 'B' }]} />)
+    fireEvent.click(screen.getByRole('combobox', { name: 'Pick' }))
+    const list = screen.getByRole('listbox').querySelector('.select-list')
+    expect(list.hasAttribute('data-lenis-prevent')).toBe(true)
+  })
   it('disables interaction when disabled', () => {
     render(<Select id="s8" label="Pick" value="" onChange={() => {}} options={[{ value: 'a', label: 'A' }]} disabled />)
     fireEvent.click(screen.getByRole('combobox', { name: 'Pick' }))

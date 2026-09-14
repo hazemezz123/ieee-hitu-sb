@@ -172,7 +172,7 @@ export default function Select({
           {filtered.length === 0 ? (
             <p className="select-empty" role="status">{q ? `No matches for "${query.trim()}"` : 'No options'}</p>
           ) : (
-            <ul className="select-list">
+            <ul className="select-list" data-lenis-prevent>
               {filtered.map((o, index) => {
                 const isSelected = o.value === value
                 return (
