@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest'
 import HeadsApplicationForm from './HeadsApplicationForm'
 
 globalThis.IntersectionObserver = class { observe() {} unobserve() {} disconnect() {} }
-vi.mock('@/features/committees/hooks/useCommittees', () => ({ fetchCommitteesResult: async () => ({ committees: [{ slug: 'ai', name: 'AI' }], source: 'remote' }) }))
+vi.mock('@/features/committees/hooks/useCommittees', () => ({ fetchCommitteesResult: async () => ({ committees: Array.from({ length: 13 }, (_, i) => ({ slug: `c${i}`, name: `Committee ${i}` })), source: 'remote' }) }))
 
 describe('HeadsApplicationForm', () => {
   it('walks 4 steps and requires role only for board applicants', async () => {
@@ -19,5 +19,8 @@ describe('HeadsApplicationForm', () => {
     fireEvent.change(screen.getByLabelText(/personal photo.*link/i), { target: { value: 'https://drive.google.com/p' } })
     fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
     expect(await screen.findByText(/Step 2\/4/)).toBeTruthy()
+    const first = screen.getByRole('combobox', { name: /1st preference/ })
+    fireEvent.click(first)
+    expect(screen.getAllByRole('option').length).toBe(13)
   })
 })

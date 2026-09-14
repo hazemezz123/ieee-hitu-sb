@@ -5,6 +5,7 @@ import { uploadToCloudinary, uploadFileToCloudinary } from '@/lib/upload'
 import { validateHeadsApplication } from '@/lib/recruitmentValidation'
 import { fetchCommitteesResult } from '@/features/committees/hooks/useCommittees'
 import { committees as fallbackCommittees } from '@/features/committees/data/committees'
+import Select, { toOptions } from '@/components/ui/Select'
 
 const DRAFT_KEY = 'recruitment:heads:draft'
 const emptyValues = { name: '', email: '', phone: '', address: '', photoUrl: '', university: '', major: '', academicYear: '', grade: '', boardInterest: '', role: '', firstPref: '', secondPref: '', experience: '', activities: '', activitiesDetails: '', weeklyHours: '', whyJoin: '', links: '', cvUrl: '', notes: '' }
@@ -32,7 +33,11 @@ export default function HeadsApplicationForm({ onClosed }) {
     return () => { active = false }
   }, [])
 
-  const set = key => e => { setFieldError(null); setValues(v => ({ ...v, [key]: e.target.value })) }
+  const set = key => valueOrEvent => {
+    setFieldError(null)
+    const next = valueOrEvent && typeof valueOrEvent === 'object' && 'target' in valueOrEvent ? valueOrEvent.target.value : valueOrEvent
+    setValues(v => ({ ...v, [key]: next }))
+  }
   const requiredFor = s => s === 0
     ? ['name', 'email', 'phone', 'photoUrl', 'university', 'major', 'academicYear']
     : s === 1 ? ['boardInterest', 'firstPref'] : s === 2 ? ['activities', 'weeklyHours', 'whyJoin'] : ['cvUrl']
@@ -94,14 +99,17 @@ export default function HeadsApplicationForm({ onClosed }) {
         {input('Current Academic Grade', 'grade')}
       </>}
       {step === 1 && <>
-        <label className="form-label" htmlFor="heads-boardInterest">Interested in Heads Board positions?<select id="heads-boardInterest" className="form-select mt-2" value={values.boardInterest} onChange={set('boardInterest')} required><option value="">Select…</option><option value="yes">Yes</option><option value="no">No</option></select>{errFor('boardInterest')}</label>
+        <Select id="heads-boardInterest" label="Interested in Heads Board positions?" required value={values.boardInterest} onChange={set('boardInterest')} options={[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }]} placeholder="Select…" />
+        {errFor('boardInterest')}
         {values.boardInterest === 'yes' && input('Role', 'role', { required: true, placeholder: 'Head / Vice-Head…' })}
-        <label className="form-label" htmlFor="heads-firstPref">1st preference<select id="heads-firstPref" className="form-select mt-2" value={values.firstPref} onChange={set('firstPref')} required><option value="">Select a committee</option>{options.map(c => <option key={c.slug} value={c.slug}>{c.name}</option>)}</select>{errFor('firstPref')}</label>
-        <label className="form-label" htmlFor="heads-secondPref">2nd preference<select id="heads-secondPref" className="form-select mt-2" value={values.secondPref} onChange={set('secondPref')}><option value="">None</option>{options.map(c => <option key={c.slug} value={c.slug}>{c.name}</option>)}</select></label>
+        <Select id="heads-firstPref" label="1st preference" required value={values.firstPref} onChange={set('firstPref')} placeholder="Select a committee" options={toOptions(options)} />
+        {errFor('firstPref')}
+        <Select id="heads-secondPref" label="2nd preference" value={values.secondPref} onChange={set('secondPref')} placeholder="None" options={toOptions(options)} />
         <label className="form-label" htmlFor="heads-experience">Your technical experience in this committee<textarea id="heads-experience" className="form-textarea mt-2" rows={4} value={values.experience} onChange={set('experience')} /></label>
       </>}
       {step === 2 && <>
-        <label className="form-label" htmlFor="heads-activities">Any student activities experience?<select id="heads-activities" className="form-select mt-2" value={values.activities} onChange={set('activities')} required><option value="">Select…</option><option value="yes">Yes</option><option value="no">No</option></select>{errFor('activities')}</label>
+        <Select id="heads-activities" label="Any student activities experience?" required value={values.activities} onChange={set('activities')} options={[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }]} placeholder="Select…" />
+        {errFor('activities')}
         {values.activities === 'yes' && <label className="form-label" htmlFor="heads-activitiesDetails">Tell us more about your activities<textarea id="heads-activitiesDetails" className="form-textarea mt-2" rows={4} value={values.activitiesDetails} onChange={set('activitiesDetails')} />{errFor('activitiesDetails')}</label>}
         {input('Weekly commit hours', 'weeklyHours', { required: true, placeholder: 'e.g. 6' })}
         <label className="form-label" htmlFor="heads-whyJoin">Why do you want to join IEEE HITU?<textarea id="heads-whyJoin" className="form-textarea mt-2" rows={4} required value={values.whyJoin} onChange={set('whyJoin')} />{errFor('whyJoin')}</label>

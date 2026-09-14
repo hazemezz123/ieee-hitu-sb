@@ -261,13 +261,15 @@ describe('recruitment pages', () => {
     const name = screen.getByLabelText('Full name')
     const email = screen.getByLabelText('Email address')
     const phone = screen.getByLabelText('Phone number')
-    const committee = screen.getByLabelText('Committee')
+    const committee = screen.getByRole('combobox', { name: 'Committee' })
 
     const controls = [name, email, phone, committee, screen.getByLabelText('Message')]
     expect(new Set(controls.map(control => control.id)).size).toBe(controls.length)
     expect(screen.getByLabelText(`${committees.length} committees`)).toBeTruthy()
-    expect(Array.from(committee.options).slice(1).map(option => option.textContent)).toEqual(committees.map(item => item.name))
-    expect(Array.from(committee.options).slice(1).map(option => option.value)).toEqual(committees.map(item => item.slug))
+    fireEvent.click(committee)
+    expect(screen.getByRole('listbox')).toBeTruthy()
+    expect(screen.getAllByRole('option').length).toBe(committees.length)
+    fireEvent.click(committee)
     expect(screen.getByText(/local demonstration/i)).toBeTruthy()
     expect(container.querySelector('main')).toBeNull()
     expect(container.querySelector('.section-label')).toBeNull()
@@ -280,7 +282,8 @@ describe('recruitment pages', () => {
     expect(screen.queryByRole('status')).toBeNull()
 
     fireEvent.change(email, { target: { value: 'student@hitu.edu.eg' } })
-    fireEvent.change(committee, { target: { value: committees[0].slug } })
+    fireEvent.click(committee)
+    fireEvent.click(screen.getByRole('option', { name: new RegExp(committees[0].name) }))
     const message = screen.getByLabelText('Message')
     if (message.required) fireEvent.change(message, { target: { value: 'Participation question' } })
     fireEvent.click(screen.getByRole('button', { name: action }))
