@@ -77,10 +77,10 @@ describe('validateHeadsApplication', () => {
   it('requires photoUrl and cvUrl', () => {
     expect(validateHeadsApplication({ ...valid, photoUrl: '', cvUrl: '' }).ok).toBe(false)
   })
-  it('exposes 22 CSV columns starting with id and created_at', () => {
+  it('exposes 23 CSV columns starting with id and created_at', () => {
     expect(HEADS_CSV_COLUMNS[0]).toBe('id')
     expect(HEADS_CSV_COLUMNS[1]).toBe('created_at')
-    expect(HEADS_CSV_COLUMNS.length).toBe(22)
+    expect(HEADS_CSV_COLUMNS.length).toBe(23)
   })
 })
 ```

@@ -115,7 +115,7 @@ Edit: `src/lib/server/db.js` (schema + helpers), `src/features/join-us/component
 
 ## 8. Tests (vitest)
 
-- API: submit to open form → 201; submit to closed → 410; missing required → 400 with field; unauthed list/delete → 401; public form fetch never includes applications; CSV has 22-column header.
+- API: submit to open form → 201; submit to closed → 410; missing required → 400 with field; unauthed list/delete → 401; public form fetch never includes applications; CSV has 23-column header (id + created_at + 21 data fields).
 - UI: wizard conditional fields show/hide; file-OR-link rule enforced; closed state hides form; admin toggle calls PUT with flipped is_open.
 - Keep existing Contact `InterestForm` honest-outcome tests passing.
 
