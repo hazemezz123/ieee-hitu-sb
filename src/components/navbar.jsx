@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useTheme } from '@/lib/theme'
 
 const navLinks = [
   { name: 'Home', href: '/' },
@@ -15,6 +16,8 @@ const navLinks = [
 
 export default function Navbar() {
   const [openPath, setOpenPath] = useState(null)
+  const { theme, toggle } = useTheme()
+  const dark = theme === 'dark'
   const pathname = usePathname()
   const menuButtonRef = useRef(null)
   const isMenuOpen = openPath === pathname
@@ -59,7 +62,7 @@ export default function Navbar() {
     <header className="fixed inset-x-0 top-0 z-50 border-b border-outline-variant bg-surface-container-lowest">
       <nav className="mx-auto flex h-[var(--navbar-height)] max-w-7xl items-center gap-6 px-5 sm:px-8" aria-label="Primary navigation">
         <Link href="/" className="mr-auto flex items-center" aria-label="IEEE HITU Student Branch home">
-          <img src="/logo.png" alt="IEEE HITU Student Branch" className="h-9 w-auto" />
+          <img src="/logo.png" alt="IEEE HITU Student Branch" className="navbar-logo h-9 w-auto" />
         </Link>
 
         <div className="hidden items-stretch self-stretch md:flex">
@@ -75,6 +78,16 @@ export default function Navbar() {
           ))}
         </div>
 
+        <button
+          type="button"
+          onClick={toggle}
+          aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+          title={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+          aria-pressed={dark}
+          className="nav-menu-button"
+        >
+          <span className="material-symbols-outlined" aria-hidden="true">{dark ? 'light_mode' : 'dark_mode'}</span>
+        </button>
         <Link href="/membership" className="btn btn-primary hidden md:inline-flex">Join IEEE</Link>
         <button
           ref={menuButtonRef}

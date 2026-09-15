@@ -1,5 +1,6 @@
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { ThemeProvider } from '@/lib/theme'
 import Navbar from './navbar'
 
 const nav = vi.hoisted(() => ({ pathname: '/' }))
@@ -17,6 +18,9 @@ beforeEach(() => { nav.pathname = '/' })
 afterEach(() => {
   cleanup()
   document.body.style.overflow = ''
+  document.documentElement.removeAttribute('data-theme')
+  document.documentElement.style.colorScheme = ''
+  window.localStorage.clear()
 })
 
 describe('Navbar', () => {
@@ -94,6 +98,23 @@ describe('Navbar', () => {
     await waitFor(() => expect(menu.getAttribute('aria-expanded')).toBe('false'))
     expect(document.body.style.overflow).toBe('scroll')
     expect(document.activeElement).toBe(menu)
+  })
+
+  it('toggles the theme and persists the choice', () => {
+    window.matchMedia = () => ({ matches: false, addEventListener: () => {}, removeEventListener: () => {} })
+    render(<ThemeProvider><Navbar /></ThemeProvider>)
+
+    const toDark = screen.getByRole('button', { name: /switch to dark mode/i })
+    fireEvent.click(toDark)
+
+    expect(document.documentElement.dataset.theme).toBe('dark')
+    expect(window.localStorage.getItem('ieee-hitu-theme')).toBe('dark')
+    expect(screen.getByRole('button', { name: /switch to light mode/i })).toBeTruthy()
+  })
+
+  it('renders the toggle without a provider (light default)', () => {
+    render(<Navbar />)
+    expect(screen.getByRole('button', { name: /switch to dark mode/i })).toBeTruthy()
   })
 
   it('closes with Escape and restores focus to the menu button', () => {
