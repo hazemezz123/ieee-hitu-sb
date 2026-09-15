@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { submitApplication } from '@/lib/recruitment'
 import { uploadToCloudinary, uploadFileToCloudinary } from '@/lib/upload'
-import { validateHeadsApplication } from '@/lib/recruitmentValidation'
+import { validateHeadsApplication, validateHeadsStep } from '@/lib/recruitmentValidation'
 import { fetchCommitteesResult } from '@/features/committees/hooks/useCommittees'
 import { committees as fallbackCommittees } from '@/features/committees/data/committees'
 import Select, { toOptions } from '@/components/ui/Select'
@@ -10,6 +10,16 @@ import Select, { toOptions } from '@/components/ui/Select'
 const DRAFT_KEY = 'recruitment:heads:draft'
 const emptyValues = { name: '', email: '', phone: '', address: '', photoUrl: '', university: '', major: '', academicYear: '', grade: '', cvUrl: '', links: '', applyingAs: '', committee: '', whyHead: '', experience: '', prevMember: '', prevCommittee: '', prevPosition: '', studentActivities: '', weeklyHours: '', whyJoin: '', notes: '' }
 const STEP_TITLES = ['Personal', 'Ambition', 'Experience', 'Notes']
+
+// Which wizard step renders each field, so a failed final validation
+// can jump back to the step where the user can see and fix the error.
+const FIELD_STEPS = {
+  name: 0, email: 0, phone: 0, address: 0, photoUrl: 0, university: 0, major: 0,
+  academicYear: 0, grade: 0, cvUrl: 0, links: 0,
+  applyingAs: 1, committee: 1, whyHead: 1, experience: 1,
+  prevMember: 2, prevCommittee: 2, prevPosition: 2, studentActivities: 2, weeklyHours: 2, whyJoin: 2,
+  notes: 3,
+}
 
 const APPLYING_AS_SELECT_OPTIONS = [
   { value: 'head', label: 'Head' },
@@ -63,40 +73,31 @@ export default function HeadsApplicationForm({ onClosed }) {
     const next = valueOrEvent && typeof valueOrEvent === 'object' && 'target' in valueOrEvent ? valueOrEvent.target.value : valueOrEvent
     setValues(v => ({ ...v, [key]: next }))
   }
-  const requiredFor = s => s === 0
-    ? ['name', 'email', 'phone', 'university', 'major', 'academicYear']
-    : s === 1 ? ['applyingAs', 'committee', 'whyHead', 'experience'] : s === 2 ? ['prevMember', 'studentActivities', 'weeklyHours', 'whyJoin'] : []
-
   function next() {
     setError(null)
-    if (step === 0) {
-      if (!photoFile && !String(values.photoUrl ?? '').trim()) { setFieldError({ field: 'photoUrl', error: 'Upload a personal photo.' }); return }
-      if (!cvFile && !String(values.cvUrl ?? '').trim()) { setFieldError({ field: 'cvUrl', error: 'Upload your CV.' }); return }
-    }
-    for (const key of requiredFor(step)) {
-      if (!String(values[key] ?? '').trim()) { setFieldError({ field: key, error: `${key} is required.` }); return }
-    }
-    if (step === 1 && !['head', 'vice-head', 'manager'].includes(String(values.applyingAs).trim())) { setFieldError({ field: 'applyingAs', error: 'Choose what you are applying as.' }); return }
-    if (step === 2) {
-      if (!['yes', 'no'].includes(String(values.prevMember).trim())) { setFieldError({ field: 'prevMember', error: 'Choose yes or no.' }); return }
-      if (String(values.prevMember).trim() === 'yes') {
-        if (!String(values.prevCommittee ?? '').trim()) { setFieldError({ field: 'prevCommittee', error: 'Committee name is required.' }); return }
-        if (!String(values.prevPosition ?? '').trim()) { setFieldError({ field: 'prevPosition', error: 'Position is required.' }); return }
-      }
-    }
+    // One shared gate: the same rules the final submit enforces, so bad
+    // input can never advance to a later step.
+    const check = validateHeadsStep(step, values, { hasPhotoFile: !!photoFile, hasCvFile: !!cvFile })
+    if (!check.ok) { setFieldError(check); return }
     setFieldError(null)
     setStep(s => Math.min(s + 1, 3))
   }
 
   async function submit(e) {
     e.preventDefault()
+    // Enter inside a text input implicitly submits the form on any step.
+    // Only the final step may really submit; earlier steps advance instead.
+    if (step < 3) { next(); return }
     setError(null); setFieldError(null); setUploading(true)
     try {
+      // Fail fast on text fields before spending time on file uploads.
+      const pre = validateHeadsApplication(values, { skipUploads: true })
+      if (!pre.ok) { setFieldError(pre); setStep(FIELD_STEPS[pre.field] ?? 0); setUploading(false); return }
       const photoUrl = photoFile ? await uploadToCloudinary(photoFile) : String(values.photoUrl ?? '').trim()
       const cvUrl = cvFile ? await uploadFileToCloudinary(cvFile) : String(values.cvUrl ?? '').trim()
       const payload = { ...values, photoUrl, cvUrl }
       const check = validateHeadsApplication(payload)
-      if (!check.ok) { setFieldError(check); setUploading(false); return }
+      if (!check.ok) { setFieldError(check); setStep(FIELD_STEPS[check.field] ?? 0); setUploading(false); return }
       const id = await submitApplication('heads', payload)
       try { localStorage.removeItem(DRAFT_KEY) } catch { /* draft already gone */ }
       setDoneId(id)
@@ -115,7 +116,7 @@ export default function HeadsApplicationForm({ onClosed }) {
   )
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-5" noValidate={false}>
+    <form onSubmit={submit} className="flex flex-col gap-5" noValidate>
       <div><p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Step {step + 1}/4 — {STEP_TITLES[step]}</p>
         <div className="mt-2 h-1 bg-surface-container"><div className="h-1 bg-primary btn-wedge" style={{ width: `${((step + 1) / 4) * 100}%` }} /></div></div>
       {error && <div role="alert" className="p-4 bg-error/10 border border-error/30 rounded-lg text-sm text-error">{error}</div>}
@@ -143,15 +144,15 @@ export default function HeadsApplicationForm({ onClosed }) {
         {input('Social media links (comma-separated)', 'links', { type: 'text', placeholder: 'https://…, https://…' })}
       </>}
       {step === 1 && <>
-        <Select id="heads-applyingAs" label="You are applying as" required value={values.applyingAs} onChange={set('applyingAs')} options={APPLYING_AS_SELECT_OPTIONS} placeholder="Select…" />
+        <Select id="heads-applyingAs" label="You are applying as" required name="applyingAs" value={values.applyingAs} onChange={set('applyingAs')} options={APPLYING_AS_SELECT_OPTIONS} placeholder="Select…" />
         {errFor('applyingAs')}
-        <Select id="heads-committee" label="Committee" required value={values.committee} onChange={set('committee')} placeholder="Select a committee" options={toOptions(options)} />
+        <Select id="heads-committee" label="Committee" required name="committee" value={values.committee} onChange={set('committee')} placeholder="Select a committee" options={toOptions(options)} />
         {errFor('committee')}
         <label className="form-label" htmlFor="heads-whyHead">Why do you want to apply as a head?<textarea id="heads-whyHead" className="form-textarea mt-2" rows={4} required value={values.whyHead} onChange={set('whyHead')} />{errFor('whyHead')}</label>
         <label className="form-label" htmlFor="heads-experience">What&apos;s your technical experience in this field?<textarea id="heads-experience" className="form-textarea mt-2" rows={4} required value={values.experience} onChange={set('experience')} />{errFor('experience')}</label>
       </>}
       {step === 2 && <>
-        <Select id="heads-prevMember" label="Are you a previous IEEE HITU member?" required value={values.prevMember} onChange={set('prevMember')} options={[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }]} placeholder="Select…" />
+        <Select id="heads-prevMember" label="Are you a previous IEEE HITU member?" required name="prevMember" value={values.prevMember} onChange={set('prevMember')} options={[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }]} placeholder="Select…" />
         {errFor('prevMember')}
         {values.prevMember === 'yes' && <>
           {input('Committee name', 'prevCommittee', { required: true })}
@@ -170,7 +171,7 @@ export default function HeadsApplicationForm({ onClosed }) {
         {step < 3
           ? <button type="button" className="btn btn-primary btn-wedge" onClick={next}>Continue</button>
           : <button type="submit" className="btn btn-primary btn-wedge" disabled={uploading}>{uploading ? 'Submitting…' : 'Submit application'}</button>}
-        <button type="button" className="btn btn-ghost" onClick={() => { setValues({ ...emptyValues }); setPhotoFile(null); setCvFile(null); try { localStorage.removeItem(DRAFT_KEY) } catch { /* nothing to clear */ } }}>Clear</button>
+        <button type="button" className="btn btn-ghost" onClick={() => { setValues({ ...emptyValues }); setPhotoFile(null); setCvFile(null); setStep(0); setError(null); setFieldError(null); try { localStorage.removeItem(DRAFT_KEY) } catch { /* nothing to clear */ } }}>Clear</button>
       </div>
     </form>
   )
