@@ -17,7 +17,14 @@ const navLinks = [
 export default function Navbar() {
   const [openPath, setOpenPath] = useState(null)
   const { theme, toggle } = useTheme()
-  const dark = theme === 'dark'
+  // Gate theme-dependent labels on mount: the server always renders light, so
+  // rendering the resolved icon immediately would hydrate stale on dark-system
+  // first visits (suppressHydrationWarning would freeze the wrong label).
+  const [mounted, setMounted] = useState(false)
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time mount flag so first paint matches SSR
+  useEffect(() => { setMounted(true) }, [])
+  const dark = mounted && theme === 'dark'
+  const toggleLabel = !mounted ? 'Toggle color theme' : (dark ? 'Switch to light mode' : 'Switch to dark mode')
   const pathname = usePathname()
   const menuButtonRef = useRef(null)
   const isMenuOpen = openPath === pathname
@@ -81,12 +88,12 @@ export default function Navbar() {
         <button
           type="button"
           onClick={toggle}
-          aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
-          title={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+          aria-label={toggleLabel}
+          title={toggleLabel}
           aria-pressed={dark}
           className="nav-menu-button"
         >
-          <span className="material-symbols-outlined" aria-hidden="true">{dark ? 'light_mode' : 'dark_mode'}</span>
+          <span className="material-symbols-outlined" aria-hidden="true">{!mounted ? 'contrast' : (dark ? 'light_mode' : 'dark_mode')}</span>
         </button>
         <Link href="/membership" className="btn btn-primary hidden md:inline-flex">Join IEEE</Link>
         <button

@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 
 export default function Hero() {
@@ -12,6 +14,27 @@ export default function Hero() {
           <p className="mt-6 max-w-2xl text-base leading-relaxed text-[#9BA9B4] md:text-xl">
             Technical learning, student-led committees, and IEEE opportunities rooted at HITU.
           </p>
+          {/* Branch slogan image (public/slogan/ieeehitu_kit-blue.png). The file has
+              an opaque white background, so it sits on a white badge with its
+              aspect ratio preserved. */}
+          <span className="mt-6 inline-block max-w-sm rounded-md bg-white px-4 py-2">
+            <img
+              src="/slogan/ieeehitu_kit-blue.png"
+              alt="IEEE HITU Student Branch slogan"
+              onError={e => { e.currentTarget.closest('span').style.display = 'none' }}
+              className="h-auto w-full object-contain"
+            />
+          </span>
+          <dl className="mt-8 flex flex-wrap gap-x-10 gap-y-4">
+            <div className="flex flex-col">
+              <dt className="order-2 mt-1 text-sm text-[#9BA9B4]">Committees</dt>
+              <dd className="order-1 text-4xl font-black leading-none text-[#F0F4F8]">+9</dd>
+            </div>
+            <div className="flex flex-col">
+              <dt className="order-2 mt-1 text-sm text-[#9BA9B4]">Members</dt>
+              <dd className="order-1 text-4xl font-black leading-none text-[#F0F4F8]">+180</dd>
+            </div>
+          </dl>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link className="btn btn-primary" href="/events">View events</Link>
             <Link className="btn btn-secondary" href="/join-us">Join the branch</Link>
