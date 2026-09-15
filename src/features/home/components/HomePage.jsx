@@ -9,6 +9,7 @@ import FeaturedEvent from './FeaturedEvent'
 import CommitteeDirectory from './CommitteeDirectory'
 import PartnershipCarousel from './PartnershipCarousel'
 import RecruitmentBand from './RecruitmentBand'
+import TechnicalResources from '@/components/ui/TechnicalResources'
 import { useEventsResult } from '../hooks/useEventsResult'
 
 export default function Home() {
@@ -48,7 +49,8 @@ export default function Home() {
         {result.status === 'ready' && <>
           {featuredEvent && <section className="container mx-auto max-w-6xl px-6 py-16 md:px-12"><FeaturedEvent event={featuredEvent} fallback={result.source === 'fallback'} /></section>}
         </>}
-                <PartnershipCarousel />
+        <PartnershipCarousel />
+        <TechnicalResources />
          {result.status === 'error' && <section className="container mx-auto max-w-6xl px-6 py-16 md:px-12"><div role="alert" className="border-l border-primary/40 pl-5"><h2 className="text-2xl font-bold text-on-surface">Event data could not be loaded</h2><p className="mt-2 text-on-surface-variant">Please try the event archive again later.</p></div></section>}
         {result.status === 'ready' && <>
           {result.source === 'fallback' && !featuredEvent && <p className="border-b border-outline-variant/30 bg-secondary-container px-6 py-3 text-center text-sm text-on-secondary-container">Showing the static event archive while live event data is unavailable.</p>}

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import AnimatedSection from '@/components/ui/AnimatedSection'
 
+
 export default function MembershipPage() {
   return (
     <div className="page-enter pt-[var(--navbar-height,6rem)]">
@@ -24,6 +25,7 @@ export default function MembershipPage() {
       <AnimatedSection delay={2}>
         <section className="container mx-auto max-w-5xl px-6 py-16 sm:px-8 md:px-12"><h2 className="text-2xl font-bold text-on-surface">Current process</h2><p className="mt-4 leading-relaxed text-on-surface-variant">Current participation process details are not published on this site.</p></section>
       </AnimatedSection>
+
     </div>
   )
 }

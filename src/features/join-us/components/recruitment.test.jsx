@@ -333,24 +333,25 @@ describe('recruitment pages', () => {
     expect(screen.queryByText(/Step 1\/4/)).toBeNull()
   })
 
-  it('renders technical resources as factual non-linked editorial entries', () => {
+  it('renders the redesigned IEEE network section', () => {
     const { container } = render(<TechnicalResources />)
-    expect(screen.getByRole('heading', { name: 'IEEE Xplore' })).toBeTruthy()
-    expect(screen.getByRole('heading', { name: 'IEEE Standards' })).toBeTruthy()
-    expect(screen.getByRole('heading', { name: 'IEEE conferences' })).toBeTruthy()
-    expect(screen.queryByRole('link')).toBeNull()
+    expect(screen.getByRole('heading', { name: /Take the next idea beyond campus/i })).toBeTruthy()
+    expect(screen.getByRole('link', { name: /IEEE Xplore/ }).getAttribute('href')).toBe('https://ieeexplore.ieee.org/')
+    expect(screen.getByRole('link', { name: /IEEE Standards/ }).getAttribute('href')).toBe('https://standards.ieee.org/')
+    expect(screen.getByRole('link', { name: /IEEE Spectrum/ }).getAttribute('href')).toBe('https://spectrum.ieee.org/')
+    expect(screen.getAllByRole('link')).toHaveLength(5)
     expect(screen.queryByRole('button')).toBeNull()
-    expect(container.querySelector('.card-hover')).toBeNull()
-    expect(container.querySelector('.section-label')).toBeNull()
+    expect(container.querySelector('.bg-inverse-surface')).toBeTruthy()
   })
 
-  it('does not invent participation instructions or a public contact channel', () => {
+  it('shows the verified public contact channel without inventing participation instructions', () => {
     const join = renderPage(<JoinUsPage />)
     expect(screen.queryByText(/contact page for current participation instructions/i)).toBeNull()
     join.unmount()
 
     renderPage(<ContactPage />)
-    expect(screen.getByText(/currently no verified public contact channel/i)).toBeTruthy()
+    expect(screen.getAllByRole('link', { name: 'ieee.hitu.sb@gmail.com' })).toHaveLength(2)
+        expect(screen.getAllByRole('link', { name: 'ieee.hitu.sb@gmail.com' }).every(link => link.getAttribute('href') === 'mailto:ieee.hitu.sb@gmail.com')).toBe(true)
     expect(screen.getByText(/local demonstration.*transmits nothing/i)).toBeTruthy()
     expect(screen.queryByText(/current branch channels|we'll get back|reach out/i)).toBeNull()
   })

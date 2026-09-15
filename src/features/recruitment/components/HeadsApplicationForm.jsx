@@ -11,6 +11,19 @@ const DRAFT_KEY = 'recruitment:heads:draft'
 const emptyValues = { name: '', email: '', phone: '', address: '', photoUrl: '', university: '', major: '', academicYear: '', grade: '', boardInterest: '', role: '', firstPref: '', secondPref: '', experience: '', activities: '', activitiesDetails: '', weeklyHours: '', whyJoin: '', links: '', cvUrl: '', notes: '' }
 const STEP_TITLES = ['Personal', 'Ambition', 'Story', 'Finish']
 
+function GoogleDriveIcon({ size = 16 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 87.3 78" aria-hidden="true" focusable="false">
+      <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H0c0 1.55.4 3.1 1.2 4.5z" fill="#0066da" />
+      <path d="M43.65 25L29.9 1.2c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0-1.2 4.5h27.5z" fill="#00ac47" />
+      <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 11.5z" fill="#ea4335" />
+      <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.9 0H34.4c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d" />
+      <path d="M59.8 53H32.92L13.75 76.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc" />
+      <path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25 59.8 53h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00" />
+    </svg>
+  )
+}
+
 function loadDraft() {
   try { return { ...emptyValues, ...JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}') } } catch { return { ...emptyValues } }
 }
@@ -81,6 +94,9 @@ export default function HeadsApplicationForm({ onClosed }) {
   const input = (label, key, props = {}) => (
     <label className="form-label" htmlFor={`heads-${key}`}>{label}<input id={`heads-${key}`} className="form-input mt-2" value={values[key]} onChange={set(key)} {...props} />{errFor(key)}</label>
   )
+  const driveInput = (label, key, props = {}) => (
+    <label className="form-label" htmlFor={`heads-${key}`}><span className="drive-label"><GoogleDriveIcon />{label}</span><input id={`heads-${key}`} className="form-input mt-2" value={values[key]} onChange={set(key)} {...props} />{errFor(key)}</label>
+  )
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-5" noValidate={false}>
@@ -92,7 +108,7 @@ export default function HeadsApplicationForm({ onClosed }) {
         {input('Email', 'email', { required: true, type: 'email' })}
         {input('Phone', 'phone', { required: true, type: 'tel' })}
         {input('Address', 'address')}
-        <div><label className="form-label" htmlFor="heads-photoFile">Personal photo (file)</label><input id="heads-photoFile" type="file" accept="image/*" onChange={e => setPhotoFile(e.target.files?.[0] || null)} />{input('…or personal photo Drive link', 'photoUrl', { type: 'url', placeholder: 'https://drive.google.com/…' })}</div>
+        <div className="file-upload"><label className="form-label" htmlFor="heads-photoFile">Personal photo (file)</label><input id="heads-photoFile" className="form-file" type="file" accept="image/*" onChange={e => setPhotoFile(e.target.files?.[0] || null)} />{photoFile && <p className="file-chosen" aria-live="polite">✓ {photoFile.name}</p>}<div className="drive-or" aria-hidden="true">or</div>{driveInput('…or personal photo Drive link', 'photoUrl', { type: 'url', placeholder: 'https://drive.google.com/…' })}</div>
         {input('University', 'university', { required: true })}
         {input('Major', 'major', { required: true })}
         {input('Academic Year', 'academicYear', { required: true, placeholder: 'e.g. 2nd' })}
@@ -116,7 +132,7 @@ export default function HeadsApplicationForm({ onClosed }) {
         {input('Social / professional / technical links (comma-separated)', 'links', { type: 'text', placeholder: 'https://…, https://…' })}
       </>}
       {step === 3 && <>
-        <div><label className="form-label" htmlFor="heads-cvFile">CV (PDF file)</label><input id="heads-cvFile" type="file" accept=".pdf,.doc,.docx" onChange={e => setCvFile(e.target.files?.[0] || null)} />{input('…or CV Drive link', 'cvUrl', { type: 'url', placeholder: 'https://drive.google.com/…' })}</div>
+        <div className="file-upload"><label className="form-label" htmlFor="heads-cvFile">CV (PDF file)</label><input id="heads-cvFile" className="form-file" type="file" accept=".pdf,.doc,.docx" onChange={e => setCvFile(e.target.files?.[0] || null)} />{cvFile && <p className="file-chosen" aria-live="polite">✓ {cvFile.name}</p>}<div className="drive-or" aria-hidden="true">or</div>{driveInput('…or CV Drive link', 'cvUrl', { type: 'url', placeholder: 'https://drive.google.com/…' })}</div>
         <label className="form-label" htmlFor="heads-notes">Questions / notes<textarea id="heads-notes" className="form-textarea mt-2" rows={4} value={values.notes} onChange={set('notes')} placeholder="Thanks for your time — drop questions here and we'll contact you." /></label>
         <input type="text" name="company_website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" value={values.company_website || ''} onChange={set('company_website')} />
       </>}
