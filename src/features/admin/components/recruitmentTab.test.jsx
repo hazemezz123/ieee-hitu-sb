@@ -5,7 +5,7 @@ import RecruitmentTab from './RecruitmentTab'
 
 vi.mock('@/lib/recruitment', () => ({
   fetchRecruitmentForms: async () => [{ _id: 1, slug: 'heads', title: 'Heads', isOpen: false, description: '' }],
-  fetchApplications: async () => [{ _id: 2, name: 'HITU Student', email: 's@hitu.edu.eg', firstPref: 'ai', createdAt: '2026-09-01' }],
+  fetchApplications: async () => [{ _id: 2, name: 'HITU Student', email: 's@hitu.edu.eg', committee: 'ai', firstPref: 'ai', createdAt: '2026-09-01' }],
   updateRecruitmentForm: vi.fn(),
   deleteApplication: vi.fn(),
 }))

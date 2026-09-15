@@ -35,8 +35,8 @@ export async function GET(req) {
     const q = (new URL(req.url).searchParams.get('q') || '').toLowerCase()
     const pref = new URL(req.url).searchParams.get('pref') || ''
     const rows = applications
-      .map(a => ({ _id: a._id, name: String(a.data?.name || ''), email: String(a.data?.email || ''), firstPref: String(a.data?.firstPref || ''), createdAt: a.createdAt }))
-      .filter(r => (!q || r.name.toLowerCase().includes(q) || r.email.toLowerCase().includes(q)) && (!pref || r.firstPref === pref))
+      .map(a => ({ _id: a._id, name: String(a.data?.name || ''), email: String(a.data?.email || ''), committee: String(a.data?.committee || a.data?.firstPref || ''), firstPref: String(a.data?.firstPref || a.data?.committee || ''), createdAt: a.createdAt }))
+      .filter(r => (!q || r.name.toLowerCase().includes(q) || r.email.toLowerCase().includes(q)) && (!pref || r.committee === pref || r.firstPref === pref))
     return NextResponse.json({ applications: rows })
   } catch {
     return NextResponse.json({ error: 'Database error' }, { status: 500 })

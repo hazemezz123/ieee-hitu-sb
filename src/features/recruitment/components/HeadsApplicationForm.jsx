@@ -8,24 +8,36 @@ import { committees as fallbackCommittees } from '@/features/committees/data/com
 import Select, { toOptions } from '@/components/ui/Select'
 
 const DRAFT_KEY = 'recruitment:heads:draft'
-const emptyValues = { name: '', email: '', phone: '', address: '', photoUrl: '', university: '', major: '', academicYear: '', grade: '', boardInterest: '', role: '', firstPref: '', secondPref: '', experience: '', activities: '', activitiesDetails: '', weeklyHours: '', whyJoin: '', links: '', cvUrl: '', notes: '' }
-const STEP_TITLES = ['Personal', 'Ambition', 'Story', 'Finish']
+const emptyValues = { name: '', email: '', phone: '', address: '', photoUrl: '', university: '', major: '', academicYear: '', grade: '', cvUrl: '', links: '', applyingAs: '', committee: '', whyHead: '', experience: '', prevMember: '', prevCommittee: '', prevPosition: '', studentActivities: '', weeklyHours: '', whyJoin: '', notes: '' }
+const STEP_TITLES = ['Personal', 'Ambition', 'Experience', 'Notes']
 
-function GoogleDriveIcon({ size = 16 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 87.3 78" aria-hidden="true" focusable="false">
-      <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H0c0 1.55.4 3.1 1.2 4.5z" fill="#0066da" />
-      <path d="M43.65 25L29.9 1.2c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0-1.2 4.5h27.5z" fill="#00ac47" />
-      <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5H59.8l5.85 11.5z" fill="#ea4335" />
-      <path d="M43.65 25L57.4 1.2C56.05.4 54.5 0 52.9 0H34.4c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d" />
-      <path d="M59.8 53H32.92L13.75 76.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc" />
-      <path d="M73.4 26.5l-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25 59.8 53h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00" />
-    </svg>
-  )
+const APPLYING_AS_SELECT_OPTIONS = [
+  { value: 'head', label: 'Head' },
+  { value: 'vice-head', label: 'Vice Head' },
+  { value: 'manager', label: 'Manager' },
+]
+
+function migrateDraft(stored = {}) {
+  const next = { ...emptyValues }
+  for (const key of Object.keys(emptyValues)) {
+    if (typeof stored[key] === 'string') next[key] = stored[key]
+  }
+  if (!next.committee && typeof stored.firstPref === 'string') next.committee = stored.firstPref
+  if (!next.applyingAs && typeof stored.role === 'string') {
+    const r = stored.role.toLowerCase()
+    if (r.includes('vice')) next.applyingAs = 'vice-head'
+    else if (r.includes('manager')) next.applyingAs = 'manager'
+    else if (r.includes('head')) next.applyingAs = 'head'
+  }
+  if (!next.studentActivities && typeof stored.activitiesDetails === 'string') next.studentActivities = stored.activitiesDetails
+  return next
 }
 
 function loadDraft() {
-  try { return { ...emptyValues, ...JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}') } } catch { return { ...emptyValues } }
+  try {
+    const stored = JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}')
+    return migrateDraft(stored)
+  } catch { return { ...emptyValues } }
 }
 
 export default function HeadsApplicationForm({ onClosed }) {
@@ -52,19 +64,26 @@ export default function HeadsApplicationForm({ onClosed }) {
     setValues(v => ({ ...v, [key]: next }))
   }
   const requiredFor = s => s === 0
-    ? ['name', 'email', 'phone', 'photoUrl', 'university', 'major', 'academicYear']
-    : s === 1 ? ['boardInterest', 'firstPref'] : s === 2 ? ['activities', 'weeklyHours', 'whyJoin'] : ['cvUrl']
+    ? ['name', 'email', 'phone', 'university', 'major', 'academicYear']
+    : s === 1 ? ['applyingAs', 'committee', 'whyHead', 'experience'] : s === 2 ? ['prevMember', 'studentActivities', 'weeklyHours', 'whyJoin'] : []
 
   function next() {
     setError(null)
-    if (step === 0 && !photoFile && !values.photoUrl.trim()) { setFieldError({ field: 'photoUrl', error: 'Add a personal photo or a Drive link.' }); return }
-    if (step === 3 && !cvFile && !values.cvUrl.trim()) { setFieldError({ field: 'cvUrl', error: 'Add your CV or a Drive link.' }); return }
+    if (step === 0) {
+      if (!photoFile && !String(values.photoUrl ?? '').trim()) { setFieldError({ field: 'photoUrl', error: 'Upload a personal photo.' }); return }
+      if (!cvFile && !String(values.cvUrl ?? '').trim()) { setFieldError({ field: 'cvUrl', error: 'Upload your CV.' }); return }
+    }
     for (const key of requiredFor(step)) {
-      if (key === 'photoUrl' || key === 'cvUrl') continue
       if (!String(values[key] ?? '').trim()) { setFieldError({ field: key, error: `${key} is required.` }); return }
     }
-    if (step === 1 && values.boardInterest === 'yes' && !values.role.trim()) { setFieldError({ field: 'role', error: 'Role is required for board applicants.' }); return }
-    if (step === 2 && values.activities === 'yes' && !values.activitiesDetails.trim()) { setFieldError({ field: 'activitiesDetails', error: 'Tell us about your activities.' }); return }
+    if (step === 1 && !['head', 'vice-head', 'manager'].includes(String(values.applyingAs).trim())) { setFieldError({ field: 'applyingAs', error: 'Choose what you are applying as.' }); return }
+    if (step === 2) {
+      if (!['yes', 'no'].includes(String(values.prevMember).trim())) { setFieldError({ field: 'prevMember', error: 'Choose yes or no.' }); return }
+      if (String(values.prevMember).trim() === 'yes') {
+        if (!String(values.prevCommittee ?? '').trim()) { setFieldError({ field: 'prevCommittee', error: 'Committee name is required.' }); return }
+        if (!String(values.prevPosition ?? '').trim()) { setFieldError({ field: 'prevPosition', error: 'Position is required.' }); return }
+      }
+    }
     setFieldError(null)
     setStep(s => Math.min(s + 1, 3))
   }
@@ -73,8 +92,8 @@ export default function HeadsApplicationForm({ onClosed }) {
     e.preventDefault()
     setError(null); setFieldError(null); setUploading(true)
     try {
-      const photoUrl = photoFile ? await uploadToCloudinary(photoFile) : values.photoUrl.trim()
-      const cvUrl = cvFile ? await uploadFileToCloudinary(cvFile) : values.cvUrl.trim()
+      const photoUrl = photoFile ? await uploadToCloudinary(photoFile) : String(values.photoUrl ?? '').trim()
+      const cvUrl = cvFile ? await uploadFileToCloudinary(cvFile) : String(values.cvUrl ?? '').trim()
       const payload = { ...values, photoUrl, cvUrl }
       const check = validateHeadsApplication(payload)
       if (!check.ok) { setFieldError(check); setUploading(false); return }
@@ -94,9 +113,6 @@ export default function HeadsApplicationForm({ onClosed }) {
   const input = (label, key, props = {}) => (
     <label className="form-label" htmlFor={`heads-${key}`}>{label}<input id={`heads-${key}`} className="form-input mt-2" value={values[key]} onChange={set(key)} {...props} />{errFor(key)}</label>
   )
-  const driveInput = (label, key, props = {}) => (
-    <label className="form-label" htmlFor={`heads-${key}`}><span className="drive-label"><GoogleDriveIcon />{label}</span><input id={`heads-${key}`} className="form-input mt-2" value={values[key]} onChange={set(key)} {...props} />{errFor(key)}</label>
-  )
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-5" noValidate={false}>
@@ -108,32 +124,45 @@ export default function HeadsApplicationForm({ onClosed }) {
         {input('Email', 'email', { required: true, type: 'email' })}
         {input('Phone', 'phone', { required: true, type: 'tel' })}
         {input('Address', 'address')}
-        <div className="file-upload"><label className="form-label" htmlFor="heads-photoFile">Personal photo (file)</label><input id="heads-photoFile" className="form-file" type="file" accept="image/*" onChange={e => setPhotoFile(e.target.files?.[0] || null)} />{photoFile && <p className="file-chosen" aria-live="polite">✓ {photoFile.name}</p>}<div className="drive-or" aria-hidden="true">or</div>{driveInput('…or personal photo Drive link', 'photoUrl', { type: 'url', placeholder: 'https://drive.google.com/…' })}</div>
         {input('University', 'university', { required: true })}
         {input('Major', 'major', { required: true })}
         {input('Academic Year', 'academicYear', { required: true, placeholder: 'e.g. 2nd' })}
         {input('Current Academic Grade', 'grade')}
+        <div className="file-upload">
+          <label className="form-label" htmlFor="heads-photoFile">Personal photo (upload, required)</label>
+          <input id="heads-photoFile" className="form-file" type="file" accept="image/*" required={!values.photoUrl} onChange={e => { setFieldError(null); setPhotoFile(e.target.files?.[0] || null) }} />
+          {photoFile && <p className="file-chosen" aria-live="polite">✓ {photoFile.name}</p>}
+          {errFor('photoUrl')}
+        </div>
+        <div className="file-upload">
+          <label className="form-label" htmlFor="heads-cvFile">CV (PDF file, required)</label>
+          <input id="heads-cvFile" className="form-file" type="file" accept=".pdf,.doc,.docx" required={!values.cvUrl} onChange={e => { setFieldError(null); setCvFile(e.target.files?.[0] || null) }} />
+          {cvFile && <p className="file-chosen" aria-live="polite">✓ {cvFile.name}</p>}
+          {errFor('cvUrl')}
+        </div>
+        {input('Social media links (comma-separated)', 'links', { type: 'text', placeholder: 'https://…, https://…' })}
       </>}
       {step === 1 && <>
-        <Select id="heads-boardInterest" label="Interested in Heads Board positions?" required value={values.boardInterest} onChange={set('boardInterest')} options={[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }]} placeholder="Select…" />
-        {errFor('boardInterest')}
-        {values.boardInterest === 'yes' && input('Role', 'role', { required: true, placeholder: 'Head / Vice-Head…' })}
-        <Select id="heads-firstPref" label="1st preference" required value={values.firstPref} onChange={set('firstPref')} placeholder="Select a committee" options={toOptions(options)} />
-        {errFor('firstPref')}
-        <Select id="heads-secondPref" label="2nd preference" value={values.secondPref} onChange={set('secondPref')} placeholder="None" options={[{ value: '', label: 'None' }, ...toOptions(options)]} />
-        <label className="form-label" htmlFor="heads-experience">Your technical experience in this committee<textarea id="heads-experience" className="form-textarea mt-2" rows={4} value={values.experience} onChange={set('experience')} /></label>
+        <Select id="heads-applyingAs" label="You are applying as" required value={values.applyingAs} onChange={set('applyingAs')} options={APPLYING_AS_SELECT_OPTIONS} placeholder="Select…" />
+        {errFor('applyingAs')}
+        <Select id="heads-committee" label="Committee" required value={values.committee} onChange={set('committee')} placeholder="Select a committee" options={toOptions(options)} />
+        {errFor('committee')}
+        <label className="form-label" htmlFor="heads-whyHead">Why do you want to apply as a head?<textarea id="heads-whyHead" className="form-textarea mt-2" rows={4} required value={values.whyHead} onChange={set('whyHead')} />{errFor('whyHead')}</label>
+        <label className="form-label" htmlFor="heads-experience">What&apos;s your technical experience in this field?<textarea id="heads-experience" className="form-textarea mt-2" rows={4} required value={values.experience} onChange={set('experience')} />{errFor('experience')}</label>
       </>}
       {step === 2 && <>
-        <Select id="heads-activities" label="Any student activities experience?" required value={values.activities} onChange={set('activities')} options={[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }]} placeholder="Select…" />
-        {errFor('activities')}
-        {values.activities === 'yes' && <label className="form-label" htmlFor="heads-activitiesDetails">Tell us more about your activities<textarea id="heads-activitiesDetails" className="form-textarea mt-2" rows={4} value={values.activitiesDetails} onChange={set('activitiesDetails')} />{errFor('activitiesDetails')}</label>}
+        <Select id="heads-prevMember" label="Are you a previous IEEE HITU member?" required value={values.prevMember} onChange={set('prevMember')} options={[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }]} placeholder="Select…" />
+        {errFor('prevMember')}
+        {values.prevMember === 'yes' && <>
+          {input('Committee name', 'prevCommittee', { required: true })}
+          {input('Position', 'prevPosition', { required: true })}
+        </>}
+        <label className="form-label" htmlFor="heads-studentActivities">Student activity experience<textarea id="heads-studentActivities" className="form-textarea mt-2" rows={4} required value={values.studentActivities} onChange={set('studentActivities')} placeholder="Tell us about your student activities…" />{errFor('studentActivities')}</label>
         {input('Weekly commit hours', 'weeklyHours', { required: true, placeholder: 'e.g. 6' })}
         <label className="form-label" htmlFor="heads-whyJoin">Why do you want to join IEEE HITU?<textarea id="heads-whyJoin" className="form-textarea mt-2" rows={4} required value={values.whyJoin} onChange={set('whyJoin')} />{errFor('whyJoin')}</label>
-        {input('Social / professional / technical links (comma-separated)', 'links', { type: 'text', placeholder: 'https://…, https://…' })}
       </>}
       {step === 3 && <>
-        <div className="file-upload"><label className="form-label" htmlFor="heads-cvFile">CV (PDF file)</label><input id="heads-cvFile" className="form-file" type="file" accept=".pdf,.doc,.docx" onChange={e => setCvFile(e.target.files?.[0] || null)} />{cvFile && <p className="file-chosen" aria-live="polite">✓ {cvFile.name}</p>}<div className="drive-or" aria-hidden="true">or</div>{driveInput('…or CV Drive link', 'cvUrl', { type: 'url', placeholder: 'https://drive.google.com/…' })}</div>
-        <label className="form-label" htmlFor="heads-notes">Questions / notes<textarea id="heads-notes" className="form-textarea mt-2" rows={4} value={values.notes} onChange={set('notes')} placeholder="Thanks for your time — drop questions here and we'll contact you." /></label>
+        <label className="form-label" htmlFor="heads-notes">Notes<textarea id="heads-notes" className="form-textarea mt-2" rows={4} value={values.notes} onChange={set('notes')} placeholder="Anything else you want us to know…" /></label>
         <input type="text" name="company_website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" value={values.company_website || ''} onChange={set('company_website')} />
       </>}
       <div className="flex gap-3">
