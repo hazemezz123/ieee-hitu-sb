@@ -53,7 +53,7 @@ codebase and the dark navbar introduced with the white-logo standardization.
 - Sun/moon icon button using the already-loaded Material Symbols font
   (`dark_mode` / `light_mode`), with an accessible label naming the target mode
   (e.g. "Switch to dark mode").
-- Placed with the navbar actions on desktop and inside the mobile menu panel.
+- One button in the header bar after the desktop links (before Join IEEE / the hamburger), so it is visible in both the desktop and mobile navigation without duplication.
 - Styled after the existing `nav-menu-button` so it fits the institutional look
   in both themes.
 
