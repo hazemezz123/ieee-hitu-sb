@@ -45,8 +45,10 @@ codebase and the dark navbar introduced with the white-logo standardization.
   in dark mode via `[data-theme="dark"] .navbar-logo { filter: brightness(0) invert(1); }`
   (same filter treatment already used in Hero/Footer). The `navbar-logo` hook
   class is already on the navbar image.
-- Hero and Footer are permanently dark surfaces, so their white logo (and the
-  white slogan image) stay unchanged in both modes.
+- Hero and Footer are permanently dark surfaces, so their white logo stays
+  unchanged in both modes. The slogan file has an opaque white background, so
+  it renders unfiltered on a small white badge (aspect ratio preserved) rather
+  than with the white filter.
 
 ## Toggle UI (`src/components/navbar.jsx`)
 
@@ -54,6 +56,7 @@ codebase and the dark navbar introduced with the white-logo standardization.
   (`dark_mode` / `light_mode`), with an accessible label naming the target mode
   (e.g. "Switch to dark mode").
 - One button in the header bar after the desktop links (before Join IEEE / the hamburger), so it is visible in both the desktop and mobile navigation without duplication.
+- Theme-dependent labels/icons render after mount (neutral "Toggle color theme" first paint) so dark-system first visits never hydrate stale server labels.
 - Styled after the existing `nav-menu-button` so it fits the institutional look
   in both themes.
 
