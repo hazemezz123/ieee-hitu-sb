@@ -390,6 +390,10 @@ a { text-underline-offset: 0.2em; }
 .nav-link[aria-current='page']::after { position: absolute; inset: auto 0.85rem -1px; height: 3px; background: var(--primary); content: ''; }
 .nav-link-mobile { min-height: 2.75rem; border-bottom: 1px solid var(--color-outline-variant); }
 .nav-link-mobile[aria-current='page'] { color: var(--primary-strong); }
+
+/* Theme-aware navbar logo: full color in light mode, white in dark mode
+   (dark-mode tokens + the data-theme rule land with the dark-mode feature). */
+.navbar-logo { display: block; }
 @layer components {
   .nav-menu-button { display: inline-flex; width: 2.75rem; height: 2.75rem; align-items: center; justify-content: center; border: 1px solid var(--color-outline-variant); border-radius: var(--radius-sm); background: var(--surface-raised); color: var(--text); }
 }
@@ -436,3 +440,56 @@ a { text-underline-offset: 0.2em; }
 @media (prefers-contrast: more) {
   :root { --color-outline-variant: var(--color-outline); }
 }
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --surface: #0b1322;
+  --surface-raised: #141f30;
+  --surface-inverse: #060b14;
+  --text: #e9eff5;
+  --text-muted: #9BA9B4;
+  --primary: #6aaed6;
+  --primary-strong: #8fcae8;
+  --color-surface-container-lowest: #141f30;
+  --color-surface-container-low: #182437;
+  --color-surface-container: #1f2f49;
+  --color-surface-container-high: #27395a;
+  --color-surface-container-highest: #31486f;
+  --color-surface-bright: #1b2942;
+  --color-surface-dim: #1f2f49;
+  --color-surface-variant: #1f2f49;
+  --color-primary-container: #6aaed6;
+  --color-on-primary-container: #06283d;
+  --color-primary-fixed: #12395a;
+  --color-primary-fixed-dim: #1d4566;
+  --color-on-primary-fixed: #cfe8f7;
+  --color-on-primary-fixed-variant: #8fcae8;
+  --color-secondary: #6aa9c4;
+  --color-secondary-container: #14324a;
+  --color-on-secondary-container: #cfe6f2;
+  --color-secondary-fixed: #14324a;
+  --color-secondary-fixed-dim: #1d4566;
+  --color-on-secondary-fixed: #cfe6f2;
+  --color-on-secondary-fixed-variant: #8fb8cf;
+  --color-tertiary: #9aa7b2;
+  --color-tertiary-container: #1c2836;
+  --color-on-tertiary: #0b1322;
+  --color-tertiary-fixed: #1c2836;
+  --color-tertiary-fixed-dim: #2a3a4f;
+  --color-on-tertiary-fixed: #d7dee5;
+  --color-on-tertiary-fixed-variant: #9aa7b2;
+  --color-outline: #8fa0b3;
+  --color-outline-variant: #2c3e5e;
+  --color-error: #ff6b61;
+  --color-error-container: #40211d;
+  --color-on-error: #2a0f0c;
+  --color-on-error-container: #ffc9c2;
+}
+
+/* White primary buttons keep dark text on the lightened dark-mode primary. */
+[data-theme="dark"] .btn-primary { color: #06283d; }
+[data-theme="dark"] .form-file::file-selector-button,
+[data-theme="dark"] .form-file::-webkit-file-upload-button { color: #06283d; }
+
+/* Theme-aware navbar logo: full color in light mode, white in dark mode. */
+[data-theme="dark"] .navbar-logo { filter: brightness(0) invert(1); }
