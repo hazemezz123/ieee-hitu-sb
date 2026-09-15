@@ -37,6 +37,17 @@ codebase and the dark navbar introduced with the white-logo standardization.
   explicit colors and stay correct in both modes; no per-component edits expected
   beyond a contrast audit.
 
+## Theme-aware brand assets
+
+- Navbar follows the theme: light surfaces in light mode, dark surfaces in dark
+  mode (automatic via the token inversion, no navbar-specific colors).
+- Navbar logo is theme-aware: full-color `logo.png` in light mode, white version
+  in dark mode via `[data-theme="dark"] .navbar-logo { filter: brightness(0) invert(1); }`
+  (same filter treatment already used in Hero/Footer). The `navbar-logo` hook
+  class is already on the navbar image.
+- Hero and Footer are permanently dark surfaces, so their white logo (and the
+  white slogan image) stay unchanged in both modes.
+
 ## Toggle UI (`src/components/navbar.jsx`)
 
 - Sun/moon icon button using the already-loaded Material Symbols font
