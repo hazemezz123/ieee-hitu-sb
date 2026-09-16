@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import Hero from '@/components/ui/Hero'
-import LogoLoader from '@/components/ui/LogoLoader'
 import Skeleton from '@/components/ui/Skeleton'
 import { getNextEvents, getRecentEvents, sortEvents } from '@/lib/presentation'
 import EventRecord from './EventRecord'
@@ -25,7 +24,6 @@ export default function Home() {
 
   return (
     <div className="page-enter">
-      <LogoLoader />
       <Hero />
       <RecruitmentBand />
       <div>
