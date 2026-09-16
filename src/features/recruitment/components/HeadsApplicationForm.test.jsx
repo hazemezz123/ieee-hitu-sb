@@ -178,6 +178,7 @@ describe('HeadsApplicationForm', () => {
     expect(await screen.findByText(/Step 4\/4/)).toBeTruthy()
     // Submit is held briefly to swallow a double-click landing from Continue.
     await new Promise(r => setTimeout(r, 850))
+    fireEvent.click(screen.getByRole('checkbox', { name: /I confirm/ }))
     fireEvent.click(screen.getByRole('button', { name: /Submit application/ }))
     expect(await screen.findByText(/Application recorded/)).toBeTruthy()
     expect(submitApplication).toHaveBeenCalledTimes(1)
@@ -259,8 +260,9 @@ describe('HeadsApplicationForm', () => {
     // Notes stay editable during the guard.
     fireEvent.change(screen.getByLabelText(/Notes/), { target: { value: 'Some note' } })
     expect(screen.getByLabelText(/Notes/).value).toBe('Some note')
-    // After the guard window, a deliberate submit goes through with the note.
+    // After the guard window, confirm and a deliberate submit goes through with the note.
     await new Promise(r => setTimeout(r, 850))
+    fireEvent.click(screen.getByRole('checkbox', { name: /I confirm/ }))
     expect(screen.getByRole('button', { name: /Submit application/ }).disabled).toBe(false)
     fireEvent.click(screen.getByRole('button', { name: /Submit application/ }))
     expect(await screen.findByText(/Application recorded/)).toBeTruthy()
@@ -293,9 +295,42 @@ describe('HeadsApplicationForm', () => {
     // Notes stay editable and a real submit on the final step records the application.
     fireEvent.change(screen.getByLabelText(/Notes/), { target: { value: 'Some note' } })
     await new Promise(r => setTimeout(r, 850))
+    fireEvent.click(screen.getByRole('checkbox', { name: /I confirm/ }))
     fireEvent.submit(document.querySelector('form'))
     expect(await screen.findByText(/Application recorded/)).toBeTruthy()
     expect(submitApplication).toHaveBeenCalledTimes(1)
     expect(submitApplication).toHaveBeenCalledWith('heads', expect.objectContaining({ notes: 'Some note' }))
+  })
+
+  it('keeps Submit disabled until the confirmation checkbox is checked', async () => {
+    submitApplication.mockReset()
+    submitApplication.mockResolvedValue(7)
+    localStorage.setItem('recruitment:heads:draft', JSON.stringify({
+      name: 'HITU Student', email: 's@hitu.edu.eg', phone: '01001234567', address: '',
+      photoUrl: 'https://cdn/photo.jpg', university: 'HITU', major: 'Eng', academicYear: '2nd', grade: '',
+      cvUrl: 'https://cdn/cv.pdf', links: '', applyingAs: 'head', committee: 'c0',
+      whyHead: 'Lead', experience: 'Exp', prevMember: 'no', prevCommittee: '', prevPosition: '',
+      studentActivities: 'x', weeklyHours: '5', whyJoin: 'y', notes: '',
+    }))
+    render(<HeadsApplicationForm />)
+    fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
+    expect(await screen.findByText(/Step 2\/4/)).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
+    expect(await screen.findByText(/Step 3\/4/)).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
+    expect(await screen.findByText(/Step 4\/4/)).toBeTruthy()
+    // Wait out the double-click guard so only the confirmation gates Submit.
+    await new Promise(r => setTimeout(r, 850))
+    const submitBtn = screen.getByRole('button', { name: /Submit application/ })
+    const confirmBox = screen.getByRole('checkbox', { name: /I confirm that the information I provided is accurate/ })
+    expect(submitBtn.disabled).toBe(true)
+    // Implicit submits (Enter / assistive tech) can't bypass the gate either.
+    fireEvent.submit(document.querySelector('form'))
+    expect(submitApplication).not.toHaveBeenCalled()
+    fireEvent.click(confirmBox)
+    expect(screen.getByRole('button', { name: /Submit application/ }).disabled).toBe(false)
+    fireEvent.click(screen.getByRole('button', { name: /Submit application/ }))
+    expect(await screen.findByText(/Application recorded/)).toBeTruthy()
+    expect(submitApplication).toHaveBeenCalledTimes(1)
   })
 })
