@@ -46,7 +46,8 @@ describe('HeadsApplicationForm', () => {
     fireEvent.click(screen.getByRole('option', { name: 'Committee 0' }))
     expect(screen.getByRole('combobox', { name: /^Committee$/ }).textContent).toMatch(/Committee 0/)
 
-    fireEvent.change(screen.getByLabelText(/Why do you want to apply as a head/), { target: { value: 'I want to lead' } })
+    // whyHead is head-only: hidden for Manager, step must advance without it
+    expect(screen.queryByLabelText(/Why do you want to apply as a head/)).toBeNull()
     fireEvent.change(screen.getByLabelText(/technical experience/), { target: { value: '2 years' } })
     fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
     expect(await screen.findByText(/Step 3\/4/)).toBeTruthy()
@@ -332,5 +333,64 @@ describe('HeadsApplicationForm', () => {
     fireEvent.click(screen.getByRole('button', { name: /Submit application/ }))
     expect(await screen.findByText(/You're all set/)).toBeTruthy()
     expect(submitApplication).toHaveBeenCalledTimes(1)
+  })
+
+  it('shows whyHead only for head and advances without it for vice-head/manager', async () => {
+    render(<HeadsApplicationForm />)
+    fireEvent.change(screen.getByLabelText(/Full name/), { target: { value: 'HITU Student' } })
+    fireEvent.change(screen.getByLabelText(/Email/), { target: { value: 's@hitu.edu.eg' } })
+    fireEvent.change(screen.getByLabelText(/Phone/), { target: { value: '01001234567' } })
+    fireEvent.change(screen.getByLabelText(/University/), { target: { value: 'HITU' } })
+    fireEvent.change(screen.getByLabelText(/Major/), { target: { value: 'Eng' } })
+    fireEvent.click(screen.getByRole('combobox', { name: /Academic Year/ }))
+    fireEvent.click(screen.getByRole('option', { name: '2nd Year' }))
+    fireEvent.change(document.getElementById('heads-photoFile'), { target: { files: [new File(['img'], 'me.png', { type: 'image/png' })] } })
+    fireEvent.change(document.getElementById('heads-cvFile'), { target: { files: [new File(['cv'], 'cv.pdf', { type: 'application/pdf' })] } })
+    fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
+    expect(await screen.findByText(/Step 2\/4/)).toBeTruthy()
+    // Head shows the field and blocks without it
+    fireEvent.click(screen.getByRole('combobox', { name: /You are applying as/ }))
+    fireEvent.click(screen.getByRole('option', { name: 'Head' }))
+    expect(screen.getByLabelText(/Why do you want to apply as a head/)).toBeTruthy()
+    fireEvent.click(screen.getByRole('combobox', { name: /^Committee$/ }))
+    fireEvent.click(screen.getByRole('option', { name: 'Committee 1' }))
+    fireEvent.change(screen.getByLabelText(/technical experience/), { target: { value: 'Exp' } })
+    fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
+    expect(screen.getByText(/Step 2\/4/)).toBeTruthy()
+    expect(screen.getByRole('alert').textContent).toMatch(/why you want to apply as head/i)
+    // Switching to vice-head hides the field and unblocks
+    fireEvent.click(screen.getByRole('combobox', { name: /You are applying as/ }))
+    fireEvent.click(screen.getByRole('option', { name: 'Vice Head' }))
+    expect(screen.queryByLabelText(/Why do you want to apply as a head/)).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
+    expect(await screen.findByText(/Step 3\/4/)).toBeTruthy()
+  })
+
+  it('wipes draft storage and in-memory values on successful submit', async () => {
+    submitApplication.mockReset()
+    submitApplication.mockResolvedValue(9)
+    localStorage.setItem('recruitment:heads:draft', JSON.stringify({
+      name: 'HITU Student', email: 's@hitu.edu.eg', phone: '01001234567', address: '',
+      photoUrl: 'https://cdn/photo.jpg', university: 'HITU', major: 'Eng', academicYear: '2nd', grade: '',
+      cvUrl: 'https://cdn/cv.pdf', links: '', applyingAs: 'manager', committee: 'c0',
+      whyHead: '', experience: 'Exp', prevMember: 'no', prevCommittee: '', prevPosition: '',
+      studentActivities: 'x', weeklyHours: '5', whyJoin: 'y', notes: 'bye',
+    }))
+    render(<HeadsApplicationForm />)
+    fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
+    expect(await screen.findByText(/Step 2\/4/)).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
+    expect(await screen.findByText(/Step 3\/4/)).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
+    expect(await screen.findByText(/Step 4\/4/)).toBeTruthy()
+    await new Promise(r => setTimeout(r, 850))
+    fireEvent.click(screen.getByRole('checkbox', { name: /I confirm/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Submit application/ }))
+    expect(await screen.findByText(/You're all set, HITU!/)).toBeTruthy()
+    expect(submitApplication).toHaveBeenCalledTimes(1)
+    // Cached draft is gone and the form is unmounted (no PII left in DOM)
+    expect(localStorage.getItem('recruitment:heads:draft')).toBeNull()
+    expect(screen.queryByLabelText(/Full name/)).toBeNull()
+    expect(document.getElementById('heads-photoFile')).toBeNull()
   })
 })

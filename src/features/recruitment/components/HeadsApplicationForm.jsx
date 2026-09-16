@@ -157,6 +157,7 @@ export default function HeadsApplicationForm({ onClosed }) {
   const [error, setError] = useState(null);
   const [fieldError, setFieldError] = useState(null);
   const [doneId, setDoneId] = useState(null);
+  const [submittedName, setSubmittedName] = useState("");
   const [options, setOptions] = useState(fallbackCommittees);
   // Submit replaces Continue in the same spot on step 4. A double-click (or
   // Enter-key repeat) on Continue would otherwise land on Submit and send the
@@ -166,12 +167,13 @@ export default function HeadsApplicationForm({ onClosed }) {
   const notesRef = useRef(null);
 
   useEffect(() => {
+    if (doneId) return;
     try {
       localStorage.setItem(DRAFT_KEY, JSON.stringify(values));
     } catch {
       /* private-mode storage may be unavailable; draft stays in memory */
     }
-  }, [values]);
+  }, [values, doneId]);
   useEffect(() => {
     let active = true;
     fetchCommitteesResult()
@@ -269,6 +271,10 @@ export default function HeadsApplicationForm({ onClosed }) {
       } catch {
         /* draft already gone */
       }
+      setSubmittedName(String(values.name ?? "").trim().split(/\s+/)[0] || "");
+      setValues({ ...emptyValues });
+      setPhotoFile(null);
+      setCvFile(null);
       setDoneId(id);
     } catch (err) {
       if (
@@ -283,7 +289,7 @@ export default function HeadsApplicationForm({ onClosed }) {
     setUploading(false);
   }
 
-  const firstName = String(values.name ?? "").trim().split(/\s+/)[0];
+  const firstName = String((doneId ? submittedName : values.name) ?? "").trim().split(/\s+/)[0];
 
   if (doneId)
     return (
@@ -458,6 +464,7 @@ export default function HeadsApplicationForm({ onClosed }) {
             options={toOptions(options)}
           />
           {errFor("committee")}
+          {values.applyingAs === 'head' && (
           <label className="form-label" htmlFor="heads-whyHead">
             Why do you want to apply as a head?
             <textarea
@@ -470,6 +477,7 @@ export default function HeadsApplicationForm({ onClosed }) {
             />
             {errFor("whyHead")}
           </label>
+          )}
           <label className="form-label" htmlFor="heads-experience">
             What&apos;s your technical experience in this field?
             <textarea

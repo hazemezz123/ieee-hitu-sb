@@ -139,7 +139,9 @@ export default function Navbar() {
         >
           <span className="material-symbols-outlined" aria-hidden="true">{!mounted ? 'contrast' : (dark ? 'light_mode' : 'dark_mode')}</span>
         </button>
-        <Link href="/join-us" className="btn btn-primary hidden md:inline-flex">Join IEEE</Link>
+        <div className="hidden md:block">
+          <Link href="/join-us" className="btn btn-primary">Join IEEE</Link>
+        </div>
         <button
           ref={menuButtonRef}
           type="button"

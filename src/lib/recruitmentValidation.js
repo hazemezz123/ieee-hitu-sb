@@ -45,7 +45,7 @@ export function validateHeadsStep(step, data = {}, { hasPhotoFile = false, hasCv
   if (step === 1) {
     if (!APPLYING_AS_OPTIONS.includes(v('applyingAs'))) return { ok: false, field: 'applyingAs', error: 'Choose what you are applying as.' }
     if (!v('committee')) return { ok: false, field: 'committee', error: 'Choose a committee.' }
-    if (!v('whyHead')) return { ok: false, field: 'whyHead', error: 'Tell us why you want to apply as head.' }
+    if (v('applyingAs') === 'head' && !v('whyHead')) return { ok: false, field: 'whyHead', error: 'Tell us why you want to apply as head.' }
     if (!v('experience')) return { ok: false, field: 'experience', error: 'Tell us about your technical experience.' }
     return { ok: true }
   }
