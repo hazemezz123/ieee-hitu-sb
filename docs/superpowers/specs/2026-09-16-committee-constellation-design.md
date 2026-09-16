@@ -16,12 +16,14 @@ A single scaling panel (`aspect-[5/3]`, max-w-6xl) containing:
 
 - **Branch hub** at (50%, 50%): dark `bg-inverse-surface` circular badge showing the live
   committee count, the word `Committees`, and one `Open directory` link to `/committees`.
-- **9 technical committees** wired as a mesh on the left half:
-  `cs` (8,30), `ai` (22,22), `embedded` (36,30), `cyber-defensive` (10,55),
-  `web` (26,52), `cyber-offensive` (12,78), `robotics` (28,74),
-  `automations` (22,92), `ds` (40,60). Coordinates are x%, y% of the panel.
+- **9 technical committees** wired as a mesh on the left half, in 1000×600 panel
+  units (HTML: left=x/10 %, top=y/6 %; SVG: raw units):
+  `cs` (80,180), `ai` (220,132), `embedded` (380,168),
+  `cyber-defensive` (100,330), `web` (260,312), `cyber-offensive` (120,468),
+  `robotics` (300,438), `automations` (220,540), `ds` (430,375).
 - **4 non-technical committees** wired as a mesh on the right half:
-  `pr-oc` (64,30), `multi-media` (80,22), `marketing` (90,52), `hr-td` (74,78).
+  `pr-oc` (640,180), `multi-media` (810,126), `marketing` (900,312),
+  `hr-td` (740,468).
 - **Edges** (SVG lines, `vector-effect="non-scaling-stroke"`): hub to every node (13),
   plus intra-mesh links — technical: cs–ai, ai–embedded, embedded–web, web–ds,
   web–robotics, cyber-defensive–web, cyber-defensive–cyber-offensive,
@@ -56,11 +58,13 @@ A single scaling panel (`aspect-[5/3]`, max-w-6xl) containing:
 
 ## 4. Responsive behavior
 
-The panel scales as one unit, so mobile needs no separate layout. Safeguards:
-cross-mesh edges hidden below `sm` (keep hub spokes); node labels shrink to
-`text-[11px]`; badges stay 56px (≥44px tap targets, no overlap at 360px per the
-coordinate map: nearest-neighbor distance ≥9% of panel width ≈ 29px edge-to-edge
-at 320px content width — verified against the map in section 2).
+Mobile panel is fixed `h-[520px]` with the hub stacked above in column flow;
+`md+` panel is `aspect-[5/3]` with the hub absolutely overlaid at center
+(anchored to the `md:relative` section wrapper). Badges are 44px (`w-11 h-11`)
+on mobile, 56px (`sm:w-14 sm:h-14`) above; labels are 10px mobile / 12px above.
+Cross-mesh edges render `hidden sm:block`; hub spokes always render. Nearest
+node-neighbor clearance was verified against the §2 map at 312px and 1088px
+panel widths.
 
 ## 5. Accessibility
 
