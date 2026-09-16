@@ -12,7 +12,7 @@ export default function Hero() {
         <img
           src="/logo.png"
           alt=""
-          className="w-full max-w-[9rem] object-contain brightness-0 invert md:max-w-[11rem]"
+          className="w-full max-w-[9rem] object-contain md:max-w-[11rem]"
         />
         <h1 id="home-title" className="sr-only">
           IEEE HITU Student Branch

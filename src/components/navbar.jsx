@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useTheme } from '@/lib/theme'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 const navLinks = [
   { name: 'Home', href: '/' },
@@ -27,6 +29,8 @@ export default function Navbar() {
   const toggleLabel = !mounted ? 'Toggle color theme' : (dark ? 'Switch to light mode' : 'Switch to dark mode')
   const pathname = usePathname()
   const menuButtonRef = useRef(null)
+  const headerRef = useRef(null)
+  const menuRef = useRef(null)
   const isMenuOpen = openPath === pathname
 
   useEffect(() => {
@@ -59,6 +63,46 @@ export default function Navbar() {
     return () => { document.body.style.overflow = previousOverflow }
   }, [isMenuOpen])
 
+  useEffect(() => {
+    const header = headerRef.current
+    if (!header) return
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches) return
+    // Directionally aware header (GSAP demo): slide the fixed header away when
+    // scrolling down, bring it back on the first upward scroll.
+    gsap.registerPlugin(ScrollTrigger)
+    const showAnim = gsap.from(header, { yPercent: -100, paused: true, duration: 0.2 }).progress(1)
+    const trigger = ScrollTrigger.create({
+      start: 'top top',
+      end: 'max',
+      onUpdate: (self) => {
+        if (self.direction === -1) showAnim.play()
+        else showAnim.reverse()
+      },
+    })
+    return () => { trigger.kill(); showAnim.kill() }
+  }, [])
+
+  useEffect(() => {
+    const menu = menuRef.current
+    if (!menu) return
+    const items = menu.querySelectorAll('[data-menu-item]')
+    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
+    if (reduce) {
+      gsap.set(menu, { height: isMenuOpen ? 'auto' : 0 })
+      gsap.set(items, { clearProps: 'opacity,visibility,transform' })
+      return
+    }
+    // Staggered reveal: the panel expands while its items fade/slide in.
+    if (isMenuOpen) {
+      const heightTween = gsap.to(menu, { height: 'auto', duration: 0.3, ease: 'power2.out' })
+      const itemTween = gsap.fromTo(items, { autoAlpha: 0, y: -8 }, { autoAlpha: 1, y: 0, duration: 0.25, delay: 0.06, stagger: 0.04 })
+      return () => { heightTween.kill(); itemTween.kill() }
+    }
+    const heightTween = gsap.to(menu, { height: 0, duration: 0.22, ease: 'power2.in' })
+    const itemTween = gsap.fromTo(items, { autoAlpha: 1, y: 0 }, { autoAlpha: 0, y: -4, duration: 0.15 })
+    return () => { heightTween.kill(); itemTween.kill() }
+  }, [isMenuOpen])
+
   const isActive = path => pathname === path || (path !== '/' && pathname.startsWith(`${path}/`))
   const dismissAfterNavigation = () => {
     setOpenPath(null)
@@ -66,7 +110,7 @@ export default function Navbar() {
   }
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-outline-variant bg-surface-container-lowest">
+    <header ref={headerRef} className="fixed inset-x-0 top-0 z-50 border-b border-outline-variant bg-surface-container-lowest">
       <nav className="mx-auto flex h-[var(--navbar-height)] max-w-7xl items-center gap-6 px-5 sm:px-8" aria-label="Primary navigation">
         <Link href="/" className="mr-auto flex items-center" aria-label="IEEE HITU Student Branch home">
           <img src="/logo.png" alt="IEEE HITU Student Branch" className="navbar-logo h-9 w-auto" />
@@ -95,7 +139,7 @@ export default function Navbar() {
         >
           <span className="material-symbols-outlined" aria-hidden="true">{!mounted ? 'contrast' : (dark ? 'light_mode' : 'dark_mode')}</span>
         </button>
-        <Link href="/membership" className="btn btn-primary hidden md:inline-flex">Join IEEE</Link>
+        <Link href="/join-us" className="btn btn-primary hidden md:inline-flex">Join IEEE</Link>
         <button
           ref={menuButtonRef}
           type="button"
@@ -109,20 +153,28 @@ export default function Navbar() {
         </button>
       </nav>
 
-      <div id="mobile-navigation" hidden={!isMenuOpen} className="border-t border-outline-variant bg-surface-container-lowest px-5 py-4 md:hidden">
-        <nav className="mx-auto flex max-w-7xl flex-col" aria-label="Mobile navigation">
+      <div
+        id="mobile-navigation"
+        ref={menuRef}
+        aria-hidden={isMenuOpen ? undefined : true}
+        inert={isMenuOpen ? undefined : true}
+        style={{ height: 0 }}
+        className="overflow-hidden bg-surface-container-lowest md:hidden"
+      >
+        <nav className="mx-auto flex max-w-7xl flex-col border-t border-outline-variant px-5 py-4" aria-label="Mobile navigation">
           {navLinks.map(link => (
             <Link
               key={link.name}
               href={link.href}
               aria-current={isActive(link.href) ? 'page' : undefined}
               className="nav-link-mobile"
+              data-menu-item
               onClick={dismissAfterNavigation}
             >
               {link.name}
             </Link>
           ))}
-          <Link href="/membership" className="btn btn-primary mt-3" onClick={dismissAfterNavigation}>Join IEEE</Link>
+          <Link href="/join-us" data-menu-item className="btn btn-primary mt-3" onClick={dismissAfterNavigation}>Join IEEE</Link>
         </nav>
       </div>
     </header>

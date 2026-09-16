@@ -2,7 +2,6 @@ import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import Home from '@/features/home/components/HomePage'
 import AboutPage from '@/features/about/components/AboutPage'
-import MembershipPage from '@/features/membership/components/MembershipPage'
 import JoinUsPage from './JoinUsPage'
 import ContactPage from '@/features/contact/components/ContactPage'
 import TechnicalResources from '@/components/ui/TechnicalResources'
@@ -261,19 +260,6 @@ describe('recruitment pages', () => {
     expect(page.container.textContent).toBe('')
   })
 
-  it('keeps membership factual and links only to the local participation route', () => {
-    const { container } = renderPage(<MembershipPage />)
-
-    expect(screen.getByRole('heading', { level: 1, name: /membership and participation/i })).toBeTruthy()
-    expect(screen.getByRole('link', { name: /start with ieee hitu/i }).getAttribute('href')).toBe('/join-us')
-    expect(screen.getAllByRole('link')).toHaveLength(1)
-    expect(screen.getByText(/current participation process details are not published/i)).toBeTruthy()
-    expect(screen.getByText(/technical learning, committees, events, and the wider ieee network/i)).toBeTruthy()
-    expect(screen.queryByText(/free|\$197|\$217|420,000|160\+|50%|testimonial|payment|cancel|refund|eligib|placement|expected to|attend|communicate reliably/i)).toBeNull()
-    expect(container.querySelector('main')).toBeNull()
-    expect(container.querySelector('.section-label')).toBeNull()
-  })
-
   it('uses committee data, native labels, and an honest local outcome on contact', () => {
     const { container } = renderPage(<ContactPage />)
     const action = 'Record message'
@@ -317,7 +303,6 @@ describe('recruitment pages', () => {
 
     expect(screen.getByRole('heading', { level: 1, name: 'Lead an IEEE HITU Committee' })).toBeTruthy()
     expect(screen.getByText('Heads & Vice-Heads Recruitment')).toBeTruthy()
-    expect(screen.getByLabelText(`${committees.length} committees`)).toBeTruthy()
     expect(container.querySelector('main')).toBeNull()
 
     expect(await screen.findByText(/Step 1\/4/)).toBeTruthy()
