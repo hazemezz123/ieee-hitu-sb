@@ -57,6 +57,7 @@ src/plugins/impeccable-live.client.ts
 # impeccable-live-ignore-end
 
 .impeccable/
+.superpowers/
 .vercel
 .env
 .env.local
