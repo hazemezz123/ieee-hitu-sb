@@ -10,8 +10,6 @@ import { fetchCommitteesResult } from '@/features/committees/hooks/useCommittees
 
 // Panel coordinate space: 1000 x 600. HTML nodes use left = x/10 %, top = y/6 %;
 // SVG edges use raw units with viewBox="0 0 1000 600" preserveAspectRatio="none".
-const HUB = { x: 500, y: 300 }
-
 const NODES = [
   { slug: 'cs', x: 80, y: 180 },
   { slug: 'ai', x: 220, y: 132 },
@@ -60,18 +58,14 @@ export default function CommitteeDirectory() {
     const ctx = gsap.context(() => {
       gsap.from('[data-const="node"]', { scale: 0, opacity: 0, duration: 0.5, ease: 'back.out(1.6)', stagger: 0.05, scrollTrigger: { trigger: '[data-const="panel"]', start: 'top 80%', once: true } })
       gsap.from('[data-const="edge"]', { opacity: 0, duration: 0.8, stagger: 0.015, scrollTrigger: { trigger: '[data-const="panel"]', start: 'top 80%', once: true } })
-      gsap.to('[data-const="hub"]', { scale: 1.04, duration: 1.6, yoyo: true, repeat: -1, ease: 'sine.inOut' })
     }, scopeRef)
     return () => ctx.revert()
   }, [result.status])
 
   const bySlug = Object.fromEntries(result.committees.map(c => [c.slug, c]))
   const nodes = NODES.filter(n => bySlug[n.slug])
-  const edges = [
-    ...nodes.map(n => (['hub', n.slug])),
-    ...MESH_EDGES.filter(([a, b]) => bySlug[a] && bySlug[b]),
-  ]
-  const pointOf = slug => (slug === 'hub' ? HUB : NODES.find(n => n.slug === slug))
+  const edges = MESH_EDGES.filter(([a, b]) => bySlug[a] && bySlug[b])
+  const pointOf = slug => NODES.find(n => n.slug === slug)
 
   const edgeClass = ([a, b]) => {
     const base = 'const-edge'
@@ -87,6 +81,7 @@ export default function CommitteeDirectory() {
         <p className="section-label">Branch structure</p>
         <h2 id="committee-directory-heading" className="mt-3 text-3xl font-bold text-on-surface">Committee directory</h2>
         <p className="mt-3 text-on-surface-variant">Thirteen crews, one blueprint — pick a path into the branch.</p>
+        <Link className="mt-5 inline-flex text-xs font-bold uppercase tracking-widest text-primary" href="/committees">Open directory</Link>
       </div>
 
       {result.status === 'loading' && (
@@ -101,16 +96,9 @@ export default function CommitteeDirectory() {
       {result.status === 'error' && <p className="mt-10 text-center text-sm text-on-surface-variant">Committee directory could not be loaded.</p>}
 
       {result.status === 'ready' && (
-        <div ref={scopeRef} className="mt-10 flex flex-col items-center gap-8 md:relative md:block">
-          {result.source === 'fallback' && <p className="mx-auto w-full max-w-3xl bg-secondary-container px-6 py-3 text-center text-sm text-on-secondary-container">Showing the static committee archive while live committee data is unavailable.</p>}
-          {/* Central hub: stacked above the panel on mobile, overlaid center at md+ */}
-          <div data-const="hub" className="z-10 flex flex-col items-center gap-1 rounded-full bg-inverse-surface px-7 py-5 text-center ring-1 ring-cyan-300/30 md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:px-8">
-            <p className="text-3xl font-black leading-none text-[#F0F4F8] md:text-4xl">{result.committees.length}</p>
-            <p className="text-xs font-bold uppercase tracking-widest text-[#9BA9B4]">committees</p>
-            <Link className="mt-2 text-xs font-bold uppercase tracking-widest text-white underline underline-offset-4 hover:no-underline" href="/committees">Open directory</Link>
-          </div>
-
-          <div data-testid="committee-constellation" data-const="panel" className="const-panel relative h-[520px] w-full max-w-[34rem] md:mt-0 md:h-auto md:max-w-none md:aspect-[5/3]">
+        <div ref={scopeRef} className="mt-10">
+          {result.source === 'fallback' && <p className="mx-auto mb-6 w-full max-w-3xl bg-secondary-container px-6 py-3 text-center text-sm text-on-secondary-container">Showing the static committee archive while live committee data is unavailable.</p>}
+          <div data-testid="committee-constellation" data-const="panel" className="const-panel relative h-[520px] w-full md:h-auto md:aspect-[5/3]">
             <svg aria-hidden="true" className="absolute inset-0 h-full w-full" viewBox="0 0 1000 600" preserveAspectRatio="none">
               {edges.map(([a, b]) => (
                 <line
@@ -119,7 +107,7 @@ export default function CommitteeDirectory() {
                   data-const="edge"
                   x1={pointOf(a).x} y1={pointOf(a).y} x2={pointOf(b).x} y2={pointOf(b).y}
                   vectorEffect="non-scaling-stroke"
-                  className={`${edgeClass([a, b])}${a !== 'hub' && b !== 'hub' ? ' hidden sm:block' : ''}`}
+                  className={`${edgeClass([a, b])} hidden sm:block`}
                 />
               ))}
             </svg>

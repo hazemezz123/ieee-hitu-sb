@@ -27,7 +27,7 @@ beforeEach(() => {
 afterEach(() => { cleanup(); vi.unstubAllGlobals() })
 
 describe('CommitteeDirectory constellation', () => {
-  it('renders 13 wired nodes as accessible links with hub count and directory entry', async () => {
+  it('renders 13 wired nodes as accessible links with a header directory entry', async () => {
     const { container } = render(<CommitteeDirectory />)
 
     expect(await screen.findByRole('heading', { name: /committee directory/i })).toBeTruthy()
@@ -36,10 +36,10 @@ describe('CommitteeDirectory constellation', () => {
       expect(link.getAttribute('href')).toBe(`/committees/${committee.slug}`)
       expect(link.querySelector('svg')).toBeTruthy()
     }
-    expect(screen.getByText('13')).toBeTruthy()
     expect(screen.getByRole('link', { name: /open directory/i }).getAttribute('href')).toBe('/committees')
-    // 13 hub spokes + 14 mesh edges
-    expect(container.querySelectorAll('[data-edge]').length).toBe(27)
+    // 14 mesh edges, no hub
+    expect(container.querySelectorAll('[data-edge]').length).toBe(14)
+    expect(container.querySelector('[data-const="hub"]')).toBeNull()
   })
 
   it('shows the committee description in a tooltip per node', async () => {
