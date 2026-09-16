@@ -867,12 +867,10 @@ a {
 .const-edge-active {
   stroke: #00b5e2;
   opacity: 1;
-  animation: none;
   filter: drop-shadow(0 0 6px rgba(0, 181, 226, 0.8));
 }
 .const-edge-dim {
   opacity: 0.18;
-  animation: none;
 }
 @keyframes const-edge-flow {
   to { stroke-dashoffset: -28; }

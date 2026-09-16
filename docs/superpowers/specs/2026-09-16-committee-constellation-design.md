@@ -45,6 +45,13 @@ A single scaling panel (`aspect-[5/3]`, max-w-6xl) containing:
   (ScrollTrigger, already a dependency and used in `navbar.jsx`). Runs once.
 - **Ambient**: edges carry a traveling dash via CSS
   (`.const-edge`: `stroke-dasharray: 6 8`, `edge-flow` keyframes, 3s linear infinite).
+  The dash flow never pauses — hover states change only stroke color/opacity,
+  never `animation`.
+- **Drag and drop**: badges are GSAP Draggable (`type: x,y`, bounded to the panel,
+  `cursor-grab` / `active:cursor-grabbing`, `touch-pan-y` so vertical page scroll
+  still works on touch). A capture-phase click guard swallows the navigation click
+  only when a real drag moved the badge (>4px); plain clicks and keyboard
+  activation always navigate. Arrangement is in-memory and resets on reload.
 - **Hover/focus**: node scales to 1.15 with cyan glow
   (`shadow 0 0 28px -4px rgba(0,181,226,0.55)`, border `cyan-300`); connected edges
   switch to `.const-edge-active` (cyan stroke, full opacity); all other edges dim to
@@ -59,7 +66,8 @@ A single scaling panel (`aspect-[5/3]`, max-w-6xl) containing:
 ## 4. Responsive behavior
 
 Mobile panel is fixed `h-[520px]` with the header stacked above in column flow;
-`md+` panel is `aspect-[5/3]`. Badges are 44px (`w-11 h-11`)
+`md+` panel is `aspect-[5/3]`. The panel always spans the full section width
+(`w-full`, no max-width cap). Badges are 44px (`w-11 h-11`)
 on mobile, 56px (`sm:w-14 sm:h-14`) above; labels are 10px mobile / 12px above.
 Mesh edges render `hidden sm:block`. Nearest
 node-neighbor clearance was verified against the §2 map at 312px and 1088px

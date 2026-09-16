@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { Draggable } from 'gsap/Draggable'
 import CommitteeIcon from '@/components/ui/CommitteeIcon'
 import Skeleton from '@/components/ui/Skeleton'
 import { fetchCommitteesResult } from '@/features/committees/hooks/useCommittees'
@@ -54,12 +55,40 @@ export default function CommitteeDirectory() {
     if (result.status !== 'ready') return
     if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    gsap.registerPlugin(ScrollTrigger)
+    gsap.registerPlugin(ScrollTrigger, Draggable)
+    const scope = scopeRef.current
+    if (!scope) return
+    let suppressClick = false
+    let suppressTimer = null
+    // Swallow the click that follows a real drag so dropping a badge never navigates.
+    const swallowDragClick = event => {
+      if (suppressClick) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+    }
     const ctx = gsap.context(() => {
       gsap.from('[data-const="node"]', { scale: 0, opacity: 0, duration: 0.5, ease: 'back.out(1.6)', stagger: 0.05, scrollTrigger: { trigger: '[data-const="panel"]', start: 'top 80%', once: true } })
       gsap.from('[data-const="edge"]', { opacity: 0, duration: 0.8, stagger: 0.015, scrollTrigger: { trigger: '[data-const="panel"]', start: 'top 80%', once: true } })
-    }, scopeRef)
-    return () => ctx.revert()
+      Draggable.create('[data-const="drag"]', {
+        type: 'x,y',
+        bounds: scope.querySelector('[data-const="panel"]'),
+        onPress() { this._dragStartX = this.x; this._dragStartY = this.y },
+        onDragEnd() {
+          if (Math.hypot(this.x - this._dragStartX, this.y - this._dragStartY) > 4) {
+            suppressClick = true
+            clearTimeout(suppressTimer)
+            suppressTimer = setTimeout(() => { suppressClick = false }, 100)
+          }
+        },
+      })
+    }, scope)
+    scope.addEventListener('click', swallowDragClick, true)
+    return () => {
+      scope.removeEventListener('click', swallowDragClick, true)
+      clearTimeout(suppressTimer)
+      ctx.revert()
+    }
   }, [result.status])
 
   const bySlug = Object.fromEntries(result.committees.map(c => [c.slug, c]))
@@ -118,12 +147,13 @@ export default function CommitteeDirectory() {
                   <li key={node.slug} data-const="node" className="absolute" style={{ left: `${node.x / 10}%`, top: `${node.y / 6}%`, transform: 'translate(-50%, -50%)' }}>
                     <Link
                       href={`/committees/${committee.slug}`}
+                      data-const="drag"
                       aria-label={`${committee.name} committee`}
                       onMouseEnter={() => setHovered(node.slug)}
                       onMouseLeave={() => setHovered(null)}
                       onFocus={() => setHovered(node.slug)}
                       onBlur={() => setHovered(null)}
-                      className="group relative flex w-11 flex-col items-center gap-1 sm:w-14"
+                      className="group relative flex w-11 cursor-grab touch-pan-y flex-col items-center gap-1 active:cursor-grabbing sm:w-14"
                     >
                       <span className="flex h-11 w-11 items-center justify-center rounded-full border border-outline-variant bg-surface-container-lowest text-primary transition-all duration-200 group-hover:scale-115 group-hover:border-cyan-300 group-hover:shadow-[0_0_28px_-4px_rgba(0,181,226,0.55)] group-focus-visible:scale-115 group-focus-visible:border-cyan-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 sm:h-14 sm:w-14">
                         <CommitteeIcon slug={committee.slug} className="h-5 w-5 sm:h-6 sm:w-6" />

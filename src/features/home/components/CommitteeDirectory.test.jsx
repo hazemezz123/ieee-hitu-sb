@@ -42,6 +42,18 @@ describe('CommitteeDirectory constellation', () => {
     expect(container.querySelector('[data-const="hub"]')).toBeNull()
   })
 
+  it('stretches the panel full width with draggable badges', async () => {
+    const { container } = render(<CommitteeDirectory />)
+    const panel = await screen.findByTestId('committee-constellation')
+
+    expect(panel.className).toContain('w-full')
+    expect(panel.className).not.toContain('max-w-')
+    const dragTargets = container.querySelectorAll('[data-const="drag"]')
+    expect(dragTargets.length).toBe(13)
+    const firstLink = screen.getByRole('link', { name: 'Committee 0 committee' })
+    expect(firstLink.getAttribute('data-const')).toBe('drag')
+  })
+
   it('shows the committee description in a tooltip per node', async () => {
     const { container } = render(<CommitteeDirectory />)
     await screen.findByTestId('committee-constellation')
