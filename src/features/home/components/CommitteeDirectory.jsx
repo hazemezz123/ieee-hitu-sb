@@ -1,7 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import CommitteeIcon from '@/components/ui/CommitteeIcon'
 import Skeleton from '@/components/ui/Skeleton'
 import { fetchCommitteesResult } from '@/features/committees/hooks/useCommittees'
@@ -38,6 +40,7 @@ const MESH_EDGES = [
 export default function CommitteeDirectory() {
   const [result, setResult] = useState({ committees: [], source: null, status: 'loading' })
   const [hovered, setHovered] = useState(null)
+  const scopeRef = useRef(null)
 
   useEffect(() => {
     let active = true
@@ -48,6 +51,19 @@ export default function CommitteeDirectory() {
     })
     return () => { active = false }
   }, [])
+
+  useEffect(() => {
+    if (result.status !== 'ready') return
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    gsap.registerPlugin(ScrollTrigger)
+    const ctx = gsap.context(() => {
+      gsap.from('[data-const="node"]', { scale: 0, opacity: 0, duration: 0.5, ease: 'back.out(1.6)', stagger: 0.05, scrollTrigger: { trigger: '[data-const="panel"]', start: 'top 80%', once: true } })
+      gsap.from('[data-const="edge"]', { opacity: 0, duration: 0.8, stagger: 0.015, scrollTrigger: { trigger: '[data-const="panel"]', start: 'top 80%', once: true } })
+      gsap.to('[data-const="hub"]', { scale: 1.04, duration: 1.6, yoyo: true, repeat: -1, ease: 'sine.inOut' })
+    }, scopeRef)
+    return () => ctx.revert()
+  }, [result.status])
 
   const bySlug = Object.fromEntries(result.committees.map(c => [c.slug, c]))
   const nodes = NODES.filter(n => bySlug[n.slug])
@@ -85,7 +101,7 @@ export default function CommitteeDirectory() {
       {result.status === 'error' && <p className="mt-10 text-center text-sm text-on-surface-variant">Committee directory could not be loaded.</p>}
 
       {result.status === 'ready' && (
-        <div className="mt-10 flex flex-col items-center gap-8 md:relative md:block">
+        <div ref={scopeRef} className="mt-10 flex flex-col items-center gap-8 md:relative md:block">
           {result.source === 'fallback' && <p className="mx-auto w-full max-w-3xl bg-secondary-container px-6 py-3 text-center text-sm text-on-secondary-container">Showing the static committee archive while live committee data is unavailable.</p>}
           {/* Central hub: stacked above the panel on mobile, overlaid center at md+ */}
           <div data-const="hub" className="z-10 flex flex-col items-center gap-1 rounded-full bg-inverse-surface px-7 py-5 text-center ring-1 ring-cyan-300/30 md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:px-8">
@@ -94,12 +110,13 @@ export default function CommitteeDirectory() {
             <Link className="mt-2 text-xs font-bold uppercase tracking-widest text-white underline underline-offset-4 hover:no-underline" href="/committees">Open directory</Link>
           </div>
 
-          <div data-testid="committee-constellation" className="const-panel relative h-[520px] w-full max-w-[34rem] md:mt-0 md:h-auto md:max-w-none md:aspect-[5/3]">
+          <div data-testid="committee-constellation" data-const="panel" className="const-panel relative h-[520px] w-full max-w-[34rem] md:mt-0 md:h-auto md:max-w-none md:aspect-[5/3]">
             <svg aria-hidden="true" className="absolute inset-0 h-full w-full" viewBox="0 0 1000 600" preserveAspectRatio="none">
               {edges.map(([a, b]) => (
                 <line
                   key={`${a}-${b}`}
                   data-edge={`${a} ${b}`}
+                  data-const="edge"
                   x1={pointOf(a).x} y1={pointOf(a).y} x2={pointOf(b).x} y2={pointOf(b).y}
                   vectorEffect="non-scaling-stroke"
                   className={`${edgeClass([a, b])}${a !== 'hub' && b !== 'hub' ? ' hidden sm:block' : ''}`}
@@ -110,7 +127,7 @@ export default function CommitteeDirectory() {
               {nodes.map(node => {
                 const committee = bySlug[node.slug]
                 return (
-                  <li key={node.slug} className="absolute" style={{ left: `${node.x / 10}%`, top: `${node.y / 6}%`, transform: 'translate(-50%, -50%)' }}>
+                  <li key={node.slug} data-const="node" className="absolute" style={{ left: `${node.x / 10}%`, top: `${node.y / 6}%`, transform: 'translate(-50%, -50%)' }}>
                     <Link
                       href={`/committees/${committee.slug}`}
                       aria-label={`${committee.name} committee`}
