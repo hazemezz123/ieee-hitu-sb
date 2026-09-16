@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useTheme } from '@/lib/theme'
 
 const navLinks = [
   { name: 'Home', href: '/' },
@@ -15,6 +16,15 @@ const navLinks = [
 
 export default function Navbar() {
   const [openPath, setOpenPath] = useState(null)
+  const { theme, toggle } = useTheme()
+  // Gate theme-dependent labels on mount: the server always renders light, so
+  // rendering the resolved icon immediately would hydrate stale on dark-system
+  // first visits (suppressHydrationWarning would freeze the wrong label).
+  const [mounted, setMounted] = useState(false)
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time mount flag so first paint matches SSR
+  useEffect(() => { setMounted(true) }, [])
+  const dark = mounted && theme === 'dark'
+  const toggleLabel = !mounted ? 'Toggle color theme' : (dark ? 'Switch to light mode' : 'Switch to dark mode')
   const pathname = usePathname()
   const menuButtonRef = useRef(null)
   const isMenuOpen = openPath === pathname
@@ -59,7 +69,7 @@ export default function Navbar() {
     <header className="fixed inset-x-0 top-0 z-50 border-b border-outline-variant bg-surface-container-lowest">
       <nav className="mx-auto flex h-[var(--navbar-height)] max-w-7xl items-center gap-6 px-5 sm:px-8" aria-label="Primary navigation">
         <Link href="/" className="mr-auto flex items-center" aria-label="IEEE HITU Student Branch home">
-          <img src="/logo.png" alt="IEEE HITU Student Branch" className="h-9 w-auto" />
+          <img src="/logo.png" alt="IEEE HITU Student Branch" className="navbar-logo h-9 w-auto" />
         </Link>
 
         <div className="hidden items-stretch self-stretch md:flex">
@@ -75,6 +85,16 @@ export default function Navbar() {
           ))}
         </div>
 
+        <button
+          type="button"
+          onClick={toggle}
+          aria-label={toggleLabel}
+          title={toggleLabel}
+          aria-pressed={dark}
+          className="nav-menu-button"
+        >
+          <span className="material-symbols-outlined" aria-hidden="true">{!mounted ? 'contrast' : (dark ? 'light_mode' : 'dark_mode')}</span>
+        </button>
         <Link href="/membership" className="btn btn-primary hidden md:inline-flex">Join IEEE</Link>
         <button
           ref={menuButtonRef}

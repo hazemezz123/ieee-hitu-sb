@@ -3,6 +3,9 @@ import Script from 'next/script'
 import Navbar from '@/components/navbar'
 import Footer from '@/components/footer'
 import LenisProvider from '@/lib/LenisProvider'
+import { ThemeProvider } from '@/lib/theme'
+
+const themeInitScript = `(function(){try{var t=localStorage.getItem('ieee-hitu-theme');if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}document.documentElement.dataset.theme=t;document.documentElement.style.colorScheme=t}catch(e){}})();`
 
 export const metadata = {
   title: 'IEEE HITU Student Branch',
@@ -16,8 +19,9 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" data-theme="dark">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
@@ -34,11 +38,13 @@ export default function RootLayout({ children }) {
         <Script id="gtag-init">
           {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-7FMS8J5THQ')`}
         </Script>
-        <LenisProvider>
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
-        </LenisProvider>
+        <ThemeProvider>
+          <LenisProvider>
+            <Navbar />
+            <main>{children}</main>
+            <Footer />
+          </LenisProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

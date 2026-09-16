@@ -23,7 +23,8 @@ describe('HeadsApplicationForm', () => {
     fireEvent.change(screen.getByLabelText(/Phone/), { target: { value: '01001234567' } })
     fireEvent.change(screen.getByLabelText(/University/), { target: { value: 'HITU' } })
     fireEvent.change(screen.getByLabelText(/Major/), { target: { value: 'Eng' } })
-    fireEvent.change(screen.getByLabelText(/Academic Year/), { target: { value: '2nd' } })
+    fireEvent.click(screen.getByRole('combobox', { name: /Academic Year/ }))
+    fireEvent.click(screen.getByRole('option', { name: '2nd Year' }))
     const photoInput = document.getElementById('heads-photoFile')
     const cvInput = document.getElementById('heads-cvFile')
     fireEvent.change(photoInput, { target: { files: [new File(['img'], 'me.png', { type: 'image/png' })] } })
@@ -63,6 +64,18 @@ describe('HeadsApplicationForm', () => {
     expect(screen.getByLabelText(/Notes/)).toBeTruthy()
   })
 
+  it('offers Academic Year and Current Academic Grade as selects', async () => {
+    render(<HeadsApplicationForm />)
+    const year = screen.getByRole('combobox', { name: /Academic Year/ })
+    fireEvent.click(year)
+    fireEvent.click(screen.getByRole('option', { name: '2nd Year' }))
+    expect(screen.getByRole('combobox', { name: /Academic Year/ }).textContent).toMatch(/2nd Year/)
+    const grade = screen.getByRole('combobox', { name: /Current Academic Grade/ })
+    fireEvent.click(grade)
+    fireEvent.click(screen.getByRole('option', { name: /Excellent/ }))
+    expect(screen.getByRole('combobox', { name: /Current Academic Grade/ }).textContent).toMatch(/Excellent/)
+  })
+
   it('requires committee name + position when previous member is yes', async () => {
     render(<HeadsApplicationForm />)
     fireEvent.change(screen.getByLabelText(/Full name/), { target: { value: 'HITU Student' } })
@@ -70,7 +83,8 @@ describe('HeadsApplicationForm', () => {
     fireEvent.change(screen.getByLabelText(/Phone/), { target: { value: '01001234567' } })
     fireEvent.change(screen.getByLabelText(/University/), { target: { value: 'HITU' } })
     fireEvent.change(screen.getByLabelText(/Major/), { target: { value: 'Eng' } })
-    fireEvent.change(screen.getByLabelText(/Academic Year/), { target: { value: '2nd' } })
+    fireEvent.click(screen.getByRole('combobox', { name: /Academic Year/ }))
+    fireEvent.click(screen.getByRole('option', { name: '2nd Year' }))
     fireEvent.change(document.getElementById('heads-photoFile'), { target: { files: [new File(['img'], 'me.png', { type: 'image/png' })] } })
     fireEvent.change(document.getElementById('heads-cvFile'), { target: { files: [new File(['cv'], 'cv.pdf', { type: 'application/pdf' })] } })
     fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
@@ -103,7 +117,8 @@ describe('HeadsApplicationForm', () => {
     fireEvent.change(screen.getByLabelText(/Phone/), { target: { value: '01001234567' } })
     fireEvent.change(screen.getByLabelText(/University/), { target: { value: 'HITU' } })
     fireEvent.change(screen.getByLabelText(/Major/), { target: { value: 'Eng' } })
-    fireEvent.change(screen.getByLabelText(/Academic Year/), { target: { value: '2nd' } })
+    fireEvent.click(screen.getByRole('combobox', { name: /Academic Year/ }))
+    fireEvent.click(screen.getByRole('option', { name: '2nd Year' }))
     fireEvent.change(document.getElementById('heads-photoFile'), { target: { files: [new File(['img'], 'me.png', { type: 'image/png' })] } })
     fireEvent.change(document.getElementById('heads-cvFile'), { target: { files: [new File(['cv'], 'cv.pdf', { type: 'application/pdf' })] } })
     fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
@@ -118,7 +133,8 @@ describe('HeadsApplicationForm', () => {
     fireEvent.change(screen.getByLabelText(/Phone/), { target: { value: '01001234567' } })
     fireEvent.change(screen.getByLabelText(/University/), { target: { value: 'HITU' } })
     fireEvent.change(screen.getByLabelText(/Major/), { target: { value: 'Eng' } })
-    fireEvent.change(screen.getByLabelText(/Academic Year/), { target: { value: '2nd' } })
+    fireEvent.click(screen.getByRole('combobox', { name: /Academic Year/ }))
+    fireEvent.click(screen.getByRole('option', { name: '2nd Year' }))
     fireEvent.change(screen.getByLabelText(/Social media links/), { target: { value: 'not-a-url' } })
     fireEvent.change(document.getElementById('heads-photoFile'), { target: { files: [new File(['img'], 'me.png', { type: 'image/png' })] } })
     fireEvent.change(document.getElementById('heads-cvFile'), { target: { files: [new File(['cv'], 'cv.pdf', { type: 'application/pdf' })] } })
@@ -134,7 +150,8 @@ describe('HeadsApplicationForm', () => {
     fireEvent.change(screen.getByLabelText(/Phone/), { target: { value: 'abc' } })
     fireEvent.change(screen.getByLabelText(/University/), { target: { value: 'HITU' } })
     fireEvent.change(screen.getByLabelText(/Major/), { target: { value: 'Eng' } })
-    fireEvent.change(screen.getByLabelText(/Academic Year/), { target: { value: '2nd' } })
+    fireEvent.click(screen.getByRole('combobox', { name: /Academic Year/ }))
+    fireEvent.click(screen.getByRole('option', { name: '2nd Year' }))
     fireEvent.change(document.getElementById('heads-photoFile'), { target: { files: [new File(['img'], 'me.png', { type: 'image/png' })] } })
     fireEvent.change(document.getElementById('heads-cvFile'), { target: { files: [new File(['cv'], 'cv.pdf', { type: 'application/pdf' })] } })
     fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
@@ -159,6 +176,9 @@ describe('HeadsApplicationForm', () => {
     expect(await screen.findByText(/Step 3\/4/)).toBeTruthy()
     fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
     expect(await screen.findByText(/Step 4\/4/)).toBeTruthy()
+    // Submit is held briefly to swallow a double-click landing from Continue.
+    await new Promise(r => setTimeout(r, 850))
+    fireEvent.click(screen.getByRole('checkbox', { name: /I confirm/ }))
     fireEvent.click(screen.getByRole('button', { name: /Submit application/ }))
     expect(await screen.findByText(/Application recorded/)).toBeTruthy()
     expect(submitApplication).toHaveBeenCalledTimes(1)
@@ -203,7 +223,8 @@ describe('HeadsApplicationForm', () => {
     fireEvent.change(screen.getByLabelText(/Phone/), { target: { value: '01001234567' } })
     fireEvent.change(screen.getByLabelText(/University/), { target: { value: 'HITU' } })
     fireEvent.change(screen.getByLabelText(/Major/), { target: { value: 'Eng' } })
-    fireEvent.change(screen.getByLabelText(/Academic Year/), { target: { value: '2nd' } })
+    fireEvent.click(screen.getByRole('combobox', { name: /Academic Year/ }))
+    fireEvent.click(screen.getByRole('option', { name: '2nd Year' }))
     fireEvent.change(document.getElementById('heads-photoFile'), { target: { files: [new File(['img'], 'me.png', { type: 'image/png' })] } })
     fireEvent.change(document.getElementById('heads-cvFile'), { target: { files: [new File(['cv'], 'cv.pdf', { type: 'application/pdf' })] } })
     fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
@@ -211,6 +232,42 @@ describe('HeadsApplicationForm', () => {
     fireEvent.click(screen.getByRole('button', { name: /Clear/ }))
     expect(screen.getByText(/Step 1\/4/)).toBeTruthy()
     expect(screen.getByLabelText(/Full name/).value).toBe('')
+  })
+
+  it('guards Step 4 submit against double-click right after Continue', async () => {
+    submitApplication.mockReset()
+    submitApplication.mockResolvedValue(7)
+    localStorage.setItem('recruitment:heads:draft', JSON.stringify({
+      name: 'HITU Student', email: 's@hitu.edu.eg', phone: '01001234567', address: '',
+      photoUrl: 'https://cdn/photo.jpg', university: 'HITU', major: 'Eng', academicYear: '2nd', grade: '',
+      cvUrl: 'https://cdn/cv.pdf', links: '', applyingAs: 'head', committee: 'c0',
+      whyHead: 'Lead', experience: 'Exp', prevMember: 'no', prevCommittee: '', prevPosition: '',
+      studentActivities: 'x', weeklyHours: '5', whyJoin: 'y', notes: '',
+    }))
+    render(<HeadsApplicationForm />)
+    fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
+    expect(await screen.findByText(/Step 2\/4/)).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
+    expect(await screen.findByText(/Step 3\/4/)).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
+    expect(await screen.findByText(/Step 4\/4/)).toBeTruthy()
+    // Second click of an accidental double-click lands on Submit in the same
+    // spot — it must not submit before the user can type Notes.
+    const submitBtn = screen.getByRole('button', { name: /Submit application/ })
+    expect(submitBtn.disabled).toBe(true)
+    fireEvent.click(submitBtn)
+    expect(submitApplication).not.toHaveBeenCalled()
+    // Notes stay editable during the guard.
+    fireEvent.change(screen.getByLabelText(/Notes/), { target: { value: 'Some note' } })
+    expect(screen.getByLabelText(/Notes/).value).toBe('Some note')
+    // After the guard window, confirm and a deliberate submit goes through with the note.
+    await new Promise(r => setTimeout(r, 850))
+    fireEvent.click(screen.getByRole('checkbox', { name: /I confirm/ }))
+    expect(screen.getByRole('button', { name: /Submit application/ }).disabled).toBe(false)
+    fireEvent.click(screen.getByRole('button', { name: /Submit application/ }))
+    expect(await screen.findByText(/Application recorded/)).toBeTruthy()
+    expect(submitApplication).toHaveBeenCalledTimes(1)
+    expect(submitApplication).toHaveBeenCalledWith('heads', expect.objectContaining({ notes: 'Some note' }))
   })
 
   it('treats Enter on a non-final step as Continue instead of submitting', async () => {
@@ -237,9 +294,43 @@ describe('HeadsApplicationForm', () => {
     expect(submitApplication).not.toHaveBeenCalled()
     // Notes stay editable and a real submit on the final step records the application.
     fireEvent.change(screen.getByLabelText(/Notes/), { target: { value: 'Some note' } })
+    await new Promise(r => setTimeout(r, 850))
+    fireEvent.click(screen.getByRole('checkbox', { name: /I confirm/ }))
     fireEvent.submit(document.querySelector('form'))
     expect(await screen.findByText(/Application recorded/)).toBeTruthy()
     expect(submitApplication).toHaveBeenCalledTimes(1)
     expect(submitApplication).toHaveBeenCalledWith('heads', expect.objectContaining({ notes: 'Some note' }))
+  })
+
+  it('keeps Submit disabled until the confirmation checkbox is checked', async () => {
+    submitApplication.mockReset()
+    submitApplication.mockResolvedValue(7)
+    localStorage.setItem('recruitment:heads:draft', JSON.stringify({
+      name: 'HITU Student', email: 's@hitu.edu.eg', phone: '01001234567', address: '',
+      photoUrl: 'https://cdn/photo.jpg', university: 'HITU', major: 'Eng', academicYear: '2nd', grade: '',
+      cvUrl: 'https://cdn/cv.pdf', links: '', applyingAs: 'head', committee: 'c0',
+      whyHead: 'Lead', experience: 'Exp', prevMember: 'no', prevCommittee: '', prevPosition: '',
+      studentActivities: 'x', weeklyHours: '5', whyJoin: 'y', notes: '',
+    }))
+    render(<HeadsApplicationForm />)
+    fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
+    expect(await screen.findByText(/Step 2\/4/)).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
+    expect(await screen.findByText(/Step 3\/4/)).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
+    expect(await screen.findByText(/Step 4\/4/)).toBeTruthy()
+    // Wait out the double-click guard so only the confirmation gates Submit.
+    await new Promise(r => setTimeout(r, 850))
+    const submitBtn = screen.getByRole('button', { name: /Submit application/ })
+    const confirmBox = screen.getByRole('checkbox', { name: /I confirm that the information I provided is accurate/ })
+    expect(submitBtn.disabled).toBe(true)
+    // Implicit submits (Enter / assistive tech) can't bypass the gate either.
+    fireEvent.submit(document.querySelector('form'))
+    expect(submitApplication).not.toHaveBeenCalled()
+    fireEvent.click(confirmBox)
+    expect(screen.getByRole('button', { name: /Submit application/ }).disabled).toBe(false)
+    fireEvent.click(screen.getByRole('button', { name: /Submit application/ }))
+    expect(await screen.findByText(/Application recorded/)).toBeTruthy()
+    expect(submitApplication).toHaveBeenCalledTimes(1)
   })
 })
