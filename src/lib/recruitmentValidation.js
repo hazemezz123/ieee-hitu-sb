@@ -11,6 +11,10 @@ export function isUrl(value) {
 
 export const APPLYING_AS_OPTIONS = ['head', 'vice-head', 'manager']
 
+export const ACADEMIC_YEAR_OPTIONS = ['1st', '2nd', '3rd', '4th']
+
+export const GRADE_OPTIONS = ['excellent', 'very-good', 'good', 'pass']
+
 export const HEADS_FIELD_KEYS = ['name','email','phone','address','photoUrl','university','major','academicYear','grade','cvUrl','links','applyingAs','committee','whyHead','experience','prevMember','prevCommittee','prevPosition','studentActivities','weeklyHours','whyJoin','notes']
 
 export const HEADS_CSV_COLUMNS = ['id','created_at',...HEADS_FIELD_KEYS]
@@ -29,7 +33,8 @@ export function validateHeadsStep(step, data = {}, { hasPhotoFile = false, hasCv
     }
     if (!v('university')) return { ok: false, field: 'university', error: 'University is required.' }
     if (!v('major')) return { ok: false, field: 'major', error: 'Major is required.' }
-    if (!v('academicYear')) return { ok: false, field: 'academicYear', error: 'Academic year is required.' }
+    if (!ACADEMIC_YEAR_OPTIONS.includes(v('academicYear'))) return { ok: false, field: 'academicYear', error: 'Choose your academic year.' }
+    if (v('grade') && !GRADE_OPTIONS.includes(v('grade'))) return { ok: false, field: 'grade', error: 'Choose your current grade.' }
     if (!hasCvFile) {
       if (!v('cvUrl')) return { ok: false, field: 'cvUrl', error: 'Upload your CV.' }
       if (!isUrl(v('cvUrl'))) return { ok: false, field: 'cvUrl', error: 'CV upload failed. Try again.' }

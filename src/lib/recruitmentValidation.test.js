@@ -35,6 +35,16 @@ describe('validateHeadsApplication', () => {
     expect(validateHeadsApplication({ ...valid, applyingAs: 'yes' }).ok).toBe(false)
     expect(validateHeadsApplication({ ...valid, applyingAs: 'manager' }).ok).toBe(true)
   })
+  it('requires academicYear to be 1st, 2nd, 3rd, or 4th', () => {
+    expect(validateHeadsApplication({ ...valid, academicYear: '' })).toEqual({ ok: false, field: 'academicYear', error: 'Choose your academic year.' })
+    expect(validateHeadsApplication({ ...valid, academicYear: 'second' }).ok).toBe(false)
+    expect(validateHeadsApplication({ ...valid, academicYear: '3rd' }).ok).toBe(true)
+  })
+  it('allows empty grade but rejects unknown grades', () => {
+    expect(validateHeadsApplication({ ...valid, grade: '' }).ok).toBe(true)
+    expect(validateHeadsApplication({ ...valid, grade: 'excellent' }).ok).toBe(true)
+    expect(validateHeadsApplication({ ...valid, grade: 'A+' })).toEqual({ ok: false, field: 'grade', error: 'Choose your current grade.' })
+  })
   it('requires committee, whyHead, and experience', () => {
     expect(validateHeadsApplication({ ...valid, committee: '' }).ok).toBe(false)
     expect(validateHeadsApplication({ ...valid, whyHead: '' }).ok).toBe(false)

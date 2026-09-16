@@ -1,8 +1,8 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { submitApplication } from '@/lib/recruitment'
 import { uploadToCloudinary, uploadFileToCloudinary } from '@/lib/upload'
-import { validateHeadsApplication, validateHeadsStep } from '@/lib/recruitmentValidation'
+import { ACADEMIC_YEAR_OPTIONS, GRADE_OPTIONS, validateHeadsApplication, validateHeadsStep } from '@/lib/recruitmentValidation'
 import { fetchCommitteesResult } from '@/features/committees/hooks/useCommittees'
 import { committees as fallbackCommittees } from '@/features/committees/data/committees'
 import Select, { toOptions } from '@/components/ui/Select'
@@ -27,6 +27,44 @@ const APPLYING_AS_SELECT_OPTIONS = [
   { value: 'manager', label: 'Manager' },
 ]
 
+const ACADEMIC_YEAR_SELECT_OPTIONS = [
+  { value: '1st', label: '1st Year' },
+  { value: '2nd', label: '2nd Year' },
+  { value: '3rd', label: '3rd Year' },
+  { value: '4th', label: '4th Year' },
+]
+
+const GRADE_SELECT_OPTIONS = [
+  { value: 'excellent', label: 'Excellent (3.5 – 4.0)' },
+  { value: 'very-good', label: 'Very Good (3.0 – 3.49)' },
+  { value: 'good', label: 'Good (2.5 – 2.99)' },
+  { value: 'pass', label: 'Pass (2.0 – 2.49)' },
+]
+
+// Legacy drafts stored free text. Map common variants to the select values so
+// returning applicants don't lose their step-1 answers.
+const YEAR_BY_DIGIT = { 1: '1st', 2: '2nd', 3: '3rd', 4: '4th' }
+function normalizeAcademicYear(raw) {
+  const s = String(raw ?? '').trim().toLowerCase()
+  if (ACADEMIC_YEAR_OPTIONS.includes(s)) return s
+  const digit = s.match(/[1-4]/)
+  if (digit) return YEAR_BY_DIGIT[digit[0]]
+  for (const [word, value] of [['first', '1st'], ['second', '2nd'], ['third', '3rd'], ['fourth', '4th']]) {
+    if (s.includes(word)) return value
+  }
+  return ''
+}
+
+function normalizeGrade(raw) {
+  const s = String(raw ?? '').trim().toLowerCase()
+  if (!s || GRADE_OPTIONS.includes(s)) return s
+  if (s.includes('excellent')) return 'excellent'
+  if (s.includes('very good') || s.includes('very-good')) return 'very-good'
+  if (s.includes('good')) return 'good'
+  if (s.includes('pass')) return 'pass'
+  return ''
+}
+
 function migrateDraft(stored = {}) {
   const next = { ...emptyValues }
   for (const key of Object.keys(emptyValues)) {
@@ -40,6 +78,8 @@ function migrateDraft(stored = {}) {
     else if (r.includes('head')) next.applyingAs = 'head'
   }
   if (!next.studentActivities && typeof stored.activitiesDetails === 'string') next.studentActivities = stored.activitiesDetails
+  next.academicYear = normalizeAcademicYear(next.academicYear)
+  next.grade = normalizeGrade(next.grade)
   return next
 }
 
@@ -60,6 +100,11 @@ export default function HeadsApplicationForm({ onClosed }) {
   const [fieldError, setFieldError] = useState(null)
   const [doneId, setDoneId] = useState(null)
   const [options, setOptions] = useState(fallbackCommittees)
+  // Submit replaces Continue in the same spot on step 4. A double-click (or
+  // Enter-key repeat) on Continue would otherwise land on Submit and send the
+  // form before the user can type Notes. Hold Submit briefly on step entry.
+  const [readyToSubmit, setReadyToSubmit] = useState(true)
+  const notesRef = useRef(null)
 
   useEffect(() => { try { localStorage.setItem(DRAFT_KEY, JSON.stringify(values)) } catch { /* private-mode storage may be unavailable; draft stays in memory */ } }, [values])
   useEffect(() => {
@@ -67,6 +112,13 @@ export default function HeadsApplicationForm({ onClosed }) {
     fetchCommitteesResult().then(r => { if (active && r?.committees?.length) setOptions(r.committees) }).catch(() => { /* fallback committees stay in use */ })
     return () => { active = false }
   }, [])
+  useEffect(() => {
+    if (step !== 3) { setReadyToSubmit(true); return }
+    setReadyToSubmit(false)
+    notesRef.current?.focus()
+    const t = setTimeout(() => setReadyToSubmit(true), 800)
+    return () => clearTimeout(t)
+  }, [step])
 
   const set = key => valueOrEvent => {
     setFieldError(null)
@@ -88,6 +140,9 @@ export default function HeadsApplicationForm({ onClosed }) {
     // Enter inside a text input implicitly submits the form on any step.
     // Only the final step may really submit; earlier steps advance instead.
     if (step < 3) { next(); return }
+    // Ignore the second half of a double-click / key repeat that lands on
+    // Submit right after Continue advanced to this step.
+    if (!readyToSubmit) return
     setError(null); setFieldError(null); setUploading(true)
     try {
       // Fail fast on text fields before spending time on file uploads.
@@ -127,8 +182,10 @@ export default function HeadsApplicationForm({ onClosed }) {
         {input('Address', 'address')}
         {input('University', 'university', { required: true })}
         {input('Major', 'major', { required: true })}
-        {input('Academic Year', 'academicYear', { required: true, placeholder: 'e.g. 2nd' })}
-        {input('Current Academic Grade', 'grade')}
+        <Select id="heads-academicYear" label="Academic Year" required name="academicYear" value={values.academicYear} onChange={set('academicYear')} options={ACADEMIC_YEAR_SELECT_OPTIONS} placeholder="Select…" />
+        {errFor('academicYear')}
+        <Select id="heads-grade" label="Current Academic Grade" name="grade" value={values.grade} onChange={set('grade')} options={GRADE_SELECT_OPTIONS} placeholder="Select…" />
+        {errFor('grade')}
         <div className="file-upload">
           <label className="form-label" htmlFor="heads-photoFile">Personal photo (upload, required)</label>
           <input id="heads-photoFile" className="form-file" type="file" accept="image/*" required={!values.photoUrl} onChange={e => { setFieldError(null); setPhotoFile(e.target.files?.[0] || null) }} />
@@ -163,14 +220,14 @@ export default function HeadsApplicationForm({ onClosed }) {
         <label className="form-label" htmlFor="heads-whyJoin">Why do you want to join IEEE HITU?<textarea id="heads-whyJoin" className="form-textarea mt-2" rows={4} required value={values.whyJoin} onChange={set('whyJoin')} />{errFor('whyJoin')}</label>
       </>}
       {step === 3 && <>
-        <label className="form-label" htmlFor="heads-notes">Notes<textarea id="heads-notes" className="form-textarea mt-2" rows={4} value={values.notes} onChange={set('notes')} placeholder="Anything else you want us to know…" /></label>
+        <label className="form-label" htmlFor="heads-notes">Notes<textarea ref={notesRef} id="heads-notes" className="form-textarea mt-2" rows={4} value={values.notes} onChange={set('notes')} placeholder="Anything else you want us to know…" /></label>
         <input type="text" name="company_website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" value={values.company_website || ''} onChange={set('company_website')} />
       </>}
       <div className="flex gap-3">
         {step > 0 && <button type="button" className="btn btn-ghost" onClick={() => setStep(s => s - 1)}>Back</button>}
         {step < 3
           ? <button type="button" className="btn btn-primary btn-wedge" onClick={next}>Continue</button>
-          : <button type="submit" className="btn btn-primary btn-wedge" disabled={uploading}>{uploading ? 'Submitting…' : 'Submit application'}</button>}
+          : <button type="submit" className="btn btn-primary btn-wedge" disabled={uploading || !readyToSubmit}>{uploading ? 'Submitting…' : 'Submit application'}</button>}
         <button type="button" className="btn btn-ghost" onClick={() => { setValues({ ...emptyValues }); setPhotoFile(null); setCvFile(null); setStep(0); setError(null); setFieldError(null); try { localStorage.removeItem(DRAFT_KEY) } catch { /* nothing to clear */ } }}>Clear</button>
       </div>
     </form>
