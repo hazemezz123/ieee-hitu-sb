@@ -61,7 +61,7 @@ describe('Select keyboard', () => {
     fireEvent.keyDown(screen.getByRole('listbox'), { key: 'Enter' })
     expect(onChange).toHaveBeenCalledWith('web')
   })
-  it('navigates with arrows + Enter on the trigger when search is hidden', () => {
+  it('navigates with arrows + Enter on the trigger', () => {
     const onChange = vi.fn()
     render(<Select id="k3" label="Pick" value="" onChange={onChange} options={options} />)
     const trigger = screen.getByRole('combobox', { name: 'Pick' })
@@ -71,7 +71,7 @@ describe('Select keyboard', () => {
     fireEvent.keyDown(trigger, { key: 'Enter' })
     expect(onChange).toHaveBeenCalledWith('web')
   })
-  it('type-ahead selects by first letter when search is hidden', () => {
+  it('type-ahead selects by first letter', () => {
     const onChange = vi.fn()
     render(<Select id="k2" label="Pick" value="" onChange={onChange} options={[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }]} />)
     fireEvent.keyDown(screen.getByRole('combobox', { name: 'Pick' }), { key: 'n' })
@@ -79,22 +79,17 @@ describe('Select keyboard', () => {
   })
 })
 
-describe('Select search', () => {
-  const many = Array.from({ length: 8 }, (_, i) => ({ value: `c${i}`, label: `Committee ${i}` }))
-  it('shows search above threshold and filters, with a no-match row', () => {
+describe('Select options', () => {
+  it('does not render a search box', () => {
+    const many = Array.from({ length: 8 }, (_, i) => ({ value: `c${i}`, label: `Committee ${i}` }))
     render(<Select id="s5" label="Pick" value="" onChange={() => {}} options={many} />)
     fireEvent.click(screen.getByRole('combobox', { name: 'Pick' }))
-    const search = screen.getByRole('searchbox', { name: 'Filter options' })
-    expect(search).toBeTruthy()
-    fireEvent.change(search, { target: { value: 'Committee 7' } })
-    expect(screen.getAllByRole('option')).toHaveLength(1)
-    fireEvent.change(search, { target: { value: 'zzz-nope' } })
-    expect(screen.getByText(/No matches for/)).toBeTruthy()
-  })
-  it('hides search for short lists', () => {
-    render(<Select id="s6" label="Pick" value="" onChange={() => {}} options={[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }]} />)
-    fireEvent.click(screen.getByRole('combobox', { name: 'Pick' }))
     expect(screen.queryByRole('searchbox')).toBeNull()
+  })
+  it('shows empty state when options are empty', () => {
+    render(<Select id="s-empty" label="Pick" value="" onChange={() => {}} options={[]} />)
+    fireEvent.click(screen.getByRole('combobox', { name: 'Pick' }))
+    expect(screen.getByText('No options')).toBeTruthy()
   })
   it('marks the selected option with aria-selected and shows its hint', () => {
     render(<Select id="s7" label="Pick" value="ai" onChange={() => {}} options={[{ value: 'ai', label: 'AI', hint: 'Smart systems.' }]} />)

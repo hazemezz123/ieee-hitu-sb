@@ -9,13 +9,13 @@ vi.mock('next/link', () => ({
 afterEach(() => { cleanup() })
 
 describe('Hero', () => {
-  it('uses the white logo treatment and keeps CTA destinations', () => {
+  it('uses the colored logo treatment and keeps CTA destinations', () => {
     render(<Hero />)
 
     const logo = document.querySelector('img[src="/logo.png"]')
     expect(logo).toBeTruthy()
-    expect(logo.classList.contains('brightness-0')).toBe(true)
-    expect(logo.classList.contains('invert')).toBe(true)
+    expect(logo.classList.contains('brightness-0')).toBe(false)
+    expect(logo.classList.contains('invert')).toBe(false)
 
     expect(screen.getByRole('link', { name: /view events/i }).getAttribute('href')).toBe('/events')
     expect(screen.getByRole('link', { name: /join the branch/i }).getAttribute('href')).toBe('/join-us')

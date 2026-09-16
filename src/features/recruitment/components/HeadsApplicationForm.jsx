@@ -283,13 +283,33 @@ export default function HeadsApplicationForm({ onClosed }) {
     setUploading(false);
   }
 
+  const firstName = String(values.name ?? "").trim().split(/\s+/)[0];
+
   if (doneId)
     return (
-      <div role="status" className="card p-8">
-        <h2 className="text-2xl font-black">Application recorded</h2>
-        <p className="mt-2 text-on-surface-variant">
-          Reference #{doneId}. Thanks for your time — we will contact you if
-          there are questions.
+      <div role="status" className="card page-enter relative overflow-hidden p-8 md:p-12">
+        <span
+          aria-hidden="true"
+          className="wedge-accent absolute right-0 top-0 h-20 w-20 md:h-28 md:w-28"
+          style={{ background: "linear-gradient(135deg, var(--primary), var(--color-primary-container))" }}
+        />
+        <span className="btn-wedge inline-flex h-12 w-12 items-center justify-center bg-primary text-white">
+          <span className="material-symbols-outlined" aria-hidden="true">check</span>
+        </span>
+        <p className="mt-5 text-xs font-bold uppercase tracking-widest text-primary">
+          Application received
+        </p>
+        <h2 className="mt-3 text-3xl font-black md:text-4xl">
+          {firstName ? `You're all set, ${firstName}!` : "You're all set!"}
+        </h2>
+        <p className="mt-4 max-w-xl text-on-surface-variant">
+          Thanks for applying — our team will review your answers and reach out
+          if anything else is needed.
+        </p>
+        <p className="mt-6">
+          <span className="inline-block rounded-full bg-primary-fixed px-4 py-1.5 text-xs font-bold text-on-primary-fixed">
+            Reference #{doneId}
+          </span>
         </p>
       </div>
     );

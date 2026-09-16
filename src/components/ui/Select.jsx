@@ -13,26 +13,19 @@ export function toOptions(items, { value = 'slug', label = 'name', hint = 'short
 export default function Select({
   id, label, ariaLabel, value, onChange, options = [],
   placeholder = 'Select…', required = false, disabled = false,
-  name, searchThreshold = 6, className = '',
+  name, className = '',
 }) {
   const [open, setOpen] = useState(false)
-  const [query, setQuery] = useState('')
   const [active, setActive] = useState(-1)
   const [dropUp, setDropUp] = useState(false)
   const rootRef = useRef(null)
   const triggerRef = useRef(null)
-  const searchRef = useRef(null)
   const reactId = useId().replace(/[^a-zA-Z0-9]/g, '')
   const triggerId = `${id}-trigger`
   const panelId = `${id}-panel-${reactId}`
 
   const selected = options.find(o => o.value === value) || null
-  const showSearch = options.length > searchThreshold
-  const q = query.trim().toLowerCase()
-  const filtered = q
-    ? options.filter(o => `${o.label} ${o.hint || ''}`.toLowerCase().includes(q))
-    : options
-  const activeId = active >= 0 && filtered[active] ? `${panelId}-opt-${active}` : undefined
+  const activeId = active >= 0 && options[active] ? `${panelId}-opt-${active}` : undefined
 
   function measure() {
     const el = rootRef.current
@@ -43,16 +36,14 @@ export default function Select({
 
   function openPanel() {
     if (disabled) return
-    const selectedIndex = filtered.findIndex(o => o.value === value)
+    const selectedIndex = options.findIndex(o => o.value === value)
     setActive(selectedIndex >= 0 ? selectedIndex : 0)
-    setQuery('')
     measure()
     setOpen(true)
   }
 
   function closePanel(refocus = true) {
     setOpen(false)
-    setQuery('')
     setActive(-1)
     if (refocus) triggerRef.current?.focus()
   }
@@ -66,7 +57,6 @@ export default function Select({
     if (!open) return
     // eslint-disable-next-line react-hooks/set-state-in-effect -- fire-and-forget open side effects
     measure()
-    if (showSearch) searchRef.current?.focus()
     function onPointerDown(e) {
       if (rootRef.current && !rootRef.current.contains(e.target)) closePanel(false)
     }
@@ -79,7 +69,7 @@ export default function Select({
       window.removeEventListener('resize', onResize)
       window.removeEventListener('scroll', onResize, true)
     }
-  }, [open]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [open])
 
   function onTriggerKeyDown(e) {
     if (disabled) return
@@ -90,15 +80,15 @@ export default function Select({
     if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
       e.preventDefault()
       openPanel()
-    } else if (!showSearch && e.key.length === 1) {
+    } else if (e.key.length === 1) {
       const hit = options.find(o => o.label.toLowerCase().startsWith(e.key.toLowerCase()))
       if (hit) onChange(hit.value)
     }
   }
 
   function move(delta) {
-    if (filtered.length === 0) return
-    setActive(a => (a + delta + filtered.length) % filtered.length)
+    if (options.length === 0) return
+    setActive(a => (a + delta + options.length) % options.length)
   }
 
   function onPanelKeyDown(e) {
@@ -106,8 +96,8 @@ export default function Select({
     else if (e.key === 'ArrowUp') { e.preventDefault(); move(-1) }
     else if (e.key === 'Enter') {
       e.preventDefault()
-      if (filtered[active]) choose(filtered[active].value)
-      else if (filtered.length === 1) choose(filtered[0].value)
+      if (options[active]) choose(options[active].value)
+      else if (options.length === 1) choose(options[0].value)
     }
     else if (e.key === 'Escape') { e.preventDefault(); closePanel() }
     else if (e.key === 'Tab') { closePanel(false) }
@@ -154,26 +144,11 @@ export default function Select({
       </select>
       {open && (
         <div id={panelId} role="listbox" aria-label={label || ariaLabel} onKeyDown={onPanelKeyDown} className={'select-panel' + (dropUp ? ' select-panel--up' : '')}>
-          {showSearch && (
-            <div className="select-search-row">
-              <input
-                ref={searchRef}
-                role="searchbox"
-                aria-label="Filter options"
-                className="select-search"
-                placeholder="Type to filter…"
-                value={query}
-                onChange={e => { setQuery(e.target.value); setActive(0) }}
-                onKeyDown={onPanelKeyDown}
-              />
-              <span className="select-count" aria-hidden="true">{filtered.length} of {options.length}</span>
-            </div>
-          )}
-          {filtered.length === 0 ? (
-            <p className="select-empty" role="status">{q ? `No matches for "${query.trim()}"` : 'No options'}</p>
+          {options.length === 0 ? (
+            <p className="select-empty" role="status">No options</p>
           ) : (
             <ul className="select-list" data-lenis-prevent>
-              {filtered.map((o, index) => {
+              {options.map((o, index) => {
                 const isSelected = o.value === value
                 return (
                   <li

@@ -5,7 +5,6 @@ const links = [
   { name: 'Committees', href: '/committees' },
   { name: 'Events', href: '/events' },
   { name: 'Gallery', href: '/gallery' },
-  { name: 'Membership', href: '/membership' },
   { name: 'Join Us', href: '/join-us' },
   { name: 'Contact', href: '/contact' },
 ]
