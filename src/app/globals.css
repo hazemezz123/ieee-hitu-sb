@@ -875,3 +875,5 @@ a {
 @keyframes const-edge-flow {
   to { stroke-dashoffset: -28; }
 }
+
+.reveal-will-change { will-change: transform, opacity; }

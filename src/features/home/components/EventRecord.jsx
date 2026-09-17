@@ -5,7 +5,7 @@ const formatDate = date => new Date(date).toLocaleDateString('en-US', { dateStyl
 export default function EventRecord({ event, tone = 'light' }) {
   const inverse = tone === 'inverse'
   return (
-    <article className={`border-t py-5 ${inverse ? 'border-white/20' : 'border-outline-variant/40'}`}>
+    <article data-reveal="record" className={`border-t py-5 ${inverse ? 'border-white/20' : 'border-outline-variant/40'}`}>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h3 className={`text-lg font-bold ${inverse ? 'text-[#F0F4F8]' : 'text-on-surface'}`}>{event.title}</h3>
         <time className="text-xs font-bold uppercase tracking-widest text-primary" dateTime={event.date}>{formatDate(event.date)}</time>
