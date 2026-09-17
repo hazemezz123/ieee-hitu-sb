@@ -44,7 +44,7 @@ export default function FeaturedEvent({ event, fallback }) {
       {fallback && <p className="mt-3 text-sm text-on-surface-variant">Showing the static event archive while live event data is unavailable.</p>}
       <article className={`mt-6 grid items-center gap-8 ${image && !imageFailed ? 'md:grid-cols-2' : ''}`}>
         {image && !imageFailed && (
-          <img data-featured="image" src={image} alt={event.title || 'Event'} className="aspect-[16/10] w-full rounded-xl object-cover" onError={() => setImageFailed(true)} onLoad={() => { try { ScrollTrigger.refresh() } catch {} }} />
+          <img data-featured="image" src={image} alt={event.title || 'Event'} className="aspect-[16/10] w-full rounded-xl object-cover" onError={() => setImageFailed(true)} onLoad={() => { try { ScrollTrigger.refresh() } catch { /* layout may be unmounted */ } }} />
         )}
         {image && imageFailed && (
           <div role="img" aria-label={`${event.title || 'Event'} image unavailable`} className="flex aspect-[16/10] w-full items-center justify-center rounded-xl bg-surface-container px-6 text-center font-semibold text-on-surface-variant">Image unavailable</div>

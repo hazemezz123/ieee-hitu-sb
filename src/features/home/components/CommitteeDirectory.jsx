@@ -44,7 +44,10 @@ export default function CommitteeDirectory() {
   useEffect(() => {
     let active = true
     fetchCommitteesResult().then(data => {
-      if (active) setResult({ ...data, status: 'ready' })
+      if (active) {
+        setResult({ ...data, status: 'ready' })
+        requestAnimationFrame(() => { try { ScrollTrigger.refresh() } catch { /* trigger may be unmounted */ } })
+      }
     }).catch(() => {
       if (active) setResult({ committees: [], source: null, status: 'error' })
     })
@@ -68,7 +71,7 @@ export default function CommitteeDirectory() {
       }
     }
     const ctx = gsap.context(() => {
-      gsap.from('[data-const="node"]', { scale: 0, opacity: 0, duration: 0.5, ease: 'back.out(1.6)', stagger: 0.05, scrollTrigger: { trigger: '[data-const="panel"]', start: 'top 80%', once: true } })
+      gsap.from('[data-const="node"]', { scale: 0, opacity: 0, duration: 0.5, ease: 'power2.out', stagger: 0.05, scrollTrigger: { trigger: '[data-const="panel"]', start: 'top 80%', once: true } })
       gsap.from('[data-const="edge"]', { opacity: 0, duration: 0.8, stagger: 0.015, scrollTrigger: { trigger: '[data-const="panel"]', start: 'top 80%', once: true } })
       Draggable.create('[data-const="drag"]', {
         type: 'x,y',

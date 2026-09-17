@@ -14,6 +14,7 @@ export default function Reveal({
   children,
 }) {
   const ref = useRef(null)
+  const Component = Tag
 
   useEffect(() => {
     if (typeof window === 'undefined' || !ref.current) return
@@ -39,5 +40,5 @@ export default function Reveal({
     return () => { ctx.revert() }
   }, [delay, y, staggerChildren, triggerStart])
 
-  return <Tag ref={ref} className={className}>{children}</Tag>
+  return <Component ref={ref} className={className}>{children}</Component>
 }

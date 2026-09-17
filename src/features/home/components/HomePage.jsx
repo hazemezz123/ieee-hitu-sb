@@ -27,7 +27,7 @@ export default function Home() {
 
   useEffect(() => {
     if (result.status !== 'ready' || typeof window === 'undefined') return
-    const frame = requestAnimationFrame(() => { try { ScrollTrigger.refresh() } catch {} })
+    const frame = requestAnimationFrame(() => { try { ScrollTrigger.refresh() } catch { /* trigger may be unmounted */ } })
     return () => cancelAnimationFrame(frame)
   }, [result.status, result.events.length])
 
