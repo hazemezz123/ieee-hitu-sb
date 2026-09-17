@@ -28,7 +28,7 @@ describe('Hero', () => {
     const section = container.querySelector('section')
     expect(section.className).toContain('min-h-[100svh]')
 
-    const hero = section.firstElementChild
+    const hero = section.querySelector('[data-hero="content"]')
     expect(hero.classList.contains('text-center')).toBe(true)
     expect(hero.classList.contains('items-center')).toBe(true)
 
@@ -61,5 +61,19 @@ describe('Hero', () => {
     expect(slogan.classList.contains('invert')).toBe(false)
     // Transparent PNG: no white badge wrapper around the artwork.
     expect(slogan.closest('.bg-white')).toBeNull()
+  })
+
+  it('exposes stable animation hooks without hiding content', () => {
+    const { container } = render(<Hero />)
+    const section = container.querySelector('section')
+    expect(section.querySelector('[data-hero="logo"]')).toBeTruthy()
+    expect(section.querySelector('[data-hero="slogan"]')).toBeTruthy()
+    expect(section.querySelector('[data-hero="copy"]')).toBeTruthy()
+    expect(section.querySelectorAll('[data-hero="stat"]').length).toBe(2)
+    expect(section.querySelector('[data-hero="ctas"]')).toBeTruthy()
+    // Content visible pre-animation: no opacity-0 utility on hooks
+    for (const el of section.querySelectorAll('[data-hero]')) {
+      expect(el.className).not.toMatch(/opacity-0/)
+    }
   })
 })

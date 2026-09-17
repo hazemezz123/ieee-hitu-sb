@@ -17,7 +17,8 @@ export default function Reveal({
 
   useEffect(() => {
     if (typeof window === 'undefined' || !ref.current) return
-    if (typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (typeof window.matchMedia !== 'function') return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     gsap.registerPlugin(ScrollTrigger)
     const scope = ref.current
     const ctx = gsap.context(() => {
