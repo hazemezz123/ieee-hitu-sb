@@ -1,6 +1,9 @@
 'use client'
 
 import Link from 'next/link'
+import { useEffect } from 'react'
+import Reveal from '@/components/ui/Reveal'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Hero from '@/components/ui/Hero'
 import Skeleton from '@/components/ui/Skeleton'
 import { getNextEvents, getRecentEvents, sortEvents } from '@/lib/presentation'
@@ -21,6 +24,12 @@ export default function Home() {
   const recentEvents = getRecentEvents(events, now, 3)
   const featuredEvent = nextEvents[0]
   const remainingNextEvents = nextEvents.slice(1)
+
+  useEffect(() => {
+    if (result.status !== 'ready' || typeof window === 'undefined') return
+    const frame = requestAnimationFrame(() => { try { ScrollTrigger.refresh() } catch {} })
+    return () => cancelAnimationFrame(frame)
+  }, [result.status, result.events.length])
 
   return (
     <div className="page-enter">
@@ -47,7 +56,7 @@ export default function Home() {
           </div>
         </div>}
         {result.status === 'ready' && <>
-          {featuredEvent && <section className="container mx-auto max-w-6xl px-6 py-16 md:px-12"><FeaturedEvent event={featuredEvent} fallback={result.source === 'fallback'} /></section>}
+          {featuredEvent && <section className="container mx-auto max-w-6xl px-6 py-16 md:px-12"><Reveal><FeaturedEvent event={featuredEvent} fallback={result.source === 'fallback'} /></Reveal></section>}
         </>}
         <PartnershipCarousel />
         <TechnicalResources />
@@ -56,10 +65,10 @@ export default function Home() {
           {result.source === 'fallback' && !featuredEvent && <p className="border-b border-outline-variant/30 bg-secondary-container px-6 py-3 text-center text-sm text-on-secondary-container">Showing the static event archive while live event data is unavailable.</p>}
            {events.length === 0 && <section className="container mx-auto max-w-6xl px-6 py-20 md:px-12"><div className="border-l border-primary/40 pl-5"><h2 className="text-2xl font-bold text-on-surface">No events are available</h2><p className="mt-2 text-on-surface-variant">The branch has no event records to publish yet.</p><Link className="mt-5 inline-flex text-xs font-bold uppercase tracking-widest text-primary" href="/contact">Contact the branch</Link></div></section>}
           {events.length > 0 && nextEvents.length === 0 && recentEvents.length === 0 && <p role="status" className="container mx-auto max-w-6xl px-6 py-12 text-on-surface-variant md:px-12">Event dates are not available yet.</p>}
-          {remainingNextEvents.length > 0 && <section className="border-y border-outline-variant/30 bg-surface-container-low py-16"><div className="container mx-auto max-w-6xl px-6 md:px-12"><h2 className="mb-6 text-2xl font-bold text-on-surface">Next events</h2>{remainingNextEvents.map((event, index) => <EventRecord key={event.slug || index} event={event} />)}</div></section>}
+          {remainingNextEvents.length > 0 && <section className="border-y border-outline-variant/30 bg-surface-container-low py-16"><div className="container mx-auto max-w-6xl px-6 md:px-12"><Reveal staggerChildren="[data-reveal='record']"><h2 className="mb-6 text-2xl font-bold text-on-surface">Next events</h2>{remainingNextEvents.map((event, index) => <EventRecord key={event.slug || index} event={event} />)}</Reveal></div></section>}
         </>}
         <CommitteeDirectory />
-        {result.status === 'ready' && recentEvents.length > 0 && <section className="border-t border-outline-variant/30 bg-inverse-surface py-16"><div className="container mx-auto max-w-6xl px-6 md:px-12"><h2 className="mb-6 text-2xl font-bold text-[#F0F4F8]">Recent events</h2>{recentEvents.map((event, index) => <EventRecord key={event.slug || index} event={event} tone="inverse" />)}</div></section>}
+        {result.status === 'ready' && recentEvents.length > 0 && <section className="border-t border-outline-variant/30 bg-inverse-surface py-16"><div className="container mx-auto max-w-6xl px-6 md:px-12"><Reveal staggerChildren="[data-reveal='record']"><h2 className="mb-6 text-2xl font-bold text-[#F0F4F8]">Recent events</h2>{recentEvents.map((event, index) => <EventRecord key={event.slug || index} event={event} tone="inverse" />)}</Reveal></div></section>}
       </div>
     </div>
   )
