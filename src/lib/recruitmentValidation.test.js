@@ -103,4 +103,9 @@ describe('validateHeadsStep', () => {
     expect(validateHeadsStep(1, { ...valid, email: 'bad', committee: '' })).toEqual({ ok: false, field: 'committee', error: 'Choose a committee.' })
     expect(validateHeadsStep(2, { ...valid, weeklyHours: 'lots' })).toEqual({ ok: false, field: 'weeklyHours', error: 'Enter valid weekly hours (e.g. 6).' })
   })
+  it('requires whyHead only when applying as head', () => {
+    expect(validateHeadsStep(1, { ...valid, applyingAs: 'head', whyHead: '' })).toEqual({ ok: false, field: 'whyHead', error: 'Tell us why you want to apply as head.' })
+    expect(validateHeadsStep(1, { ...valid, applyingAs: 'vice-head', whyHead: '' })).toEqual({ ok: true })
+    expect(validateHeadsStep(1, { ...valid, applyingAs: 'manager', whyHead: '' })).toEqual({ ok: true })
+  })
 })

@@ -3,11 +3,12 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { boardMembers } from '@/features/about/data/boardMembers'
+import MemberCard from '@/features/about/components/MemberCard'
 import { communityPartners } from '@/features/home/data/partners'
 import { fetchPartners } from '@/features/home/hooks/usePartners'
 
 export default function AboutPage() {
-  const leadership = boardMembers.filter(member => /^(Head|Vice Head)$/.test(member.position))
+  const leadership = boardMembers.filter(member => /^(Head|Vice Head|Technical Manager|Technical Software Manager|Manager)$/i.test(member.position))
   const [partnerCount, setPartnerCount] = useState(communityPartners.length)
 
   useEffect(() => {
@@ -34,10 +35,12 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="grid gap-10 border-b border-outline-variant/40 py-12 md:grid-cols-[0.8fr_1.2fr]">
-          <div><p className="section-label">Leadership records</p><h2 className="mt-3 text-3xl font-bold text-on-surface">Board members</h2></div>
-          <ul className="divide-y divide-outline-variant/30 border-t border-outline-variant/30">{leadership.map(member => <li key={`${member.name}-${member.committee}-${member.position}`} className="flex flex-wrap justify-between gap-2 py-3"><span className="font-medium text-on-surface">{member.name}</span><span className="text-sm text-on-surface-variant">{member.position}, {member.committee}</span></li>)}</ul>
+        <section className="border-b border-outline-variant/40 py-12">
+          <div><p className="section-label">Leadership records</p><h2 className="mt-3 text-3xl font-bold text-on-surface">Meet Our Board Members</h2></div>
+          <ul className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">{leadership.map(member => <MemberCard key={`${member.name}-${member.committee}-${member.position}`} member={member} />)}</ul>
         </section>
+
+        <section className="flex flex-wrap items-center justify-between gap-6 border-b border-outline-variant/40 py-12"><div><p className="section-label">Origins</p><h2 className="mt-3 text-3xl font-bold text-on-surface">Founders Team</h2><p className="mt-3 max-w-xl text-on-surface-variant">Meet the students who started the branch.</p></div><Link className="btn btn-secondary" href="/about/founders">Meet Our Founders</Link></section>
 
         <section className="flex flex-wrap items-center justify-between gap-6 py-12"><p className="max-w-xl text-on-surface-variant">The public site provides access to branch information, committees, events, gallery content, resources, and contact paths.</p><Link className="btn btn-primary" href="/join-us">Join the branch</Link></section>
       </div>

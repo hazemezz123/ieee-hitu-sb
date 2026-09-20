@@ -849,3 +849,29 @@ a {
 [data-theme="dark"] .navbar-logo {
   filter: brightness(0) invert(1);
 }
+
+/* Committee constellation (home directory): blueprint grid panel, wired SVG
+   edges with traveling dash, tooltip cards. GSAP owns scale on
+   [data-const="node"] during entrance only — do not add Tailwind scale there. */
+.const-panel {
+  background-image: radial-gradient(circle, var(--color-outline-variant) 1px, transparent 1.5px);
+  background-size: 22px 22px;
+}
+.const-edge {
+  stroke: var(--color-outline-variant);
+  stroke-width: 1.5;
+  opacity: 0.7;
+  stroke-dasharray: 6 8;
+  animation: const-edge-flow 3s linear infinite;
+}
+.const-edge-active {
+  stroke: #00b5e2;
+  opacity: 1;
+  filter: drop-shadow(0 0 6px rgba(0, 181, 226, 0.8));
+}
+.const-edge-dim {
+  opacity: 0.18;
+}
+@keyframes const-edge-flow {
+  to { stroke-dashoffset: -28; }
+}

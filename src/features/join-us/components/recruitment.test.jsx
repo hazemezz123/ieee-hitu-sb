@@ -2,6 +2,7 @@ import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import Home from '@/features/home/components/HomePage'
 import AboutPage from '@/features/about/components/AboutPage'
+import FoundersView from '@/features/about/components/FoundersView'
 import JoinUsPage from './JoinUsPage'
 import ContactPage from '@/features/contact/components/ContactPage'
 import TechnicalResources from '@/components/ui/TechnicalResources'
@@ -250,6 +251,37 @@ describe('recruitment pages', () => {
     expect(screen.queryByText(/@gmail\.com|01\d{8,}/i)).toBeNull()
   })
 
+  it('shows Meet Our Board Members as image cards including managers plus a founders entry', async () => {
+    renderPage(<AboutPage />)
+
+    expect(screen.getByRole('heading', { name: /meet our board members/i })).toBeTruthy()
+    // Managers must not be filtered out
+    expect(screen.getByText('Habiba Hamdy Aly Hassan')).toBeTruthy()
+    expect(screen.getByText('Seif Ayman Abdelmoniem Ahmed')).toBeTruthy()
+    // Card grid with photos (real URL or graceful fallback), name, and title
+    const grid = screen.getByText('Habiba Hamdy Aly Hassan').closest('ul')
+    expect(grid.className).toContain('grid')
+    const card = screen.getByText('Habiba Hamdy Aly Hassan').closest('li')
+    expect(card.textContent).toMatch(/Technical Software Manager/)
+    // Fallback avatar for members without a usable photo URL
+    const fallbackCard = screen.getByText('Abdelrhman Saleh Amin').closest('li')
+    expect(fallbackCard.querySelector('img')).toBeNull()
+    // Prominent entry point to the Founders Team view
+    const foundersLink = screen.getByRole('link', { name: /founders team|meet our founders/i })
+    expect(foundersLink.getAttribute('href')).toBe('/about/founders')
+  })
+
+  it('renders the founders view with a heading, honest empty state, and navigation', async () => {
+    const { container } = renderPage(<FoundersView />)
+
+    expect(screen.getByRole('heading', { level: 1, name: /meet our founders/i })).toBeTruthy()
+    expect(screen.getByText(/founder records are being compiled/i)).toBeTruthy()
+    expect(screen.getByRole('link', { name: /back to about/i }).getAttribute('href')).toBe('/about')
+    expect(screen.getByRole('link', { name: /join the branch/i }).getAttribute('href')).toBe('/join-us')
+    expect(container.querySelector('main')).toBeNull()
+    expect(screen.queryByText(/@gmail\.com/i)).toBeTruthy()
+  })
+
   it('does not update state after unmounting before the request resolves', async () => {
     let resolve
     fetchEventsResult.mockReturnValue(new Promise(done => { resolve = done }))
@@ -266,9 +298,10 @@ describe('recruitment pages', () => {
     const name = screen.getByLabelText('Full name')
     const email = screen.getByLabelText('Email address')
     const phone = screen.getByLabelText('Phone number')
+    const company = screen.getByLabelText('Company')
     const committee = screen.getByRole('combobox', { name: 'Committee' })
 
-    const controls = [name, email, phone, committee, screen.getByLabelText('Message')]
+    const controls = [name, email, phone, company, committee, screen.getByLabelText('Message')]
     expect(new Set(controls.map(control => control.id)).size).toBe(controls.length)
     expect(screen.getByLabelText(`${committees.length} committees`)).toBeTruthy()
     fireEvent.click(committee)
@@ -289,6 +322,11 @@ describe('recruitment pages', () => {
     fireEvent.change(email, { target: { value: 'student@hitu.edu.eg' } })
     fireEvent.click(committee)
     fireEvent.click(screen.getByRole('option', { name: new RegExp(committees[0].name) }))
+    // Branch email sits directly underneath the submit button
+    const submitBtn = screen.getByRole('button', { name: action })
+    expect(submitBtn.nextElementSibling?.tagName).toBe('A')
+    expect(submitBtn.nextElementSibling?.getAttribute('href')).toBe('mailto:ieee.hitu.sb@gmail.com')
+    expect(submitBtn.nextElementSibling?.textContent).toMatch(/ieee\.hitu\.sb@gmail\.com/)
     const message = screen.getByLabelText('Message')
     if (message.required) fireEvent.change(message, { target: { value: 'Participation question' } })
     fireEvent.click(screen.getByRole('button', { name: action }))
@@ -335,7 +373,7 @@ describe('recruitment pages', () => {
     join.unmount()
 
     renderPage(<ContactPage />)
-    expect(screen.getAllByRole('link', { name: 'ieee.hitu.sb@gmail.com' })).toHaveLength(2)
+    expect(screen.getAllByRole('link', { name: 'ieee.hitu.sb@gmail.com' })).toHaveLength(3)
         expect(screen.getAllByRole('link', { name: 'ieee.hitu.sb@gmail.com' }).every(link => link.getAttribute('href') === 'mailto:ieee.hitu.sb@gmail.com')).toBe(true)
     expect(screen.getByText(/local demonstration.*transmits nothing/i)).toBeTruthy()
     expect(screen.queryByText(/current branch channels|we'll get back|reach out/i)).toBeNull()

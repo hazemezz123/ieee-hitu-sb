@@ -1,6 +1,7 @@
 import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import Hero from './Hero'
+import { committees } from '@/features/committees/data/committees'
 
 vi.mock('next/link', () => ({
   default: ({ href, children, ...rest }) => <a href={href} {...rest}>{children}</a>,
@@ -39,12 +40,12 @@ describe('Hero', () => {
   it('shows committee and member statistics above the CTAs', () => {
     render(<Hero />)
 
-    expect(screen.getByText('+9')).toBeTruthy()
+    expect(screen.getByText(`+${committees.length}`)).toBeTruthy()
     expect(screen.getByText('Committees')).toBeTruthy()
     expect(screen.getByText('+180')).toBeTruthy()
     expect(screen.getByText('Members')).toBeTruthy()
 
-    const stats = screen.getByText('+9').closest('dl')
+    const stats = screen.getByText(`+${committees.length}`).closest('dl')
     const ctas = screen.getByRole('link', { name: /view events/i }).closest('div')
     expect(stats.compareDocumentPosition(ctas) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })

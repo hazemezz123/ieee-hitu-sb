@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { committees } from "@/features/committees/data/committees";
 
 export default function Hero() {
   return (
@@ -38,7 +39,7 @@ export default function Hero() {
           <div className="flex flex-col">
             <dt className="order-2 mt-1 text-sm text-[#9BA9B4]">Committees</dt>
             <dd className="order-1 text-3xl font-black leading-none text-[#F0F4F8]">
-              +9
+              +{committees.length}
             </dd>
           </div>
           <div className="flex flex-col">
