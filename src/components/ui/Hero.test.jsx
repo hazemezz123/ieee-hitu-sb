@@ -76,4 +76,26 @@ describe('Hero', () => {
       expect(el.className).not.toMatch(/opacity-0/)
     }
   })
+
+  it('renders modern IEEE navy background, radial glow, canvas and z-index layers', () => {
+    const { container } = render(<Hero />)
+    const section = container.querySelector('section')
+    expect(section.className).toContain('bg-[#070d18]')
+
+    const bgLayer = section.querySelector('[data-hero="bg"]')
+    expect(bgLayer.classList.contains('pointer-events-none')).toBe(true)
+    expect(bgLayer.classList.contains('z-0')).toBe(true)
+
+    const radialGlow = bgLayer.querySelector('div[style*="radial-gradient"]')
+    expect(radialGlow).toBeTruthy()
+    expect(radialGlow.getAttribute('style')).toContain('rgba(0, 114, 206, 0.18)')
+
+    const canvas = bgLayer.querySelector('canvas')
+    expect(canvas).toBeTruthy()
+    expect(canvas.getAttribute('aria-hidden')).toBe('true')
+
+    const content = section.querySelector('[data-hero="content"]')
+    expect(content.classList.contains('z-10')).toBe(true)
+    expect(content.classList.contains('relative')).toBe(true)
+  })
 })

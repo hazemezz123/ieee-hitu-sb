@@ -123,7 +123,7 @@ describe('recruitment pages', () => {
     }
   })
 
-  it('orders Home bands as identity, featured, counts, next, directory, and recent', async () => {
+  it('orders Home bands as identity, featured, counts, next, and recent', async () => {
     renderPage(<Home />)
 
     await screen.findByText('Next Lab')
@@ -131,7 +131,6 @@ describe('recruitment pages', () => {
       screen.getByRole('heading', { level: 1 }),
       screen.getByRole('heading', { name: 'Featured next event' }),
       screen.getByRole('heading', { name: 'Next events' }),
-      screen.getByRole('heading', { name: 'Committee directory' }),
       screen.getByRole('heading', { name: 'Recent events' }),
     ]
     nodes.slice(1).forEach((node, index) => {
@@ -177,12 +176,11 @@ describe('recruitment pages', () => {
     expect(screen.getByText('Later Lab')).toBeTruthy()
   })
 
-  it('keeps the committee directory when events are empty', async () => {
+  it('handles empty events cleanly', async () => {
     fetchEventsResult.mockResolvedValue({ events: [], source: 'remote' })
     renderPage(<Home />)
 
     expect(await screen.findByText(/no events are available/i)).toBeTruthy()
-    expect(screen.getByRole('heading', { level: 2, name: 'Committee directory' })).toBeTruthy()
     expect(screen.queryByRole('heading', { name: /next events/i })).toBeNull()
     expect(screen.queryByRole('heading', { name: /recent events/i })).toBeNull()
   })
@@ -195,7 +193,6 @@ describe('recruitment pages', () => {
     renderPage(<Home />)
 
     expect(await screen.findByText('Event dates are not available yet.')).toBeTruthy()
-    expect(screen.getByRole('heading', { name: 'Committee directory' })).toBeTruthy()
     expect(screen.queryByText(/no events are available/i)).toBeNull()
   })
 
@@ -236,7 +233,6 @@ describe('recruitment pages', () => {
     expect(screen.getByText(/event data could not be loaded/i)).toBeTruthy()
     expect(screen.queryByText(/static event archive/i)).toBeNull()
     expect(screen.queryByLabelText('0 events')).toBeNull()
-    expect(screen.getByRole('heading', { name: 'Committee directory' })).toBeTruthy()
   })
 
   it('keeps About factual, private-contact-free, and free of nested main landmarks', async () => {

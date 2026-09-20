@@ -9,10 +9,8 @@ import Skeleton from '@/components/ui/Skeleton'
 import { getNextEvents, getRecentEvents, sortEvents } from '@/lib/presentation'
 import EventRecord from './EventRecord'
 import FeaturedEvent from './FeaturedEvent'
-import CommitteeDirectory from './CommitteeDirectory'
 import PartnershipCarousel from './PartnershipCarousel'
 import RecruitmentBand from './RecruitmentBand'
-import TechnicalResources from '@/components/ui/TechnicalResources'
 import { useEventsResult } from '../hooks/useEventsResult'
 
 export default function Home() {
@@ -59,7 +57,6 @@ export default function Home() {
           {featuredEvent && <section className="container mx-auto max-w-6xl px-6 py-16 md:px-12"><Reveal><FeaturedEvent event={featuredEvent} fallback={result.source === 'fallback'} /></Reveal></section>}
         </>}
         <PartnershipCarousel />
-        <TechnicalResources />
          {result.status === 'error' && <section className="container mx-auto max-w-6xl px-6 py-16 md:px-12"><div role="alert" className="border-l border-primary/40 pl-5"><h2 className="text-2xl font-bold text-on-surface">Event data could not be loaded</h2><p className="mt-2 text-on-surface-variant">Please try the event archive again later.</p></div></section>}
         {result.status === 'ready' && <>
           {result.source === 'fallback' && !featuredEvent && <p className="border-b border-outline-variant/30 bg-secondary-container px-6 py-3 text-center text-sm text-on-secondary-container">Showing the static event archive while live event data is unavailable.</p>}
@@ -67,7 +64,6 @@ export default function Home() {
           {events.length > 0 && nextEvents.length === 0 && recentEvents.length === 0 && <p role="status" className="container mx-auto max-w-6xl px-6 py-12 text-on-surface-variant md:px-12">Event dates are not available yet.</p>}
           {remainingNextEvents.length > 0 && <section className="border-y border-outline-variant/30 bg-surface-container-low py-16"><div className="container mx-auto max-w-6xl px-6 md:px-12"><Reveal staggerChildren="[data-reveal='record']"><h2 className="mb-6 text-2xl font-bold text-on-surface">Next events</h2>{remainingNextEvents.map((event, index) => <EventRecord key={event.slug || index} event={event} />)}</Reveal></div></section>}
         </>}
-        <CommitteeDirectory />
         {result.status === 'ready' && recentEvents.length > 0 && <section className="border-t border-outline-variant/30 bg-inverse-surface py-16"><div className="container mx-auto max-w-6xl px-6 md:px-12"><Reveal staggerChildren="[data-reveal='record']"><h2 className="mb-6 text-2xl font-bold text-[#F0F4F8]">Recent events</h2>{recentEvents.map((event, index) => <EventRecord key={event.slug || index} event={event} tone="inverse" />)}</Reveal></div></section>}
       </div>
     </div>
