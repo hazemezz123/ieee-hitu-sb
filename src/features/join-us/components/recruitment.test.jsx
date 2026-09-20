@@ -71,7 +71,7 @@ describe('recruitment pages', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'IEEE HITU Student Branch' })).toBeTruthy()
     expect(screen.getByRole('link', { name: /view events/i }).getAttribute('href')).toBe('/events')
     expect(screen.getByRole('link', { name: /join the branch/i }).getAttribute('href')).toBe('/join-us')
-    expect(screen.getByAltText('')).toBeTruthy()
+    expect(screen.getByRole('img', { name: /ieee hitu student branch logo/i })).toBeTruthy()
     expect(container.querySelector('main')).toBeNull()
     expect(screen.queryByText('Beyond Labels. Beyond Limits.')).toBeNull()
     expect(screen.queryByText(/learn, grow, connect/i)).toBeNull()
