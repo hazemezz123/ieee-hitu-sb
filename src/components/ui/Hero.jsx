@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { committees } from "@/features/committees/data/committees";
+import LogoMark from "@/components/ui/LogoMark";
 
 function ConstellationCanvas() {
   const canvasRef = useRef(null);
@@ -166,13 +167,50 @@ export default function Hero() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     gsap.registerPlugin(ScrollTrigger);
     const scope = scopeRef.current;
+    const diamondPath = scope.querySelector('[data-logo="diamond"]');
+    const archPath = scope.querySelector('[data-logo="arch"]');
+
     const ctx = gsap.context(() => {
+      const paths = [diamondPath, archPath].filter(Boolean);
+      if (paths.length > 0) {
+        paths.forEach((path) => {
+          const length = typeof path.getTotalLength === "function" ? path.getTotalLength() : 4000;
+          gsap.set(path, {
+            strokeDasharray: length,
+            strokeDashoffset: length,
+            fillOpacity: 0,
+          });
+        });
+      }
+
       const tl = gsap.timeline({
         defaults: { duration: 0.7, ease: "power2.out" },
       });
-      tl.from('[data-hero="logo"]', { opacity: 0, scale: 0.92 })
-        .from('[data-hero="slogan"]', { opacity: 0, y: 24 }, "-=0.4")
-        .from('[data-hero="copy"]', { opacity: 0, y: 24 }, "-=0.45")
+      tl.from('[data-hero="logo"]', { opacity: 0, scale: 0.94, duration: 0.4, ease: "power2.out" });
+
+      if (paths.length > 0) {
+        tl.to(
+          paths,
+          {
+            strokeDashoffset: 0,
+            duration: 1.2,
+            ease: "power2.out",
+            stagger: 0.15,
+          },
+          "-=0.2",
+        ).to(
+          paths,
+          {
+            fillOpacity: 1,
+            duration: 0.5,
+            ease: "power1.inOut",
+          },
+          "-=0.3",
+        );
+      }
+
+      tl.from('[data-hero="slogan"]', { opacity: 0, y: 24 }, "-=0.1")
+        .from('[data-hero="copy"]', { opacity: 0, y: 24 }, "-=0.4")
         .from(
           '[data-hero="stat"]',
           { opacity: 0, y: 16, stagger: 0.08 },
@@ -242,11 +280,9 @@ export default function Hero() {
         data-hero="content"
         className="container relative z-10 mx-auto flex max-w-4xl flex-col items-center px-6 py-8 text-center md:px-12 md:py-10"
       >
-        <img
+        <LogoMark
           data-hero="logo"
-          src="/logo.png"
-          alt=""
-          className="w-full max-w-[9rem] object-contain md:max-w-[11rem]"
+          className="w-full max-w-[9rem] md:max-w-[11rem]"
         />
         <h1 id="home-title" className="sr-only">
           IEEE HITU Student Branch

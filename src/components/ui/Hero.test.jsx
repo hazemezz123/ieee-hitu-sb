@@ -13,10 +13,10 @@ describe('Hero', () => {
   it('uses the colored logo treatment and keeps CTA destinations', () => {
     render(<Hero />)
 
-    const logo = document.querySelector('img[src="/logo.png"]')
+    const logo = screen.getByRole('img', { name: /ieee hitu student branch logo/i })
     expect(logo).toBeTruthy()
-    expect(logo.classList.contains('brightness-0')).toBe(false)
-    expect(logo.classList.contains('invert')).toBe(false)
+    expect(logo.querySelector('[data-logo="diamond"]')).toBeTruthy()
+    expect(logo.querySelector('[data-logo="arch"]')).toBeTruthy()
 
     expect(screen.getByRole('link', { name: /view events/i }).getAttribute('href')).toBe('/events')
     expect(screen.getByRole('link', { name: /join the branch/i }).getAttribute('href')).toBe('/join-us')
@@ -73,7 +73,8 @@ describe('Hero', () => {
     expect(section.querySelector('[data-hero="ctas"]')).toBeTruthy()
     // Content visible pre-animation: no opacity-0 utility on hooks
     for (const el of section.querySelectorAll('[data-hero]')) {
-      expect(el.className).not.toMatch(/opacity-0/)
+      const cls = typeof el.className === 'string' ? el.className : (el.getAttribute('class') || '')
+      expect(cls).not.toMatch(/opacity-0/)
     }
   })
 
