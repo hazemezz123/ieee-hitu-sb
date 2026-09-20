@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Reveal from "@/components/ui/Reveal";
 import { fetchRecruitmentForm } from "@/lib/recruitment";
 import { committees } from "@/features/committees/data/committees";
 
@@ -34,7 +35,7 @@ export default function RecruitmentBand() {
       className="wedge-bg"
       style={{ background: "linear-gradient(135deg, #004976, #00629b)" }}
     >
-      <div className="container mx-auto max-w-6xl px-6 py-16 md:px-12 md:py-20">
+      <Reveal className="container mx-auto max-w-6xl px-6 py-16 md:px-12 md:py-20">
         <p>
           <span className="inline-block rounded-full bg-white/15 px-3 py-1 text-xs font-bold uppercase tracking-widest text-white">
             Heads Recruitment — Open
@@ -60,7 +61,7 @@ export default function RecruitmentBand() {
         >
           Start your application
         </Link>
-      </div>
+      </Reveal>
     </section>
   );
 }

@@ -13,10 +13,10 @@ describe('Hero', () => {
   it('uses the colored logo treatment and keeps CTA destinations', () => {
     render(<Hero />)
 
-    const logo = document.querySelector('img[src="/logo.png"]')
+    const logo = screen.getByRole('img', { name: /ieee hitu student branch logo/i })
     expect(logo).toBeTruthy()
-    expect(logo.classList.contains('brightness-0')).toBe(false)
-    expect(logo.classList.contains('invert')).toBe(false)
+    expect(logo.querySelector('[data-logo="diamond"]')).toBeTruthy()
+    expect(logo.querySelector('[data-logo="arch"]')).toBeTruthy()
 
     expect(screen.getByRole('link', { name: /view events/i }).getAttribute('href')).toBe('/events')
     expect(screen.getByRole('link', { name: /join the branch/i }).getAttribute('href')).toBe('/join-us')
@@ -28,7 +28,7 @@ describe('Hero', () => {
     const section = container.querySelector('section')
     expect(section.className).toContain('min-h-[100svh]')
 
-    const hero = section.firstElementChild
+    const hero = section.querySelector('[data-hero="content"]')
     expect(hero.classList.contains('text-center')).toBe(true)
     expect(hero.classList.contains('items-center')).toBe(true)
 
@@ -61,5 +61,42 @@ describe('Hero', () => {
     expect(slogan.classList.contains('invert')).toBe(false)
     // Transparent PNG: no white badge wrapper around the artwork.
     expect(slogan.closest('.bg-white')).toBeNull()
+  })
+
+  it('exposes stable animation hooks without hiding content', () => {
+    const { container } = render(<Hero />)
+    const section = container.querySelector('section')
+    expect(section.querySelector('[data-hero="logo"]')).toBeTruthy()
+    expect(section.querySelector('[data-hero="slogan"]')).toBeTruthy()
+    expect(section.querySelector('[data-hero="copy"]')).toBeTruthy()
+    expect(section.querySelectorAll('[data-hero="stat"]').length).toBe(2)
+    expect(section.querySelector('[data-hero="ctas"]')).toBeTruthy()
+    // Content visible pre-animation: no opacity-0 utility on hooks
+    for (const el of section.querySelectorAll('[data-hero]')) {
+      const cls = typeof el.className === 'string' ? el.className : (el.getAttribute('class') || '')
+      expect(cls).not.toMatch(/opacity-0/)
+    }
+  })
+
+  it('renders modern IEEE navy background, radial glow, canvas and z-index layers', () => {
+    const { container } = render(<Hero />)
+    const section = container.querySelector('section')
+    expect(section.className).toContain('bg-[#070d18]')
+
+    const bgLayer = section.querySelector('[data-hero="bg"]')
+    expect(bgLayer.classList.contains('pointer-events-none')).toBe(true)
+    expect(bgLayer.classList.contains('z-0')).toBe(true)
+
+    const radialGlow = bgLayer.querySelector('div[style*="radial-gradient"]')
+    expect(radialGlow).toBeTruthy()
+    expect(radialGlow.getAttribute('style')).toContain('rgba(0, 114, 206, 0.18)')
+
+    const canvas = bgLayer.querySelector('canvas')
+    expect(canvas).toBeTruthy()
+    expect(canvas.getAttribute('aria-hidden')).toBe('true')
+
+    const content = section.querySelector('[data-hero="content"]')
+    expect(content.classList.contains('z-10')).toBe(true)
+    expect(content.classList.contains('relative')).toBe(true)
   })
 })
