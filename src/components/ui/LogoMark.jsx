@@ -16,9 +16,9 @@ const LogoMark = forwardRef(function LogoMark({ className = '', ...props }, ref)
       <path
         data-logo="diamond"
         d={LOGO_DIAMOND_PATH}
-        fill="#00629b"
-        stroke="#00b5e2"
-        strokeWidth="6"
+        fill="#0e487f"
+        stroke="#0e487f"
+        strokeWidth="0.25"
         strokeLinejoin="round"
         fillRule="evenodd"
       />
@@ -27,7 +27,7 @@ const LogoMark = forwardRef(function LogoMark({ className = '', ...props }, ref)
         d={LOGO_ARCH_PATH}
         fill="#dcb656"
         stroke="#dcb656"
-        strokeWidth="6"
+        strokeWidth="0.25"
         strokeLinejoin="round"
         fillRule="evenodd"
       />

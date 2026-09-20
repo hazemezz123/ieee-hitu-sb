@@ -173,12 +173,14 @@ export default function Hero() {
     const ctx = gsap.context(() => {
       const paths = [diamondPath, archPath].filter(Boolean);
       if (paths.length > 0) {
-        paths.forEach((path) => {
+        paths.forEach((path, i) => {
           const length = typeof path.getTotalLength === "function" ? path.getTotalLength() : 4000;
           gsap.set(path, {
             strokeDasharray: length,
             strokeDashoffset: length,
             fillOpacity: 0,
+            strokeWidth: 2.5,
+            stroke: i === 0 ? "#0e487f" : "#dcb656",
           });
         });
       }
@@ -186,7 +188,7 @@ export default function Hero() {
       const tl = gsap.timeline({
         defaults: { duration: 0.7, ease: "power2.out" },
       });
-      tl.from('[data-hero="logo"]', { opacity: 0, scale: 0.94, duration: 0.4, ease: "power2.out" });
+      tl.from('[data-hero="logo"]', { opacity: 0, scale: 0.96, duration: 0.4, ease: "power2.out" });
 
       if (paths.length > 0) {
         tl.to(
@@ -198,7 +200,8 @@ export default function Hero() {
             stagger: 0.15,
           },
           "-=0.2",
-        ).to(
+        )
+        .to(
           paths,
           {
             fillOpacity: 1,
@@ -206,6 +209,16 @@ export default function Hero() {
             ease: "power1.inOut",
           },
           "-=0.3",
+        )
+        .to(
+          paths,
+          {
+            strokeWidth: 0.25,
+            duration: 0.3,
+            ease: "power1.out",
+            clearProps: "stroke,strokeWidth,strokeDasharray,strokeDashoffset,fillOpacity",
+          },
+          "-=0.2",
         );
       }
 
