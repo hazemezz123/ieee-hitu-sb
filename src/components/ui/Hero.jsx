@@ -188,7 +188,6 @@ export default function Hero() {
       const tl = gsap.timeline({
         defaults: { duration: 0.7, ease: "power2.out" },
       });
-      tl.from('[data-hero="logo"]', { opacity: 0, scale: 0.96, duration: 0.4, ease: "power2.out" });
 
       if (paths.length > 0) {
         tl.to(
@@ -199,7 +198,7 @@ export default function Hero() {
             ease: "power2.out",
             stagger: 0.15,
           },
-          "-=0.2",
+          0,
         )
         .to(
           paths,
