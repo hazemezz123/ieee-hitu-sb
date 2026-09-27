@@ -1,10 +1,9 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { submitApplication } from "@/lib/recruitment";
-import { uploadToCloudinary, uploadFileToCloudinary } from "@/lib/upload";
+import { uploadFileToCloudinary } from "@/lib/upload";
 import {
   ACADEMIC_YEAR_OPTIONS,
-  GRADE_OPTIONS,
   validateHeadsApplication,
   validateHeadsStep,
 } from "@/lib/recruitmentValidation";
@@ -37,10 +36,11 @@ const emptyValues = {
   whyJoin: "",
   notes: "",
 };
-const STEP_TITLES = ["Personal", "Ambition", "Experience", "Notes"];
+const STEP_TITLES = ["Personal", "Role & Experience"];
 
 // Which wizard step renders each field, so a failed final validation
 // can jump back to the step where the user can see and fix the error.
+// Legacy fields stay mapped so old drafts still jump somewhere sensible.
 const FIELD_STEPS = {
   name: 0,
   email: 0,
@@ -57,16 +57,17 @@ const FIELD_STEPS = {
   committee: 1,
   whyHead: 1,
   experience: 1,
-  prevMember: 2,
-  prevCommittee: 2,
-  prevPosition: 2,
-  studentActivities: 2,
-  weeklyHours: 2,
-  whyJoin: 2,
-  notes: 3,
+  prevMember: 1,
+  prevCommittee: 1,
+  prevPosition: 1,
+  studentActivities: 1,
+  weeklyHours: 1,
+  whyJoin: 1,
+  notes: 1,
 };
 
 const APPLYING_AS_SELECT_OPTIONS = [
+  { value: "member", label: "Member" },
   { value: "head", label: "Head" },
   { value: "vice-head", label: "Vice Head" },
   { value: "manager", label: "Manager" },
@@ -77,13 +78,6 @@ const ACADEMIC_YEAR_SELECT_OPTIONS = [
   { value: "2nd", label: "2nd Year" },
   { value: "3rd", label: "3rd Year" },
   { value: "4th", label: "4th Year" },
-];
-
-const GRADE_SELECT_OPTIONS = [
-  { value: "excellent", label: "Excellent (3.5 – 4.0)" },
-  { value: "very-good", label: "Very Good (3.0 – 3.49)" },
-  { value: "good", label: "Good (2.5 – 2.99)" },
-  { value: "pass", label: "Pass (2.0 – 2.49)" },
 ];
 
 // Legacy drafts stored free text. Map common variants to the select values so
@@ -107,18 +101,6 @@ function normalizeAcademicYear(raw) {
   return "";
 }
 
-function normalizeGrade(raw) {
-  const s = String(raw ?? "")
-    .trim()
-    .toLowerCase();
-  if (!s || GRADE_OPTIONS.includes(s)) return s;
-  if (s.includes("excellent")) return "excellent";
-  if (s.includes("very good") || s.includes("very-good")) return "very-good";
-  if (s.includes("good")) return "good";
-  if (s.includes("pass")) return "pass";
-  return "";
-}
-
 function migrateDraft(stored = {}) {
   const next = { ...emptyValues };
   for (const key of Object.keys(emptyValues)) {
@@ -130,12 +112,12 @@ function migrateDraft(stored = {}) {
     const r = stored.role.toLowerCase();
     if (r.includes("vice")) next.applyingAs = "vice-head";
     else if (r.includes("manager")) next.applyingAs = "manager";
+    else if (r.includes("member")) next.applyingAs = "member";
     else if (r.includes("head")) next.applyingAs = "head";
   }
   if (!next.studentActivities && typeof stored.activitiesDetails === "string")
     next.studentActivities = stored.activitiesDetails;
   next.academicYear = normalizeAcademicYear(next.academicYear);
-  next.grade = normalizeGrade(next.grade);
   return next;
 }
 
@@ -151,7 +133,6 @@ function loadDraft() {
 export default function HeadsApplicationForm({ onClosed }) {
   const [step, setStep] = useState(0);
   const [values, setValues] = useState(loadDraft);
-  const [photoFile, setPhotoFile] = useState(null);
   const [cvFile, setCvFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
@@ -159,12 +140,12 @@ export default function HeadsApplicationForm({ onClosed }) {
   const [doneId, setDoneId] = useState(null);
   const [submittedName, setSubmittedName] = useState("");
   const [options, setOptions] = useState(fallbackCommittees);
-  // Submit replaces Continue in the same spot on step 4. A double-click (or
+  // Submit replaces Continue in the same spot on step 2. A double-click (or
   // Enter-key repeat) on Continue would otherwise land on Submit and send the
-  // form before the user can type Notes. Hold Submit briefly on step entry.
+  // form before the user can confirm. Hold Submit briefly on step entry.
   const [readyToSubmit, setReadyToSubmit] = useState(true);
   const [confirmed, setConfirmed] = useState(false);
-  const notesRef = useRef(null);
+  const confirmRef = useRef(null);
 
   useEffect(() => {
     if (doneId) return;
@@ -188,13 +169,13 @@ export default function HeadsApplicationForm({ onClosed }) {
     };
   }, []);
   useEffect(() => {
-    if (step !== 3) {
+    if (step !== 1) {
       setReadyToSubmit(true);
       setConfirmed(false);
       return;
     }
     setReadyToSubmit(false);
-    notesRef.current?.focus();
+    confirmRef.current?.focus();
     const t = setTimeout(() => setReadyToSubmit(true), 800);
     return () => clearTimeout(t);
   }, [step]);
@@ -214,7 +195,6 @@ export default function HeadsApplicationForm({ onClosed }) {
     // One shared gate: the same rules the final submit enforces, so bad
     // input can never advance to a later step.
     const check = validateHeadsStep(step, values, {
-      hasPhotoFile: !!photoFile,
       hasCvFile: !!cvFile,
     });
     if (!check.ok) {
@@ -222,21 +202,21 @@ export default function HeadsApplicationForm({ onClosed }) {
       return;
     }
     setFieldError(null);
-    setStep((s) => Math.min(s + 1, 3));
+    setStep((s) => Math.min(s + 1, 1));
   }
 
   async function submit(e) {
     e.preventDefault();
     // Enter inside a text input implicitly submits the form on any step.
     // Only the final step may really submit; earlier steps advance instead.
-    if (step < 3) {
+    if (step < 1) {
       next();
       return;
     }
     // Ignore the second half of a double-click / key repeat that lands on
     // Submit right after Continue advanced to this step.
     if (!readyToSubmit) return;
-    // The Step 4 confirmation checkbox gates real submission; implicit
+    // The final-step confirmation checkbox gates real submission; implicit
     // submits (Enter / assistive tech) must not bypass the disabled button.
     if (!confirmed) return;
     setError(null);
@@ -251,13 +231,10 @@ export default function HeadsApplicationForm({ onClosed }) {
         setUploading(false);
         return;
       }
-      const photoUrl = photoFile
-        ? await uploadToCloudinary(photoFile)
-        : String(values.photoUrl ?? "").trim();
       const cvUrl = cvFile
         ? await uploadFileToCloudinary(cvFile)
         : String(values.cvUrl ?? "").trim();
-      const payload = { ...values, photoUrl, cvUrl };
+      const payload = { ...values, cvUrl };
       const check = validateHeadsApplication(payload);
       if (!check.ok) {
         setFieldError(check);
@@ -273,7 +250,6 @@ export default function HeadsApplicationForm({ onClosed }) {
       }
       setSubmittedName(String(values.name ?? "").trim().split(/\s+/)[0] || "");
       setValues({ ...emptyValues });
-      setPhotoFile(null);
       setCvFile(null);
       setDoneId(id);
     } catch (err) {
@@ -344,12 +320,12 @@ export default function HeadsApplicationForm({ onClosed }) {
     <form onSubmit={submit} className="flex flex-col gap-5" noValidate>
       <div>
         <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">
-          Step {step + 1}/4 — {STEP_TITLES[step]}
+          Step {step + 1}/2 — {STEP_TITLES[step]}
         </p>
         <div className="mt-2 h-1 bg-surface-container">
           <div
             className="h-1 bg-primary btn-wedge"
-            style={{ width: `${((step + 1) / 4) * 100}%` }}
+            style={{ width: `${((step + 1) / 2) * 100}%` }}
           />
         </div>
       </div>
@@ -366,7 +342,6 @@ export default function HeadsApplicationForm({ onClosed }) {
           {input("Full name", "name", { required: true, type: "text" })}
           {input("Email", "email", { required: true, type: "email" })}
           {input("Phone", "phone", { required: true, type: "tel" })}
-          {input("Address", "address")}
           {input("University", "university", { required: true })}
           {input("Major", "major", { required: true })}
           <Select
@@ -380,38 +355,6 @@ export default function HeadsApplicationForm({ onClosed }) {
             placeholder="Select…"
           />
           {errFor("academicYear")}
-          <Select
-            id="heads-grade"
-            label="Current Academic Grade"
-            name="grade"
-            value={values.grade}
-            onChange={set("grade")}
-            options={GRADE_SELECT_OPTIONS}
-            placeholder="Select…"
-          />
-          {errFor("grade")}
-          <div className="file-upload">
-            <label className="form-label" htmlFor="heads-photoFile">
-              Personal photo (upload, required)
-            </label>
-            <input
-              id="heads-photoFile"
-              className="form-file"
-              type="file"
-              accept="image/*"
-              required={!values.photoUrl}
-              onChange={(e) => {
-                setFieldError(null);
-                setPhotoFile(e.target.files?.[0] || null);
-              }}
-            />
-            {photoFile && (
-              <p className="file-chosen" aria-live="polite">
-                ✓ {photoFile.name}
-              </p>
-            )}
-            {errFor("photoUrl")}
-          </div>
           <div className="file-upload">
             <label className="form-label" htmlFor="heads-cvFile">
               CV (PDF file, required)
@@ -434,10 +377,6 @@ export default function HeadsApplicationForm({ onClosed }) {
             )}
             {errFor("cvUrl")}
           </div>
-          {input("Social media links (comma-separated)", "links", {
-            type: "text",
-            placeholder: "https://…, https://…",
-          })}
         </>
       )}
       {step === 1 && (
@@ -464,22 +403,8 @@ export default function HeadsApplicationForm({ onClosed }) {
             options={toOptions(options)}
           />
           {errFor("committee")}
-          {values.applyingAs === 'head' && (
-          <label className="form-label" htmlFor="heads-whyHead">
-            Why do you want to apply as a head?
-            <textarea
-              id="heads-whyHead"
-              className="form-textarea mt-2"
-              rows={4}
-              required
-              value={values.whyHead}
-              onChange={set("whyHead")}
-            />
-            {errFor("whyHead")}
-          </label>
-          )}
           <label className="form-label" htmlFor="heads-experience">
-            What&apos;s your technical experience in this field?
+            What&apos;s your experience in this field?
             <textarea
               id="heads-experience"
               className="form-textarea mt-2"
@@ -487,80 +412,17 @@ export default function HeadsApplicationForm({ onClosed }) {
               required
               value={values.experience}
               onChange={set("experience")}
+              placeholder="Briefly tell us about your experience…"
             />
             {errFor("experience")}
-          </label>
-        </>
-      )}
-      {step === 2 && (
-        <>
-          <Select
-            id="heads-prevMember"
-            label="Are you a previous IEEE HITU member?"
-            required
-            name="prevMember"
-            value={values.prevMember}
-            onChange={set("prevMember")}
-            options={[
-              { value: "yes", label: "Yes" },
-              { value: "no", label: "No" },
-            ]}
-            placeholder="Select…"
-          />
-          {errFor("prevMember")}
-          {values.prevMember === "yes" && (
-            <>
-              {input("Committee name", "prevCommittee", { required: true })}
-              {input("Position", "prevPosition", { required: true })}
-            </>
-          )}
-          <label className="form-label" htmlFor="heads-studentActivities">
-            Student activity experience
-            <textarea
-              id="heads-studentActivities"
-              className="form-textarea mt-2"
-              rows={4}
-              required
-              value={values.studentActivities}
-              onChange={set("studentActivities")}
-              placeholder="Tell us about your student activities…"
-            />
-            {errFor("studentActivities")}
           </label>
           {input("Weekly commit hours", "weeklyHours", {
             required: true,
             placeholder: "e.g. 6",
           })}
-          <label className="form-label" htmlFor="heads-whyJoin">
-            Why do you want to join IEEE HITU?
-            <textarea
-              id="heads-whyJoin"
-              className="form-textarea mt-2"
-              rows={4}
-              required
-              value={values.whyJoin}
-              onChange={set("whyJoin")}
-            />
-            {errFor("whyJoin")}
-          </label>
-        </>
-      )}
-      {step === 3 && (
-        <>
-          <label className="form-label" htmlFor="heads-notes">
-            Notes
-            <textarea
-              ref={notesRef}
-              id="heads-notes"
-              className="form-textarea mt-2"
-              rows={4}
-              value={values.notes}
-              onChange={set("notes")}
-              placeholder="Anything else you want us to know…"
-            />
-          </label>
           <label className="flex cursor-pointer items-center gap-2 text-sm" htmlFor="heads-confirm">
             <input
+              ref={confirmRef}
               id="heads-confirm"
               type="checkbox"
               className="form-checkbox"
@@ -591,7 +453,7 @@ export default function HeadsApplicationForm({ onClosed }) {
             Back
           </button>
         )}
-        {step < 3 ? (
+        {step < 1 ? (
           <button
             type="button"
             className="btn btn-primary btn-wedge"
@@ -613,7 +475,6 @@ export default function HeadsApplicationForm({ onClosed }) {
           className="btn btn-ghost"
           onClick={() => {
             setValues({ ...emptyValues });
-            setPhotoFile(null);
             setCvFile(null);
             setStep(0);
             setError(null);
