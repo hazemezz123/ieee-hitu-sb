@@ -38,18 +38,18 @@ export default function RecruitmentBand() {
       <Reveal className="container mx-auto max-w-6xl px-6 py-16 md:px-12 md:py-20">
         <p>
           <span className="inline-block rounded-full bg-white/15 px-3 py-1 text-xs font-bold uppercase tracking-widest text-white">
-            Heads Recruitment — Open
+            Recruitment — Open
           </span>
         </p>
         <h2
           id="recruitment-band-title"
           className="mt-4 max-w-3xl text-3xl font-black tracking-tight text-[#F0F4F8] md:text-5xl"
         >
-          Lead an IEEE HITU Committee
+          Join an IEEE HITU Committee
         </h2>
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-[#C7D3DC] md:text-lg">
           {form?.description ||
-            "Apply to lead a committee as Head or Vice-Head."}
+            "Apply as a Member, Head, Vice-Head, or Manager."}
         </p>
         <p className="mt-6" aria-label={`${committees.length} committees`}>
           <strong className="text-2xl text-white">{committees.length}</strong>{" "}

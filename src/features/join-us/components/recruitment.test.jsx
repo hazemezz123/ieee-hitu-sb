@@ -145,7 +145,7 @@ describe('recruitment pages', () => {
     const cta = await screen.findByRole('link', { name: /start your application/i })
     expect(cta.getAttribute('href')).toBe('/join-us')
     const h1 = screen.getByRole('heading', { level: 1 })
-    const band = screen.getByRole('heading', { name: /lead an ieee hitu committee/i })
+    const band = screen.getByRole('heading', { name: /join an ieee hitu committee/i })
     expect(h1.compareDocumentPosition(band) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
@@ -154,7 +154,7 @@ describe('recruitment pages', () => {
     renderPage(<Home />)
 
     await screen.findByText('Next Lab')
-    expect(screen.queryByRole('heading', { name: /lead an ieee hitu committee/i })).toBeNull()
+    expect(screen.queryByRole('heading', { name: /join an ieee hitu committee/i })).toBeNull()
   })
 
   it('renders duplicate slugs only once across Home event records', async () => {
@@ -335,11 +335,11 @@ describe('recruitment pages', () => {
     fetchRecruitmentForm.mockResolvedValue({ slug: 'heads', title: 'Heads', description: 'Lead description', isOpen: true })
     const { container } = renderPage(<JoinUsPage />)
 
-    expect(screen.getByRole('heading', { level: 1, name: 'Lead an IEEE HITU Committee' })).toBeTruthy()
-    expect(screen.getByText('Heads & Vice-Heads Recruitment')).toBeTruthy()
+    expect(screen.getByRole('heading', { level: 1, name: 'Join an IEEE HITU Committee' })).toBeTruthy()
+    expect(screen.getByText('Members, Heads & Managers Recruitment')).toBeTruthy()
     expect(container.querySelector('main')).toBeNull()
 
-    expect(await screen.findByText(/Step 1\/4/)).toBeTruthy()
+    expect(await screen.findByText(/Step 1\/2/)).toBeTruthy()
     expect(fetchRecruitmentForm).toHaveBeenCalledWith('heads')
   })
 
@@ -349,7 +349,7 @@ describe('recruitment pages', () => {
 
     expect(await screen.findByText('Custom closed')).toBeTruthy()
     expect(screen.getByText('Come back later.')).toBeTruthy()
-    expect(screen.queryByText(/Step 1\/4/)).toBeNull()
+    expect(screen.queryByText(/Step 1\/2/)).toBeNull()
   })
 
   it('renders the redesigned IEEE network section', () => {
