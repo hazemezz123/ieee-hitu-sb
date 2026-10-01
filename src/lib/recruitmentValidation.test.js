@@ -50,10 +50,11 @@ describe('validateHeadsApplication', () => {
     expect(validateHeadsApplication({ ...valid, experience: '' }).ok).toBe(false)
     expect(validateHeadsApplication({ ...valid, weeklyHours: '' }).ok).toBe(false)
   })
-  it('requires university, major, and cv', () => {
+  it('requires university and major, while cv is optional', () => {
     expect(validateHeadsApplication({ ...valid, university: '' }).ok).toBe(false)
     expect(validateHeadsApplication({ ...valid, major: '' }).ok).toBe(false)
-    expect(validateHeadsApplication({ ...valid, cvUrl: '' }).ok).toBe(false)
+    expect(validateHeadsApplication({ ...valid, cvUrl: '' }).ok).toBe(true)
+    expect(validateHeadsApplication({ ...valid, cvUrl: 'not-a-url' })).toEqual({ ok: false, field: 'cvUrl', error: 'CV upload failed. Try again.' })
   })
   it('skips upload checks with skipUploads for pre-upload fail-fast', () => {
     expect(validateHeadsApplication({ ...valid, cvUrl: '' }, { skipUploads: true })).toEqual({ ok: true })
@@ -88,6 +89,7 @@ describe('validateHeadsStep', () => {
     expect(validateHeadsStep(0, { ...valid, email: 'bad' })).toEqual({ ok: false, field: 'email', error: 'Enter a valid email address.' })
     expect(validateHeadsStep(0, { ...valid, phone: 'abc' })).toEqual({ ok: false, field: 'phone', error: 'Enter a valid phone number.' })
     expect(validateHeadsStep(0, { ...valid, cvUrl: 'not-a-url' })).toEqual({ ok: false, field: 'cvUrl', error: 'CV upload failed. Try again.' })
+    expect(validateHeadsStep(0, { ...valid, cvUrl: '' })).toEqual({ ok: true })
   })
   it('skips URL checks for freshly picked files', () => {
     expect(validateHeadsStep(0, { ...valid, cvUrl: '' }, { hasCvFile: true })).toEqual({ ok: true })

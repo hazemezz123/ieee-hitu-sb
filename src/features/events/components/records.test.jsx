@@ -89,7 +89,7 @@ beforeEach(() => {
 
 describe('committee records', () => {
   it('keeps only the repository-backed committee fields', () => {
-    expect(committees).toHaveLength(13)
+    expect(committees).toHaveLength(12)
     for (const committee of committees) {
       expect(Object.keys(committee).sort()).toEqual([
         'category',
@@ -106,7 +106,7 @@ describe('committee records', () => {
     const { container } = renderRoute('/committees')
 
     await screen.findByRole('heading', { level: 1, name: 'Committee directory' })
-    expect(screen.getByLabelText('13 committee records')).toBeTruthy()
+    expect(screen.getByLabelText('12 committee records')).toBeTruthy()
     const technical = screen.getByRole('heading', { level: 2, name: 'Technical committees' }).parentElement
     const nonTechnical = screen.getByRole('heading', { level: 2, name: 'Non-technical committees' }).parentElement
     const lists = screen.getAllByRole('list')

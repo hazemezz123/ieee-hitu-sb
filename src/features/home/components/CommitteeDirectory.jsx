@@ -34,14 +34,6 @@ export const COMMITTEES_DATA = [
     shortDescription: 'Builds strong computer science foundations through data structures, problem-solving, and software craftsmanship.',
   },
   {
-    slug: 'ds',
-    name: 'Data Science',
-    category: 'technical',
-    categoryLabel: 'Technical Track',
-    featured: false,
-    shortDescription: 'Extracts actionable insights from data using statistical analysis, predictive pipelines, and visualization.',
-  },
-  {
     slug: 'cyber-defensive',
     name: 'Cyber Defensive',
     category: 'technical',
@@ -311,7 +303,7 @@ export default function CommitteeDirectory() {
             href="/committees"
             className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-6 py-3 text-xs font-bold uppercase tracking-widest text-[#F0F4F8] transition-all duration-300 hover:border-[#00b5e2]/40 hover:bg-white/10 hover:text-white"
           >
-            <span>Explore All 13 Detailed Committee Records</span>
+            <span>Explore All 12 Detailed Committee Records</span>
             <span aria-hidden="true">→</span>
           </Link>
         </div>

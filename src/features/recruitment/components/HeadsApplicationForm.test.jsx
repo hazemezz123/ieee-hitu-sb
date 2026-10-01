@@ -120,6 +120,48 @@ describe('HeadsApplicationForm summarized', () => {
     expect(screen.getByLabelText(/Full name/).value).toBe('')
   })
 
+  it('allows advancing and submitting without providing a CV', async () => {
+    submitApplication.mockReset()
+    submitApplication.mockResolvedValue(42)
+    render(<HeadsApplicationForm />)
+    expect(screen.getByLabelText(/CV \(PDF file, optional\)/)).toBeTruthy()
+    expect(document.getElementById('heads-cvFile').required).toBe(false)
+
+    fireEvent.change(screen.getByLabelText(/Full name/), { target: { value: 'Jane Doe' } })
+    fireEvent.change(screen.getByLabelText(/Email/), { target: { value: 'jane@hitu.edu.eg' } })
+    fireEvent.change(screen.getByLabelText(/Phone/), { target: { value: '01001234567' } })
+    fireEvent.change(screen.getByLabelText(/University/), { target: { value: 'HITU' } })
+    fireEvent.change(screen.getByLabelText(/Major/), { target: { value: 'CS' } })
+    fireEvent.click(screen.getByRole('combobox', { name: /Academic Year/ }))
+    fireEvent.click(screen.getByRole('option', { name: '2nd Year' }))
+
+    // Continue without touching CV
+    fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
+    expect(await screen.findByText(/Step 2\/2/)).toBeTruthy()
+
+    const applyingAs = screen.getByRole('combobox', { name: /You are applying as/ })
+    fireEvent.click(applyingAs)
+    fireEvent.click(screen.getByRole('option', { name: 'Member' }))
+
+    const committee = screen.getByRole('combobox', { name: /^Committee$/ })
+    fireEvent.click(committee)
+    fireEvent.click(screen.getByRole('option', { name: 'Committee 0' }))
+
+    fireEvent.change(screen.getByLabelText(/experience/), { target: { value: 'None' } })
+    fireEvent.change(screen.getByLabelText(/Weekly commit hours/), { target: { value: '4' } })
+
+    await new Promise(r => setTimeout(r, 850))
+    fireEvent.click(screen.getByRole('checkbox', { name: /I confirm/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Submit application/ }))
+
+    expect(await screen.findByText(/You're all set/)).toBeTruthy()
+    expect(submitApplication).toHaveBeenCalledTimes(1)
+    expect(submitApplication).toHaveBeenCalledWith('heads', expect.objectContaining({
+      name: 'Jane Doe',
+      cvUrl: '',
+    }))
+  })
+
   it('keeps Submit disabled until the confirmation checkbox is checked', async () => {
     submitApplication.mockReset()
     submitApplication.mockResolvedValue(7)

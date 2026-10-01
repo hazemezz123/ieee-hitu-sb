@@ -30,9 +30,8 @@ export function validateHeadsStep(step, data = {}, { hasCvFile = false } = {}) {
     if (!v('university')) return { ok: false, field: 'university', error: 'University is required.' }
     if (!v('major')) return { ok: false, field: 'major', error: 'Major is required.' }
     if (!ACADEMIC_YEAR_OPTIONS.includes(v('academicYear'))) return { ok: false, field: 'academicYear', error: 'Choose your academic year.' }
-    if (!hasCvFile) {
-      if (!v('cvUrl')) return { ok: false, field: 'cvUrl', error: 'Upload your CV.' }
-      if (!isUrl(v('cvUrl'))) return { ok: false, field: 'cvUrl', error: 'CV upload failed. Try again.' }
+    if (!hasCvFile && v('cvUrl') && !isUrl(v('cvUrl'))) {
+      return { ok: false, field: 'cvUrl', error: 'CV upload failed. Try again.' }
     }
     return { ok: true }
   }

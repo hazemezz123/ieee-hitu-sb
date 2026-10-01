@@ -18,7 +18,6 @@ describe('CommitteeDirectory Bento Grid', () => {
         { slug: 'ai', name: 'AI', category: 'technical' },
         { slug: 'web', name: 'Web', category: 'technical' },
         { slug: 'cs', name: 'CS', category: 'technical' },
-        { slug: 'ds', name: 'DS', category: 'technical' },
         { slug: 'cyber-defensive', name: 'Cyber Defensive', category: 'technical' },
         { slug: 'cyber-offensive', name: 'Cyber Offensive', category: 'technical' },
         { slug: 'embedded', name: 'Embedded', category: 'technical' },
@@ -61,7 +60,7 @@ describe('CommitteeDirectory Bento Grid', () => {
     expect(aiArticle.className).toContain('bg-[#0b1324]')
   })
 
-  it('renders all 13 committees by default', async () => {
+  it('renders all 12 committees by default', async () => {
     render(<CommitteeDirectory />)
     await waitFor(() => {
       expect(screen.getByText('AI')).toBeTruthy()
@@ -69,7 +68,7 @@ describe('CommitteeDirectory Bento Grid', () => {
       expect(screen.getByText('PR & OC')).toBeTruthy()
     })
     const links = screen.getAllByRole('link', { name: /view|learn more/i })
-    expect(links.length).toBeGreaterThanOrEqual(13)
+    expect(links.length).toBeGreaterThanOrEqual(12)
   })
 
   it('renders featured cards with tech tags and learn more action', async () => {

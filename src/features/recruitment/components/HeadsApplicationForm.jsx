@@ -357,14 +357,13 @@ export default function HeadsApplicationForm({ onClosed }) {
           {errFor("academicYear")}
           <div className="file-upload">
             <label className="form-label" htmlFor="heads-cvFile">
-              CV (PDF file, required)
+              CV (PDF file, optional)
             </label>
             <input
               id="heads-cvFile"
               className="form-file"
               type="file"
               accept=".pdf,.doc,.docx"
-              required={!values.cvUrl}
               onChange={(e) => {
                 setFieldError(null);
                 setCvFile(e.target.files?.[0] || null);
