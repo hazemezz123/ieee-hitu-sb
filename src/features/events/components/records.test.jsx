@@ -1,6 +1,5 @@
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { boardMembers } from '@/features/about/data/boardMembers'
 import { committees } from '@/features/committees/data/committees'
 import { findCommitteeLeaders } from '@/lib/presentation'
 import CommitteesPage from '@/features/committees/components/CommitteesPage'
@@ -64,6 +63,22 @@ const renderEventRoute = route => {
 
 const renderGallery = () => render(<GalleryPage />)
 
+// Self-contained roster fixture so tests never depend on production data.
+const rosterFixture = [
+  { name: 'Sample AI Head', committee: 'AI', position: 'Head', email: 'ai@example.com', phone: '01000000001' },
+  { name: 'Sample Automation Head', committee: 'Automation', position: 'Head' },
+  { name: 'Sample CS Vice Head', committee: 'CS', position: 'Vice Head' },
+  { name: 'Sample Embedded Head', committee: 'Embedded', position: 'Head' },
+  { name: 'Sample HR Head', committee: 'HR', position: 'Head' },
+  { name: 'Sample T&D Vice Head', committee: 'T&D', position: 'Vice Head' },
+  { name: 'Sample Marketing Head', committee: 'Marketing', position: 'Head' },
+  { name: 'Sample Multi Media Head', committee: 'Multi Media', position: 'Head' },
+  { name: 'Sample PR Head', committee: 'PR', position: 'Head' },
+  { name: 'Sample Robotics Head', committee: 'Robotic', position: 'Head' },
+  { name: 'Sample Web Manager', committee: 'Web', position: 'Technical Software Manager' },
+  { name: 'Sample DS Member', committee: 'DS', position: '' },
+]
+
 afterEach(cleanup)
 
 beforeEach(() => {
@@ -75,13 +90,13 @@ beforeEach(() => {
   committeeSource.fetchCommitteesResult.mockReset()
   committeeSource.fetchCommitteesResult.mockResolvedValue({ committees: structuredClone(committees), source: 'fallback' })
   committeeSource.fetchAllMembersResult.mockReset()
-  committeeSource.fetchAllMembersResult.mockResolvedValue({ members: structuredClone(boardMembers), source: 'fallback' })
+  committeeSource.fetchAllMembersResult.mockResolvedValue({ members: structuredClone(rosterFixture), source: 'fallback' })
   committeeSource.fetchCommitteeDetailResult.mockReset()
   committeeSource.fetchCommitteeDetailResult.mockImplementation(async slug => {
     const committee = committees.find(item => item.slug === slug)
     return {
       committee: committee ? structuredClone(committee) : null,
-      members: structuredClone(boardMembers),
+      members: structuredClone(rosterFixture),
       source: 'fallback',
     }
   })
@@ -132,14 +147,15 @@ describe('committee records', () => {
 
     await screen.findByRole('heading', { level: 1, name: 'Committee directory' })
     for (const name of [
-      'Omar Raafat Hamed Abdelaziz',
-      'Ahmed Hamdy',
-      'Menna Allah Mohamed',
-      'Adham Ahmad Hosny Mohammad',
-      'Mariam Ahmed El-Neblawy',
+      'Sample AI Head',
+      'Sample Automation Head',
+      'Sample HR Head',
+      'Sample T&D Vice Head',
+      'Sample Multi Media Head',
     ]) expect(screen.getByText(name)).toBeTruthy()
 
-    expect(screen.queryByText('Habiba Hamdy Aly Hassan')).toBeNull()
+    expect(screen.queryByText('Sample Web Manager')).toBeNull()
+    expect(screen.queryByText('Sample DS Member')).toBeNull()
     expect(screen.queryByText(/Technical Software Manager|Technical Manager/i)).toBeNull()
     expect(screen.queryByText(/@gmail\.com|01\d{8,}/i)).toBeNull()
     expect(screen.queryByRole('link', { name: /github|linkedin|email/i })).toBeNull()
@@ -148,7 +164,7 @@ describe('committee records', () => {
 
   it('renders every detail route with exactly its explicitly supported leadership', async () => {
     for (const committee of committees) {
-      const expected = findCommitteeLeaders(committee.slug, boardMembers)
+      const expected = findCommitteeLeaders(committee.slug, rosterFixture)
       const page = renderRoute(`/committees/${committee.slug}`)
 
       await screen.findByRole('heading', { level: 1, name: committee.name })
@@ -181,7 +197,7 @@ describe('committee records', () => {
       const page = renderRoute(`/committees/${slug}`)
       await screen.findByRole('heading', { level: 1, name: slug === 'cyber-defensive' ? 'Cyber Defensive' : 'Cyber Offensive' })
       expect(screen.queryByRole('heading', { name: 'Leadership' })).toBeNull()
-      for (const member of boardMembers.filter(item => ['CS', 'DS'].includes(item.committee))) {
+      for (const member of rosterFixture.filter(item => ['CS', 'DS'].includes(item.committee))) {
         expect(screen.queryByText(member.name)).toBeNull()
       }
       page.unmount()

@@ -1,6 +1,4 @@
 import { describe, expect, it } from 'vitest'
-import { boardMembers } from '@/features/about/data/boardMembers'
-import { committees } from '@/features/committees/data/committees'
 import {
   aggregateGallery,
   findCommitteeLeaders,
@@ -86,31 +84,6 @@ describe('presentation selectors', () => {
 
     expect(findCommitteeLeaders('robotics', members).map(member => member.name)).toEqual(['Roster', 'Display'])
     expect(findCommitteeLeaders('pr-oc', members).map(member => member.name)).toEqual(['Slugged'])
-  })
-
-  it('maps every committee route to only its supported real roster records', () => {
-    const expectedNames = {
-      ai: ['Kareem Mohammed Sayed', 'Ramez Kamal', 'Samer Muharram', 'Mohamed Osama Mohamed'],
-      automations: ['Omar Raafat Hamed Abdelaziz', 'Abdelrahman Mahmoud Zakaria'],
-      embedded: ['Ziad Mohamed Fathy'],
-      'hr-td': ['Basel Khaled Matter', 'Mohammed Basem Abdul Momen', 'Mariam Ahmed El-Neblawy', 'Adham Ahmad Hosny Mohammad', 'Omar Farouk'],
-      marketing: ['Ziad Mahmoud Mohamed'],
-      'multi-media': ['Menna Allah Mohamed', 'Yahia Ahmed Saad', 'Youssef Ahmed Ali Gamal'],
-      'pr-oc': ['Shahd Rady El-sayed', 'Seif Allah Hany'],
-      robotics: ['Ahmed Hamdy', 'Mariam Mohamed Khedr'],
-      web: ['Hazem Mohammed'],
-      cs: ['Abdelrhman Saleh Amin', 'Bassam Hossam', 'Omnia Osama Mohammed'],
-      'cyber-defensive': [],
-      'cyber-offensive': [],
-    }
-
-    expect(Object.keys(expectedNames).sort()).toEqual(committees.map(committee => committee.slug).sort())
-    for (const committee of committees) {
-      expect(findCommitteeLeaders(committee.slug, boardMembers).map(member => member.name)).toEqual(expectedNames[committee.slug])
-    }
-    expect(findCommitteeLeaders('cyber-defensive', boardMembers)).toEqual([])
-    expect(findCommitteeLeaders('cyber-offensive', boardMembers)).toEqual([])
-    expect(Object.values(expectedNames).flat()).not.toContain('Habiba Hamdy Aly Hassan')
   })
 
   it('keeps event metadata on gallery images', () => {

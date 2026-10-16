@@ -35,10 +35,12 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="border-b border-outline-variant/40 py-12">
-          <div><p className="section-label">Leadership records</p><h2 className="mt-3 text-3xl font-bold text-on-surface">Meet Our Board Members</h2></div>
-          <ul className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">{leadership.map(member => <MemberCard key={`${member.name}-${member.committee}-${member.position}`} member={member} />)}</ul>
-        </section>
+        {leadership.length > 0 && (
+          <section className="border-b border-outline-variant/40 py-12">
+            <div><p className="section-label">Leadership records</p><h2 className="mt-3 text-3xl font-bold text-on-surface">Meet Our Board Members</h2></div>
+            <ul className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">{leadership.map(member => <MemberCard key={`${member.name}-${member.committee}-${member.position}`} member={member} />)}</ul>
+          </section>
+        )}
 
         <section className="flex flex-wrap items-center justify-between gap-6 border-b border-outline-variant/40 py-12"><div><p className="section-label">Origins</p><h2 className="mt-3 text-3xl font-bold text-on-surface">Founders Team</h2><p className="mt-3 max-w-xl text-on-surface-variant">Meet the students who started the branch.</p></div><Link className="btn btn-secondary" href="/about/founders">Meet Our Founders</Link></section>
 

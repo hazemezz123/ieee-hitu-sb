@@ -687,6 +687,20 @@ a {
 .wedge-accent {
   clip-path: polygon(100% 0, 0 100%, 100% 100%);
 }
+/* Portrait frame with the IEEE 45° corner cut (mirrors .btn-wedge geometry). */
+.wedge-frame {
+  clip-path: polygon(
+    0 0,
+    calc(100% - 1.5rem) 0,
+    100% 1.5rem,
+    100% 100%,
+    0 100%
+  );
+}
+/* Solid triangle that anchors the .wedge-frame corner cut. */
+.wedge-notch {
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
 .btn-wedge {
   clip-path: polygon(
     0 0,

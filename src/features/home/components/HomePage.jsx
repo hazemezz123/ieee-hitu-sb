@@ -10,6 +10,7 @@ import { getNextEvents, getRecentEvents, sortEvents } from '@/lib/presentation'
 import EventRecord from './EventRecord'
 import FeaturedEvent from './FeaturedEvent'
 import PartnershipCarousel from './PartnershipCarousel'
+import OfficersSection from './OfficersSection'
 import RecruitmentBand from './RecruitmentBand'
 import { useEventsResult } from '../hooks/useEventsResult'
 
@@ -34,6 +35,7 @@ export default function Home() {
       <Hero />
       <div className="page-enter">
       <PartnershipCarousel />
+      <OfficersSection />
       <RecruitmentBand />
       <div>
         {result.status === 'loading' && <div role="status" className="container mx-auto max-w-6xl px-6 py-16 md:px-12">

@@ -241,28 +241,18 @@ describe('recruitment pages', () => {
     expect(screen.getByLabelText('more than 60 sessions')).toBeTruthy()
     expect(screen.getByLabelText('5 community partnerships')).toBeTruthy()
     expect(screen.getByRole('heading', { level: 1, name: /about ieee hitu student branch/i })).toBeTruthy()
-    expect(screen.getByText('Abdelrhman Saleh Amin')).toBeTruthy()
+    expect(screen.queryByRole('heading', { name: /meet our board members/i })).toBeNull()
     expect(container.querySelector('main')).toBeNull()
     expect(screen.queryByText(/founded|since 20|worldwide impact|global leader/i)).toBeNull()
     expect(screen.queryByText(/@gmail\.com|01\d{8,}/i)).toBeNull()
   })
 
-  it('shows Meet Our Board Members as image cards including managers plus a founders entry', async () => {
+  it('omits the board section while keeping the founders entry point when no roster records exist', async () => {
     renderPage(<AboutPage />)
 
-    expect(screen.getByRole('heading', { name: /meet our board members/i })).toBeTruthy()
-    // Managers must not be filtered out
-    expect(screen.getByText('Habiba Hamdy Aly Hassan')).toBeTruthy()
-    expect(screen.getByText('Seif Ayman Abdelmoniem Ahmed')).toBeTruthy()
-    // Card grid with photos (real URL or graceful fallback), name, and title
-    const grid = screen.getByText('Habiba Hamdy Aly Hassan').closest('ul')
-    expect(grid.className).toContain('grid')
-    const card = screen.getByText('Habiba Hamdy Aly Hassan').closest('li')
-    expect(card.textContent).toMatch(/Technical Software Manager/)
-    // Fallback avatar for members without a usable photo URL
-    const fallbackCard = screen.getByText('Abdelrhman Saleh Amin').closest('li')
-    expect(fallbackCard.querySelector('img')).toBeNull()
-    // Prominent entry point to the Founders Team view
+    expect(screen.queryByRole('heading', { name: /meet our board members/i })).toBeNull()
+    expect(screen.queryByRole('listitem')).toBeNull()
+    // Prominent entry point to the Founders Team view stays available
     const foundersLink = screen.getByRole('link', { name: /founders team|meet our founders/i })
     expect(foundersLink.getAttribute('href')).toBe('/about/founders')
   })
