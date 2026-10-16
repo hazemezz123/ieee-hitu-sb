@@ -46,7 +46,7 @@ describe('officers section', () => {
       render(<OfficersSection />)
 
       expect(screen.queryByRole('img', { name: /mariam/i })).toBeNull()
-      expect(screen.getByText('MM')).toBeTruthy()
+      expect(screen.getByText('MA')).toBeTruthy()
     } finally {
       complete.mockRestore()
       naturalWidth.mockRestore()
@@ -106,7 +106,7 @@ describe('officers section', () => {
     const role = screen.getByText('Treasurer')
     expect(role.compareDocumentPosition(linkedin) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
 
-    const mariam = screen.getByRole('link', { name: 'LinkedIn - Mariam M Almahdi' })
+    const mariam = screen.getByRole('link', { name: 'LinkedIn - Mariam Almahdi' })
     expect(mariam.getAttribute('href')).toBe('https://www.linkedin.com/in/mariam-mostafa06/')
     expect(mariam.getAttribute('target')).toBe('_blank')
   })
@@ -114,14 +114,14 @@ describe('officers section', () => {
   it('renders no social row when the officer has no links', () => {
     render(<ul><ChairwomanCard officer={{ ...officers[0], socials: {} }} /></ul>)
 
-    const card = screen.getByRole('heading', { level: 3, name: 'Mariam M Almahdi' }).closest('li')
+    const card = screen.getByRole('heading', { level: 3, name: 'Mariam Almahdi' }).closest('li')
     expect(within(card).queryAllByRole('link')).toHaveLength(0)
   })
 
   it('anchors the blue corner wedge to the right edge of the chairwoman card', () => {
     render(<OfficersSection />)
 
-    const chairCard = screen.getByRole('heading', { level: 3, name: 'Mariam M Almahdi' }).closest('li')
+    const chairCard = screen.getByRole('heading', { level: 3, name: 'Mariam Almahdi' }).closest('li')
     const chairArticle = chairCard.querySelector('article')
     const chairNotch = chairArticle.querySelector('.wedge-notch')
     // Card corner, not the portrait corner (the portrait sits mid-card in the row layout).

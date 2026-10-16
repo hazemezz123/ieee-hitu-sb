@@ -6,10 +6,10 @@ const portrait = (version, publicId) =>
 
 export const officers = [
   {
-    name: "Mariam M Almahdi",
+    name: "Mariam Almahdi",
     role: "Chairwoman",
     img: portrait("v1792178192", "ma2iygcpmdy3bqplirgh"),
-    alt: "Portrait of Mariam M Almahdi, Chairwoman",
+    alt: "Portrait of Mariam Almahdi, Chairwoman",
     bio: "",
     socials: {
       linkedin: "https://www.linkedin.com/in/mariam-mostafa06/",
