@@ -6,6 +6,8 @@ import LenisProvider from '@/lib/LenisProvider'
 import { ThemeProvider } from '@/lib/theme'
 import { inter } from '@/lib/fonts'
 import { siteConfig } from '@/lib/seo'
+import JsonLd from '@/components/seo/JsonLd'
+import { buildOrganizationJsonLd, buildWebSiteJsonLd } from '@/lib/structuredData'
 
 const themeInitScript = `(function(){try{var t=localStorage.getItem('ieee-hitu-theme');if(t!=='light'&&t!=='dark'){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}document.documentElement.dataset.theme=t;document.documentElement.style.colorScheme=t}catch(e){}})();`
 
@@ -88,6 +90,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className={inter.className}>
+        <JsonLd data={[buildOrganizationJsonLd(), buildWebSiteJsonLd()]} />
         <Script async src="https://www.googletagmanager.com/gtag/js?id=G-7FMS8J5THQ" />
         <Script id="gtag-init">
           {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-7FMS8J5THQ')`}
