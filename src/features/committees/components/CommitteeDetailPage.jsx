@@ -9,17 +9,20 @@ import { fetchCommitteeDetailResult } from '@/features/committees/hooks/useCommi
 import Skeleton from '@/components/ui/Skeleton'
 import CommitteeIcon from '@/components/ui/CommitteeIcon'
 
-export default function CommitteeDetailPage() {
-  const { slug } = useParams()
-  const [detail, setDetail] = useState(null)
+export default function CommitteeDetailPage({ initialDetail, slug: propSlug }) {
+  const params = useParams()
+  const slug = propSlug ?? params?.slug
+  const hasInitial = initialDetail !== undefined
+  const [detail, setDetail] = useState(() => (hasInitial ? initialDetail : null))
 
   useEffect(() => {
+    if (hasInitial) return
     let active = true
     fetchCommitteeDetailResult(slug).then(result => {
       if (active) setDetail(result)
     })
     return () => { active = false }
-  }, [slug])
+  }, [slug, hasInitial])
 
   if (!detail) return (
     <div className="page-enter pt-[var(--navbar-height,6rem)]">

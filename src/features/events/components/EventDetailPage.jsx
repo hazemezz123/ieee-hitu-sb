@@ -14,15 +14,17 @@ const formatDate = (date) => {
     : "Date unavailable";
 };
 
-function EventDetail({ slug }) {
-  const [state, setState] = useState({
-    event: null,
-    source: null,
-    status: "loading",
-  });
+function EventDetail({ slug, initialEvent, initialSource }) {
+  const hasInitial = initialEvent !== undefined;
+  const [state, setState] = useState(() =>
+    hasInitial
+      ? { event: initialEvent, source: initialSource ?? null, status: "ready" }
+      : { event: null, source: null, status: "loading" },
+  );
   const [imageFailed, setImageFailed] = useState(false);
 
   useEffect(() => {
+    if (hasInitial) return;
     let active = true;
     fetchEventBySlugResult(slug)
       .then((result) => {
@@ -38,7 +40,7 @@ function EventDetail({ slug }) {
     return () => {
       active = false;
     };
-  }, [slug]);
+  }, [slug, hasInitial]);
 
   if (state.status === "loading")
     return (
@@ -212,7 +214,11 @@ function EventDetail({ slug }) {
   );
 }
 
-export default function EventDetailPage() {
-  const { slug } = useParams();
+export default function EventDetailPage({ initialEvent, initialSource, slug: propSlug }) {
+  const { slug: paramSlug } = useParams();
+  const slug = propSlug ?? paramSlug;
+  if (initialEvent !== undefined) {
+    return <EventDetail key={slug} slug={slug} initialEvent={initialEvent} initialSource={initialSource} />;
+  }
   return <EventDetail key={slug} slug={slug} />;
 }
