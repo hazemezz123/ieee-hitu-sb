@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import EventDetailPage from '@/features/events/components/EventDetailPage'
 import JsonLd from '@/components/seo/JsonLd'
-import { absoluteUrl } from '@/lib/seo'
+import { absoluteUrl, resolveOgImage } from '@/lib/seo'
 import { buildBreadcrumbJsonLd, buildEventJsonLd } from '@/lib/structuredData'
 import { getEventForSeo } from '@/lib/server/seoData'
 
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }) {
   const title = event.title || 'Event'
   const description = (event.excerpt || event.description || '').slice(0, 160) || undefined
   const canonical = absoluteUrl(`/events/${event.slug}`)
-  const image = event.coverImage || event.cardImage
+  const image = resolveOgImage(event.coverImage || event.cardImage)
   return {
     title,
     ...(description ? { description } : {}),

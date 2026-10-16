@@ -50,8 +50,6 @@ export const metadata = {
     images: [
       {
         url: siteConfig.ogImage,
-        width: 1200,
-        height: 630,
         alt: 'IEEE HITU Student Branch',
       },
     ],
