@@ -55,8 +55,7 @@ export const officers = [
     role: "Webmaster",
     img: portrait("v1792184593", "tert7rfbgfrozg2fkbbm"),
     alt: "Portrait of Hazem Ezz, Webmaster",
-    imgScale: "scale-150",
-    imgHoverScale: "group-hover:scale-[1.6]",
+    imgScale: "scale-125",
     socials: {
       linkedin: "https://www.linkedin.com/in/hazem-ezz-424498285",
       email: "mailto:hazemezz988@gmail.com",

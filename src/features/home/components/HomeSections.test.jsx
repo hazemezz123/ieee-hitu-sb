@@ -97,13 +97,13 @@ describe('officers section polish', () => {
     }
   })
 
-  it('scales Habiba lower and Hazem higher than the other portraits', () => {
+  it('scales Habiba lower than the other portraits', () => {
     const { container } = render(<OfficersSection />)
     const byAlt = alt => container.querySelector(`img[alt="${alt}"]`).className.split(' ')
 
     expect(byAlt('Portrait of Habiba Hamdy, Vice Chair')).toContain('scale-90')
     expect(byAlt('Portrait of Habiba Hamdy, Vice Chair')).toContain('origin-bottom')
-    expect(byAlt('Portrait of Hazem Ezz, Webmaster')).toContain('scale-150')
+    expect(byAlt('Portrait of Hazem Ezz, Webmaster')).toContain('scale-125')
     expect(byAlt('Portrait of Rania Elrediny, Treasurer')).toContain('scale-125')
   })
 
@@ -112,7 +112,7 @@ describe('officers section polish', () => {
     const byAlt = alt => container.querySelector(`img[alt="${alt}"]`).className.split(' ')
 
     expect(byAlt('Portrait of Habiba Hamdy, Vice Chair')).toContain('group-hover:scale-95')
-    expect(byAlt('Portrait of Hazem Ezz, Webmaster')).toContain('group-hover:scale-[1.6]')
+    expect(byAlt('Portrait of Hazem Ezz, Webmaster')).toContain('group-hover:scale-[1.35]')
     expect(byAlt('Portrait of Rania Elrediny, Treasurer')).toContain('group-hover:scale-[1.35]')
   })
 })
