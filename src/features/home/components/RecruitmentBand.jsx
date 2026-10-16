@@ -32,10 +32,22 @@ export default function RecruitmentBand() {
   return (
     <section
       aria-labelledby="recruitment-band-title"
-      className="wedge-bg"
-      style={{ background: "linear-gradient(135deg, #004976, #00629b)" }}
+      className="px-4 py-4 sm:px-6 lg:px-8"
     >
-      <Reveal className="container mx-auto max-w-6xl px-6 py-16 md:px-12 md:py-20">
+      <div
+        className="max-w-7xl mx-auto rounded-3xl my-16 px-8 py-14 relative overflow-hidden"
+        style={{ background: "linear-gradient(135deg, #004976, #00629b)" }}
+      >
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-20"
+          style={{
+            backgroundImage:
+              "radial-gradient(rgba(255, 255, 255, 0.25) 1px, transparent 1px)",
+            backgroundSize: "22px 22px",
+          }}
+        />
+      <Reveal className="relative">
         <p>
           <span className="inline-block rounded-full bg-white/15 px-3 py-1 text-xs font-bold uppercase tracking-widest text-white">
             Recruitment — Open
@@ -62,6 +74,7 @@ export default function RecruitmentBand() {
           Start your application
         </Link>
       </Reveal>
+      </div>
     </section>
   );
 }

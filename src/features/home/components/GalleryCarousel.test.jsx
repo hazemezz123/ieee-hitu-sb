@@ -26,24 +26,21 @@ describe('GalleryCarousel', () => {
     }
   })
 
-  it('provides accessible previous and next carousel navigation buttons', () => {
-    render(<GalleryCarousel />)
+  it('moves automatically with no navigation arrow buttons', () => {
+    const { container } = render(<GalleryCarousel />)
 
-    const prevButton = screen.getByRole('button', { name: /previous|scroll left/i })
-    const nextButton = screen.getByRole('button', { name: /next|scroll right/i })
-
-    expect(prevButton).toBeTruthy()
-    expect(nextButton).toBeTruthy()
-
-    // Test clicking navigation buttons without error
-    fireEvent.click(nextButton)
-    fireEvent.click(prevButton)
+    expect(screen.queryByRole('button', { name: /previous|scroll left/i })).toBeNull()
+    expect(screen.queryByRole('button', { name: /next|scroll right/i })).toBeNull()
+    expect(container.querySelector('[data-carousel="track"]')).toBeTruthy()
   })
 
-  it('displays photo captions or titles on each slide card', () => {
+  it('shows photos without titles, caption bios, or section description text', () => {
     render(<GalleryCarousel />)
 
-    expect(screen.getAllByText(galleryPhotos[0].caption).length).toBeGreaterThanOrEqual(1)
+    expect(screen.queryByText(galleryPhotos[0].title)).toBeNull()
+    expect(screen.queryByText(galleryPhotos[0].caption)).toBeNull()
+    expect(screen.queryByText(/highlights from our recent summits/i)).toBeNull()
+    expect(screen.getAllByRole('img').length).toBeGreaterThanOrEqual(galleryPhotos.length)
   })
 
   it('applies a gradient fade on the left and right edges of the carousel viewport', () => {

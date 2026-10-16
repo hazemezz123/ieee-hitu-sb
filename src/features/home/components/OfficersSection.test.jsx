@@ -128,9 +128,11 @@ describe('officers section', () => {
     expect(chairNotch.parentElement).toBe(chairArticle)
     expect(chairArticle.querySelector('img').classList.contains('wedge-frame')).toBe(false)
 
-    // Regular cards keep the photo-corner cut: frame on the portrait, notch in the photo box.
-    const regularArticle = screen.getByRole('heading', { level: 3, name: 'Adham' }).closest('li').querySelector('article')
-    expect(regularArticle.querySelector('img').classList.contains('wedge-frame')).toBe(true)
-    expect(regularArticle.querySelector('.wedge-notch').parentElement).not.toBe(regularArticle)
+    // Regular cards normalize portraits in a gradient frame flush to the
+    // bottom edge instead of the photo-corner cut.
+    const regularArticle = screen.getByRole('heading', { level: 3, name: 'Adham Ahmed' }).closest('li').querySelector('article')
+    expect(regularArticle.querySelector('img').classList.contains('wedge-frame')).toBe(false)
+    expect(regularArticle.querySelector('[data-portrait="frame"]').className).not.toContain('bg-gradient')
+    expect(regularArticle.querySelector('.wedge-notch')).toBeNull()
   })
 })

@@ -310,7 +310,7 @@ export default function Hero() {
         </p>
         <img
           data-hero="slogan"
-          src="/slogan/ieeehitu_kit_white.png"
+          src="https://res.cloudinary.com/dweqigxnz/image/upload/f_auto,q_auto,w_800,c_limit/v1792178195/ieee-brand/vx9roslnppudt0booekg.png"
           alt="IEEE HITU Student Branch slogan"
           onError={(e) => {
             e.currentTarget.style.display = "none";

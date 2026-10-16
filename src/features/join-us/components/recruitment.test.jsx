@@ -126,12 +126,13 @@ describe('recruitment pages', () => {
     }
   })
 
-  it('orders Home bands as identity, featured, counts, next, and recent', async () => {
+  it('orders Home bands as identity, partners, featured, next, and recent', async () => {
     renderPage(<Home />)
 
     await screen.findByText('Next Lab')
     const nodes = [
       screen.getByRole('heading', { level: 1 }),
+      screen.getByRole('heading', { name: 'Partners we build with' }),
       screen.getByRole('heading', { name: 'Featured next event' }),
       screen.getByRole('heading', { name: 'Next events' }),
       screen.getByRole('heading', { name: 'Recent events' }),

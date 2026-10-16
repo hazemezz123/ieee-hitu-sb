@@ -7,7 +7,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Hero from '@/components/ui/Hero'
 import Skeleton from '@/components/ui/Skeleton'
 import { getNextEvents, getRecentEvents, sortEvents } from '@/lib/presentation'
-import EventRecord from './EventRecord'
+import EventRecord, { RecentSpotlight } from './EventRecord'
 import FeaturedEvent from './FeaturedEvent'
 import PartnershipCarousel from './PartnershipCarousel'
 import OfficersSection from './OfficersSection'
@@ -36,8 +36,6 @@ export default function Home() {
       <Hero />
       <div className="page-enter">
       <PartnershipCarousel />
-      <OfficersSection />
-      <RecruitmentBand />
       <div>
         {result.status === 'loading' && <div role="status" className="container mx-auto max-w-6xl px-6 py-16 md:px-12">
           <span className="sr-only">Loading event records...</span>
@@ -68,9 +66,11 @@ export default function Home() {
           {events.length > 0 && nextEvents.length === 0 && recentEvents.length === 0 && <p role="status" className="container mx-auto max-w-6xl px-6 py-12 text-on-surface-variant md:px-12">Event dates are not available yet.</p>}
           {remainingNextEvents.length > 0 && <section className="border-y border-outline-variant/30 bg-surface-container-low py-16"><div className="container mx-auto max-w-6xl px-6 md:px-12"><Reveal staggerChildren="[data-reveal='record']"><h2 className="mb-6 text-2xl font-bold text-on-surface">Next events</h2>{remainingNextEvents.map((event, index) => <EventRecord key={event.slug || index} event={event} />)}</Reveal></div></section>}
         </>}
-        {result.status === 'ready' && recentEvents.length > 0 && <section className="border-t border-outline-variant/30 bg-inverse-surface py-16"><div className="container mx-auto max-w-6xl px-6 md:px-12"><Reveal staggerChildren="[data-reveal='record']"><h2 className="mb-6 text-2xl font-bold text-[#F0F4F8]">Recent events</h2>{recentEvents.map((event, index) => <EventRecord key={event.slug || index} event={event} tone="inverse" />)}</Reveal></div></section>}
+        {result.status === 'ready' && recentEvents.length > 0 && <section className="border-t border-outline-variant/30 bg-inverse-surface py-16"><div className="container mx-auto max-w-6xl px-6 md:px-12"><Reveal staggerChildren="[data-reveal='record']"><h2 className="mb-6 text-2xl font-bold text-[#F0F4F8]">Recent events</h2>{recentEvents.length === 1 ? <RecentSpotlight event={recentEvents[0]} /> : recentEvents.map((event, index) => <EventRecord key={event.slug || index} event={event} tone="inverse" />)}</Reveal></div></section>}
       </div>
       <GalleryCarousel />
+      <OfficersSection />
+      <RecruitmentBand />
       </div>
     </>
   )

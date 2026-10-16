@@ -113,7 +113,7 @@ export default function Navbar() {
     <header ref={headerRef} className="fixed inset-x-0 top-0 z-50 border-b border-outline-variant bg-surface-container-lowest">
       <nav className="mx-auto flex h-[var(--navbar-height)] max-w-7xl items-center gap-6 px-5 sm:px-8" aria-label="Primary navigation">
         <Link href="/" className="mr-auto flex items-center" aria-label="IEEE HITU Student Branch home">
-          <img src="/logo.png" alt="IEEE HITU Student Branch" className="navbar-logo h-9 w-auto" />
+          <img src="https://res.cloudinary.com/dweqigxnz/image/upload/f_auto,q_auto,w_400,c_limit/v1792178198/ieee-brand/hxgultwyrc7cq9ae9nny.png" alt="IEEE HITU Student Branch" className="navbar-logo h-9 w-auto" />
         </Link>
 
         <div className="hidden items-stretch self-stretch md:flex">

@@ -80,7 +80,7 @@ export function SocialLinks({ name, socials, size = 'sm', align = 'justify-start
   const iconSize = size === 'lg' ? 'h-5 w-5' : 'h-4 w-4'
 
   return (
-    <div className={`${className} ${align} flex flex-wrap items-center gap-2 opacity-90 transition-opacity duration-300 group-hover:opacity-100`}>
+    <div className={`${className} ${align} flex flex-wrap items-center gap-1 opacity-90 transition-opacity duration-300 group-hover:opacity-100`}>
       {links.map(({ key, href }) => {
         const Icon = SOCIAL_ICONS[key]
         const isMail = href.startsWith('mailto:')
@@ -104,7 +104,8 @@ export function SocialLinks({ name, socials, size = 'sm', align = 'justify-start
 // Portrait + initials fallback + broken-image handling, shared by every officer card.
 // `framed` adds the 45° IEEE corner cut; skip it when the portrait does not sit
 // at a card corner, so the blue notch can anchor the card edge instead.
-function OfficerPortrait({ officer, framed = true }) {
+// Pass `imgClassName` to normalize portraits inside a gradient frame.
+function OfficerPortrait({ officer, framed = true, imgClassName = '' }) {
   const [failed, setFailed] = useState(false)
   const showImg = Boolean(officer.img) && !failed
 
@@ -132,18 +133,20 @@ function OfficerPortrait({ officer, framed = true }) {
       alt={officer.alt}
       loading="lazy"
       onError={() => setFailed(true)}
-      className={framed ? 'wedge-frame h-full w-full object-cover' : 'h-full w-full object-cover'}
+      className={imgClassName || (framed ? 'wedge-frame h-full w-full object-cover' : 'h-full w-full object-cover')}
     />
   )
 }
 
 function OfficerCard({ officer }) {
+  const baseScale = officer.imgScale || 'scale-125'
+  const hoverScale = officer.imgHoverScale || 'group-hover:scale-[1.35]'
+  const origin = officer.imgOrigin || 'origin-center'
   return (
     <li data-reveal="officer" className="mx-auto w-full max-w-xs sm:max-w-none">
       <article className="card group h-full overflow-hidden">
-        <div className="relative aspect-[4/5]">
-          <OfficerPortrait officer={officer} />
-          <span aria-hidden="true" className="wedge-notch absolute right-0 top-0 h-6 w-6 bg-primary" />
+        <div data-portrait="frame" className="h-64 w-full overflow-hidden flex items-end justify-center pt-4">
+          <OfficerPortrait officer={officer} framed={false} imgClassName={`h-full w-auto object-contain object-bottom ${baseScale} ${origin} transition-transform duration-300 ${hoverScale}`} />
         </div>
         <div className="p-5 md:p-6">
           <h3 className="text-lg font-bold tracking-tight text-on-surface">{officer.name}</h3>
@@ -155,10 +158,10 @@ function OfficerCard({ officer }) {
   )
 }
 
-// Featured chairwoman card: full-width row, horizontal from md up.
+// Featured chairwoman card: balanced centered layout with a subtle IEEE watermark.
 export function ChairwomanCard({ officer }) {
   return (
-    <li data-reveal="officer" className="mx-auto w-full max-w-xs sm:col-span-2 sm:max-w-none lg:col-span-4">
+    <li data-reveal="officer" className="mx-auto w-full max-w-2xl sm:col-span-2 lg:col-span-4">
       <article className="card group relative h-full overflow-hidden">
         <div className="flex h-full flex-col md:flex-row">
           <div className="mx-auto aspect-[4/5] w-48 shrink-0 md:mx-0 md:w-56 lg:w-64">
@@ -178,6 +181,7 @@ export function ChairwomanCard({ officer }) {
           </div>
         </div>
         <span aria-hidden="true" className="wedge-notch absolute right-0 top-0 h-6 w-6 bg-primary" />
+        <span aria-hidden="true" className="pointer-events-none absolute -bottom-2 right-2 select-none text-8xl font-black tracking-tighter text-primary opacity-10">IEEE</span>
       </article>
     </li>
   )

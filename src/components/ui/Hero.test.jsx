@@ -54,7 +54,7 @@ describe('Hero', () => {
     render(<Hero />)
 
     const slogan = screen.getByAltText(/slogan/i)
-    expect(slogan.getAttribute('src')).toBe('/slogan/ieeehitu_kit_white.png')
+    expect(slogan.getAttribute('src')).toBe('https://res.cloudinary.com/dweqigxnz/image/upload/f_auto,q_auto,w_800,c_limit/v1792178195/ieee-brand/vx9roslnppudt0booekg.png')
     const style = slogan.getAttribute('style') || ''
     expect(style).toContain('drop-shadow')
     expect(style).toContain('255, 255, 255')
