@@ -173,7 +173,7 @@ export default function Hero() {
     const ctx = gsap.context(() => {
       const paths = [diamondPath, archPath].filter(Boolean);
       if (paths.length > 0) {
-        paths.forEach((path, i) => {
+        paths.forEach((path) => {
           const length = typeof path.getTotalLength === "function" ? path.getTotalLength() : 4000;
           gsap.set(path, {
             strokeDasharray: length,
@@ -312,6 +312,8 @@ export default function Hero() {
           data-hero="slogan"
           src="/slogan/ieeehitu_kit_white.png"
           alt="IEEE HITU Student Branch slogan"
+          fetchPriority="high"
+          decoding="async"
           onError={(e) => {
             e.currentTarget.style.display = "none";
           }}

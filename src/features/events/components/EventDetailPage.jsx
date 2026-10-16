@@ -113,6 +113,9 @@ function EventDetail({ slug, initialEvent, initialSource }) {
           className=" w-full object-cover"
           src={event.coverImage}
           alt={event.title || "Event"}
+          fetchPriority="high"
+          decoding="async"
+          sizes="100vw"
           onError={() => setImageFailed(true)}
         />
       ) : event.coverImage ? (
