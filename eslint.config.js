@@ -25,7 +25,7 @@ export default defineConfig([
     },
   },
   {
-    files: ['src/app/api/**/*.js', 'src/lib/server/**/*.js', 'scripts/**/*.mjs'],
+    files: ['src/app/api/**/*.js', 'src/lib/server/**/*.js', 'src/lib/seo.js', 'src/lib/structuredData.js', 'src/app/sitemap.js', 'src/app/robots.js', 'scripts/**/*.mjs'],
     languageOptions: {
       globals: { ...globals.browser, ...globals.node },
     },
