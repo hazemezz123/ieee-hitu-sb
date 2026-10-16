@@ -1,7 +1,13 @@
 import { forwardRef } from 'react'
 import { LOGO_ARCH_PATH, LOGO_DIAMOND_PATH } from './logoPaths'
 
-const LogoMark = forwardRef(function LogoMark({ className = '', ...props }, ref) {
+const LOGO_TREATMENTS = {
+  color: { diamond: '#0e487f', arch: '#dcb656' },
+  white: { diamond: '#ffffff', arch: '#ffffff' },
+}
+
+const LogoMark = forwardRef(function LogoMark({ className = '', variant = 'color', ...props }, ref) {
+  const colors = LOGO_TREATMENTS[variant] || LOGO_TREATMENTS.color
   return (
     <svg
       ref={ref}
@@ -16,8 +22,8 @@ const LogoMark = forwardRef(function LogoMark({ className = '', ...props }, ref)
       <path
         data-logo="diamond"
         d={LOGO_DIAMOND_PATH}
-        fill="#0e487f"
-        stroke="#0e487f"
+        fill={colors.diamond}
+        stroke={colors.diamond}
         strokeWidth="0.25"
         strokeLinejoin="round"
         fillRule="evenodd"
@@ -25,8 +31,8 @@ const LogoMark = forwardRef(function LogoMark({ className = '', ...props }, ref)
       <path
         data-logo="arch"
         d={LOGO_ARCH_PATH}
-        fill="#dcb656"
-        stroke="#dcb656"
+        fill={colors.arch}
+        stroke={colors.arch}
         strokeWidth="0.25"
         strokeLinejoin="round"
         fillRule="evenodd"

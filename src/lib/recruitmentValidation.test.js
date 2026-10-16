@@ -30,12 +30,14 @@ describe('validateHeadsApplication', () => {
   it('rejects weekly hours without a number', () => {
     expect(validateHeadsApplication({ ...valid, weeklyHours: 'a lot' })).toEqual({ ok: false, field: 'weeklyHours', error: 'Enter valid weekly hours (e.g. 6).' })
   })
-  it('requires applyingAs to be head, vice-head, manager, or member', () => {
+  it('requires applyingAs to be head, vice-head, manager, member, director, or instructor', () => {
     expect(validateHeadsApplication({ ...valid, applyingAs: '' }).ok).toBe(false)
     expect(validateHeadsApplication({ ...valid, applyingAs: 'yes' }).ok).toBe(false)
     expect(validateHeadsApplication({ ...valid, applyingAs: 'manager' }).ok).toBe(true)
     expect(validateHeadsApplication({ ...valid, applyingAs: 'member' }).ok).toBe(true)
     expect(validateHeadsApplication({ ...valid, applyingAs: 'head' }).ok).toBe(true)
+    expect(validateHeadsApplication({ ...valid, applyingAs: 'director' }).ok).toBe(true)
+    expect(validateHeadsApplication({ ...valid, applyingAs: 'instructor' }).ok).toBe(true)
   })
   it('requires academicYear to be 1st, 2nd, 3rd, or 4th', () => {
     expect(validateHeadsApplication({ ...valid, academicYear: '' })).toEqual({ ok: false, field: 'academicYear', error: 'Choose your academic year.' })
@@ -98,8 +100,8 @@ describe('validateHeadsStep', () => {
     expect(validateHeadsStep(1, { ...valid, email: 'bad', committee: '' })).toEqual({ ok: false, field: 'committee', error: 'Choose a committee.' })
     expect(validateHeadsStep(1, { ...valid, weeklyHours: 'lots' })).toEqual({ ok: false, field: 'weeklyHours', error: 'Enter valid weekly hours (e.g. 6).' })
   })
-  it('accepts member, head, vice-head, and manager without whyHead', () => {
-    for (const applyingAs of ['member', 'head', 'vice-head', 'manager']) {
+  it('accepts member, head, vice-head, manager, director, and instructor without whyHead', () => {
+    for (const applyingAs of ['member', 'head', 'vice-head', 'manager', 'director', 'instructor']) {
       expect(validateHeadsStep(1, { ...valid, applyingAs, whyHead: '' })).toEqual({ ok: true })
     }
   })

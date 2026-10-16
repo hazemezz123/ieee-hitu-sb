@@ -110,6 +110,39 @@ describe('HeadsApplicationForm summarized', () => {
     expect(submitApplication).toHaveBeenCalledTimes(1)
   })
 
+  it('lists director and instructor among the applying-as options', async () => {
+    render(<HeadsApplicationForm />)
+    fillStep1()
+    fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
+    expect(await screen.findByText(/Step 2\/2/)).toBeTruthy()
+    const applyingAs = screen.getByRole('combobox', { name: /You are applying as/ })
+    fireEvent.click(applyingAs)
+    expect(screen.getByRole('option', { name: 'Director' })).toBeTruthy()
+    expect(screen.getByRole('option', { name: 'Instructor' })).toBeTruthy()
+  })
+
+  it('accepts a valid draft applying as director on submit', async () => {
+    submitApplication.mockReset()
+    submitApplication.mockResolvedValue(9)
+    localStorage.setItem('recruitment:heads:draft', JSON.stringify({
+      name: 'HITU Student', email: 's@hitu.edu.eg', phone: '01001234567',
+      university: 'HITU', major: 'Eng', academicYear: '2nd',
+      cvUrl: 'https://cdn/cv.pdf', applyingAs: 'director', committee: 'c0',
+      experience: 'Exp', weeklyHours: '5',
+    }))
+    render(<HeadsApplicationForm />)
+    fireEvent.click(screen.getByRole('button', { name: /Continue/ }))
+    expect(await screen.findByText(/Step 2\/2/)).toBeTruthy()
+    await new Promise(r => setTimeout(r, 850))
+    fireEvent.click(screen.getByRole('checkbox', { name: /I confirm/ }))
+    fireEvent.click(screen.getByRole('button', { name: /Submit application/ }))
+    expect(await screen.findByText(/You're all set/)).toBeTruthy()
+    expect(submitApplication).toHaveBeenCalledTimes(1)
+    expect(submitApplication).toHaveBeenCalledWith('heads', expect.objectContaining({
+      applyingAs: 'director',
+    }))
+  })
+
   it('resets the wizard to step 1 when cleared', async () => {
     render(<HeadsApplicationForm />)
     fillStep1()

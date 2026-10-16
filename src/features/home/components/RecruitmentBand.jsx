@@ -49,7 +49,7 @@ export default function RecruitmentBand() {
         </h2>
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-[#C7D3DC] md:text-lg">
           {form?.description ||
-            "Apply as a Member, Head, Vice-Head, or Manager."}
+            "Apply as a Member, Head, Vice-Head, Manager, Director, or Instructor."}
         </p>
         <p className="mt-6" aria-label={`${committees.length} committees`}>
           <strong className="text-2xl text-white">{committees.length}</strong>{" "}

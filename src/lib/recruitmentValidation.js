@@ -9,7 +9,7 @@ export function isUrl(value) {
   } catch { return false }
 }
 
-export const APPLYING_AS_OPTIONS = ['head', 'vice-head', 'manager', 'member']
+export const APPLYING_AS_OPTIONS = ['head', 'vice-head', 'manager', 'member', 'director', 'instructor']
 
 export const ACADEMIC_YEAR_OPTIONS = ['1st', '2nd', '3rd', '4th']
 

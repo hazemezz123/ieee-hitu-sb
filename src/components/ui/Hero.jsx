@@ -180,7 +180,7 @@ export default function Hero() {
             strokeDashoffset: length,
             fillOpacity: 0,
             strokeWidth: 2.5,
-            stroke: i === 0 ? "#0e487f" : "#dcb656",
+            stroke: "#ffffff",
           });
         });
       }
@@ -294,6 +294,7 @@ export default function Hero() {
       >
         <LogoMark
           data-hero="logo"
+          variant="white"
           className="w-full max-w-[9rem] md:max-w-[11rem]"
         />
         <h1 id="home-title" className="sr-only">
@@ -313,6 +314,10 @@ export default function Hero() {
           alt="IEEE HITU Student Branch slogan"
           onError={(e) => {
             e.currentTarget.style.display = "none";
+          }}
+          style={{
+            filter:
+              "drop-shadow(0 0 10px rgba(255, 255, 255, 0.45)) drop-shadow(0 0 28px rgba(255, 255, 255, 0.22))",
           }}
           className="mx-auto mt-4 h-auto w-full max-w-xs object-contain"
         />

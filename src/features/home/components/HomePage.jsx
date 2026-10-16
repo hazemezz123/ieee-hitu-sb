@@ -12,6 +12,7 @@ import FeaturedEvent from './FeaturedEvent'
 import PartnershipCarousel from './PartnershipCarousel'
 import OfficersSection from './OfficersSection'
 import RecruitmentBand from './RecruitmentBand'
+import GalleryCarousel from './GalleryCarousel'
 import { useEventsResult } from '../hooks/useEventsResult'
 
 export default function Home() {
@@ -69,6 +70,7 @@ export default function Home() {
         </>}
         {result.status === 'ready' && recentEvents.length > 0 && <section className="border-t border-outline-variant/30 bg-inverse-surface py-16"><div className="container mx-auto max-w-6xl px-6 md:px-12"><Reveal staggerChildren="[data-reveal='record']"><h2 className="mb-6 text-2xl font-bold text-[#F0F4F8]">Recent events</h2>{recentEvents.map((event, index) => <EventRecord key={event.slug || index} event={event} tone="inverse" />)}</Reveal></div></section>}
       </div>
+      <GalleryCarousel />
       </div>
     </>
   )

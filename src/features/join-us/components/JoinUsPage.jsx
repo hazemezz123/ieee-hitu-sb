@@ -30,14 +30,14 @@ export default function JoinUsPage() {
       <AnimatedSection>
         <header className="container mx-auto max-w-4xl px-6 py-16 sm:px-8 md:px-12 md:py-24">
           <p className="text-xs font-bold uppercase tracking-widest text-primary">
-            Members, Heads &amp; Managers Recruitment
+            Committee Recruitment
           </p>
           <h1 className="mt-3 text-4xl font-black text-on-surface md:text-6xl">
             Join an IEEE HITU Committee
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-on-surface-variant">
             {form?.description ||
-              "Apply to lead a committee as Head or Vice-Head."}
+              "Apply to join a committee as Member, Head, Vice-Head, Manager, Director, or Instructor."}
           </p>
         </header>
       </AnimatedSection>

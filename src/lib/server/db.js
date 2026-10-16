@@ -203,7 +203,7 @@ export async function ensureSchema() {
   if ((headsCheck?.rows || []).length === 0) {
     await execute(
       'INSERT INTO recruitment_forms (slug, title, description, is_open, closed_title, closed_message) VALUES (?, ?, ?, ?, ?, ?)',
-      ['heads', 'Heads & Vice-Heads Recruitment', 'Apply to lead a committee as Head or Vice-Head.', 0, 'Recruitment is Closed', 'Heads recruitment is closed right now. Follow our events and check back for the next wave.'],
+      ['heads', 'Heads & Vice-Heads Recruitment', 'Apply to join a committee as Member, Head, Vice-Head, Manager, Director, or Instructor.', 0, 'Recruitment is Closed', 'Heads recruitment is closed right now. Follow our events and check back for the next wave.'],
     )
   }
 }

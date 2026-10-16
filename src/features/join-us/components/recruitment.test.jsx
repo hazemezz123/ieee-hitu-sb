@@ -109,9 +109,9 @@ describe('recruitment pages', () => {
     expect(screen.getByRole('heading', { name: 'Partners we build with' })).toBeTruthy()
   })
 
-  it('gives light-colored logos a dark tile', async () => {
+  it('ensures light-colored logos have contrast in protective pills', async () => {
     fetchPartnersResult.mockResolvedValue({
-      partners: [{ name: 'White Logo Co', logo: 'https://cdn/white.png', logoDark: true }],
+      partners: [{ name: 'White Logo Co', logo: 'https://cdn/white.png' }],
       source: 'remote',
     })
     renderPage(<Home />)
@@ -119,7 +119,10 @@ describe('recruitment pages', () => {
     const tiles = await screen.findAllByLabelText('White Logo Co')
     expect(tiles).toHaveLength(2)
     for (const tile of tiles) {
-      expect(tile.className).toContain('partner-tile--dark')
+      expect(tile.className).toContain('bg-slate-50/80')
+      const img = tile.querySelector('img')
+      expect(img.className).toContain('brightness-0')
+      expect(img.className).toContain('group-hover:brightness-100')
     }
   })
 
@@ -155,6 +158,15 @@ describe('recruitment pages', () => {
 
     await screen.findByText('Next Lab')
     expect(screen.queryByRole('heading', { name: /join an ieee hitu committee/i })).toBeNull()
+  })
+
+  it('falls back to a band description covering director and instructor', async () => {
+    fetchRecruitmentForm.mockResolvedValue({ slug: 'heads', title: 'Heads', description: '', isOpen: true })
+    renderPage(<Home />)
+
+    expect(
+      await screen.findByText(/Apply as a Member, Head, Vice-Head, Manager, Director, or Instructor\./)
+    ).toBeTruthy()
   })
 
   it('renders duplicate slugs only once across Home event records', async () => {
@@ -326,11 +338,20 @@ describe('recruitment pages', () => {
     const { container } = renderPage(<JoinUsPage />)
 
     expect(screen.getByRole('heading', { level: 1, name: 'Join an IEEE HITU Committee' })).toBeTruthy()
-    expect(screen.getByText('Members, Heads & Managers Recruitment')).toBeTruthy()
+    expect(screen.getByText('Committee Recruitment')).toBeTruthy()
     expect(container.querySelector('main')).toBeNull()
 
     expect(await screen.findByText(/Step 1\/2/)).toBeTruthy()
     expect(fetchRecruitmentForm).toHaveBeenCalledWith('heads')
+  })
+
+  it('falls back to a description covering all six accepted roles', async () => {
+    fetchRecruitmentForm.mockResolvedValue({ slug: 'heads', title: 'Heads', description: '', isOpen: false })
+    renderPage(<JoinUsPage />)
+
+    expect(
+      await screen.findByText(/Apply to join a committee as Member, Head, Vice-Head, Manager, Director, or Instructor\./)
+    ).toBeTruthy()
   })
 
   it('shows the closed state when heads recruitment is closed', async () => {

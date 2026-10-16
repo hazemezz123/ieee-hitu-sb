@@ -84,13 +84,14 @@ export function SocialLinks({ name, socials, size = 'sm', align = 'justify-start
       {links.map(({ key, href }) => {
         const Icon = SOCIAL_ICONS[key]
         const isMail = href.startsWith('mailto:')
+        // Bare glyph (no chip background or border); hover is a simple color shift.
         return (
           <a
             key={key}
             href={href}
             aria-label={`${SOCIAL_LABELS[key]} - ${name}`}
             {...(isMail ? {} : { target: '_blank', rel: 'noopener noreferrer' })}
-            className={`inline-flex ${buttonSize} items-center justify-center rounded-full border border-outline-variant bg-surface-container-low text-primary transition-all duration-300 ease-out motion-safe:hover:-translate-y-1 motion-safe:hover:scale-110 hover:border-primary hover:bg-primary hover:text-on-primary focus-visible:ring-2 focus-visible:ring-primary`}
+            className={`inline-flex ${buttonSize} items-center justify-center rounded-full text-primary transition-colors duration-200 hover:text-[var(--primary-strong)] focus-visible:ring-2 focus-visible:ring-primary`}
           >
             <Icon aria-hidden="true" className={iconSize} />
           </a>

@@ -71,6 +71,8 @@ const APPLYING_AS_SELECT_OPTIONS = [
   { value: "head", label: "Head" },
   { value: "vice-head", label: "Vice Head" },
   { value: "manager", label: "Manager" },
+  { value: "director", label: "Director" },
+  { value: "instructor", label: "Instructor" },
 ];
 
 const ACADEMIC_YEAR_SELECT_OPTIONS = [

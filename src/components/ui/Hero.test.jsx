@@ -50,17 +50,30 @@ describe('Hero', () => {
     expect(stats.compareDocumentPosition(ctas) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
-  it('shows the white slogan artwork unfiltered with aspect ratio preserved', () => {
+  it('shows the white slogan artwork with a soft white glow', () => {
     render(<Hero />)
 
     const slogan = screen.getByAltText(/slogan/i)
     expect(slogan.getAttribute('src')).toBe('/slogan/ieeehitu_kit_white.png')
+    const style = slogan.getAttribute('style') || ''
+    expect(style).toContain('drop-shadow')
+    expect(style).toContain('255, 255, 255')
     expect(slogan.classList.contains('object-contain')).toBe(true)
     expect(slogan.classList.contains('h-auto')).toBe(true)
     expect(slogan.classList.contains('brightness-0')).toBe(false)
     expect(slogan.classList.contains('invert')).toBe(false)
     // Transparent PNG: no white badge wrapper around the artwork.
     expect(slogan.closest('.bg-white')).toBeNull()
+  })
+
+  it('renders the hero logo with the white treatment', () => {
+    render(<Hero />)
+
+    const logo = screen.getByRole('img', { name: /ieee hitu student branch logo/i })
+    const diamond = logo.querySelector('[data-logo="diamond"]')
+    const arch = logo.querySelector('[data-logo="arch"]')
+    expect(diamond.getAttribute('fill')).toBe('#ffffff')
+    expect(arch.getAttribute('fill')).toBe('#ffffff')
   })
 
   it('exposes stable animation hooks without hiding content', () => {
