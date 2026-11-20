@@ -52,6 +52,7 @@ describe('PartnershipCarousel (Responsive Partner Grid)', () => {
         { _id: 1, name: 'Make X', logo: '/logos/partners/make-x.svg', logoDark: true },
         { _id: 2, name: 'IEEE HSB', logo: '/logos/originals/ieee-hsb.png', logoDark: false },
         { _id: 3, name: 'GDG Cairo', logo: '/logos/partners/gdg-cairo-light.svg', logoDark: false },
+        { _id: 4, name: 'CARERHA', logo: '/logos/partners/carerha.svg', logoDark: true },
       ],
       source: 'remote',
     })
@@ -61,6 +62,7 @@ describe('PartnershipCarousel (Responsive Partner Grid)', () => {
     const makeXImg = await screen.findByRole('img', { name: 'Make X' })
     const hsbImg = screen.getByRole('img', { name: 'IEEE HSB' })
     const gdgImg = screen.getByRole('img', { name: 'GDG Cairo' })
+    const carerhaImg = screen.getByRole('img', { name: 'CARERHA' })
 
     expect(makeXImg.getAttribute('src')).toBe('/logos/partners/make-x.svg')
     expect(makeXImg.parentElement.getAttribute('data-logo-surface')).toBe('dark')
@@ -79,6 +81,12 @@ describe('PartnershipCarousel (Responsive Partner Grid)', () => {
     expect(gdgImg.parentElement.className).toContain('bg-white')
     expect(gdgImg.style.maxWidth).toBe('min(100%, 192px)')
     expect(gdgImg.className).not.toMatch(/invert|grayscale|brightness-0|hue-rotate/)
+
+    expect(carerhaImg.getAttribute('src')).toBe('/logos/partners/carerha.svg')
+    expect(carerhaImg.parentElement.getAttribute('data-logo-surface')).toBe('dark')
+    expect(carerhaImg.parentElement.className).toContain('bg-[#101820]')
+    expect(carerhaImg.style.maxWidth).toBe('min(100%, 204px)')
+    expect(carerhaImg.className).not.toMatch(/invert|grayscale|brightness-0|hue-rotate/)
   })
 
   it('falls back to partner name when a logo fails to load', async () => {

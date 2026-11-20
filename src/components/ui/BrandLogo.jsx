@@ -15,6 +15,7 @@ const OPTICAL_SCALES = {
   techne: 0.96,
   konnect: 1.06,
   'gdg cairo': 0.98,
+  carerha: 1.0,
   'ieee hitu student branch': 1.0,
 }
 

@@ -64,9 +64,9 @@
   --color-inverse-primary: #74b9df;
   --color-surface-tint: var(--primary);
 
-  --font-family-headline: "Inter", sans-serif;
-  --font-family-body: "Inter", sans-serif;
-  --font-family-label: "Inter", sans-serif;
+  --font-family-headline: var(--font-inter), "Inter", sans-serif;
+  --font-family-body: var(--font-inter), "Inter", sans-serif;
+  --font-family-label: var(--font-inter), "Inter", sans-serif;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-base: 1rem;

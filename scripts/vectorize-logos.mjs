@@ -79,6 +79,13 @@ const LOGO_JOBS = [
     alphaCutoff: 210,
     config: { colorPrecision: 6, layerDifference: 28, filterSpeckle: 3, cornerThreshold: 40, lengthThreshold: 2.5 },
   },
+  {
+    id: 'carerha',
+    input: `${ORIGINALS_DIR}/carerha.png`,
+    output: `${PARTNERS_OUT_DIR}/carerha.svg`,
+    alphaCutoff: 128,
+    config: { colorPrecision: 4, layerDifference: 48, filterSpeckle: 6, cornerThreshold: 45, lengthThreshold: 3.0 },
+  },
   // Local partner variants in public/Partners/
   {
     id: 'gdg-cairo-light',

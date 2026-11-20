@@ -67,6 +67,14 @@ export const PARTNER_LOGO_CONFIGS = {
     maxWidth: 192,
     maxHeight: 76,
   },
+  carerha: {
+    src: '/logos/partners/carerha.svg',
+    alt: 'CARERHA',
+    surface: 'dark',
+    opticalScale: 1.0,
+    maxWidth: 204,
+    maxHeight: 56,
+  },
 }
 
 export function resolvePartnerLogoConfig(partner = {}) {
@@ -102,4 +110,5 @@ export const communityPartners = [
   { name: 'techne', logo: '/logos/partners/techne.svg', logoDark: true },
   { name: 'Konnect', logo: '/logos/partners/konnect.svg', logoDark: true },
   { name: 'GDG Cairo', logo: '/logos/partners/gdg-cairo-light.svg', logoDark: false },
+  { name: 'CARERHA', logo: '/logos/partners/carerha.svg', logoDark: true },
 ]
