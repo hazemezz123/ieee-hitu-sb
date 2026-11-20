@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { ExternalLink } from 'lucide-react'
 import { boardMembers } from '@/features/about/data/boardMembers'
 import MemberCard from '@/features/about/components/MemberCard'
+import { GLOBAL_IEEE_CONTEXT } from '@/features/home/data/landingContent'
 import { communityPartners } from '@/features/home/data/partners'
 import { fetchPartners } from '@/features/home/hooks/usePartners'
 
@@ -32,6 +34,43 @@ export default function AboutPage() {
           <div><p className="section-label">The branch at a glance</p><h2 className="mt-3 text-3xl font-bold text-on-surface">A campus bridge to IEEE</h2></div>
           <div>
             <div className="grid grid-cols-2 gap-4"><p aria-label="more than 60 sessions"><strong className="block text-3xl text-primary">60+</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">Sessions across all committees</span></p><p aria-label={`${partnerCount} community partnerships`}><strong className="block text-3xl text-primary">{partnerCount}</strong><span className="text-xs uppercase tracking-widest text-on-surface-variant">Community partnerships</span></p></div>
+          </div>
+        </section>
+
+        <section
+          aria-labelledby="ieee-membership-heading"
+          className="grid gap-8 border-b border-outline-variant/40 py-12 md:grid-cols-[1fr_1.4fr]"
+        >
+          <div>
+            <p className="section-label">IEEE relationship</p>
+            <h2
+              id="ieee-membership-heading"
+              className="mt-3 text-3xl font-bold text-on-surface"
+            >
+              {GLOBAL_IEEE_CONTEXT.title}
+            </h2>
+          </div>
+          <div>
+            <p className="text-base leading-relaxed text-on-surface-variant">
+              {GLOBAL_IEEE_CONTEXT.description}
+            </p>
+            <nav
+              aria-label="Official IEEE links"
+              className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2"
+            >
+              {GLOBAL_IEEE_CONTEXT.links.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-10 items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary transition-colors hover:text-[var(--primary-strong)]"
+                >
+                  <span>{link.label}</span>
+                  <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+                </a>
+              ))}
+            </nav>
           </div>
         </section>
 

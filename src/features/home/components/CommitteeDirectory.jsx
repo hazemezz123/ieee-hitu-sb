@@ -1,375 +1,276 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
+import gsap from 'gsap'
+import { ArrowRight, ChevronRight } from 'lucide-react'
 import CommitteeIcon from '@/components/ui/CommitteeIcon'
-import Skeleton from '@/components/ui/Skeleton'
+import CommitteeVisual from '@/components/ui/CommitteeVisual'
+import { committees as staticCommittees } from '@/features/committees/data/committees'
 import { fetchCommitteesResult } from '@/features/committees/hooks/useCommittees'
+import { COMMITTEE_CATEGORY_META } from '../data/landingContent'
 
-export const COMMITTEES_DATA = [
-  {
-    slug: 'artificial-intelligence',
-    name: 'Artificial Intelligence',
-    category: 'technical',
-    categoryLabel: 'Technical Track',
-    featured: true,
-    shortDescription: 'Explores artificial intelligence and machine learning through practical learning, experiments, and team-led projects.',
-    techTags: ['PyTorch', 'TensorFlow', 'Computer Vision', 'NLP'],
-  },
-  {
-    slug: 'web-development',
-    name: 'Web Development',
-    category: 'technical',
-    categoryLabel: 'Technical Track',
-    featured: true,
-    shortDescription: 'Creates modern web experiences and strengthens frontend, backend, and full-stack engineering skills.',
-    techTags: ['Next.js', 'React', 'Tailwind CSS', 'Node.js'],
-  },
-  {
-    slug: 'automation',
-    name: 'Automation',
-    category: 'technical',
-    categoryLabel: 'Technical Track',
-    featured: false,
-    shortDescription: 'Improves workflows and engineering processes through automation systems, scripting, and industrial control concepts.',
-  },
-  {
-    slug: 'iot',
-    name: 'IoT',
-    category: 'technical',
-    categoryLabel: 'Technical Track',
-    featured: false,
-    shortDescription: 'Connects sensors, hardware, and cloud platforms to design smart, networked Internet of Things solutions.',
-  },
-  {
-    slug: 'cyber-security-defensive',
-    name: 'Cyber Security (Defensive)',
-    category: 'technical',
-    categoryLabel: 'Technical Track',
-    featured: false,
-    shortDescription: 'Focuses on secure systems, defensive practices, threat monitoring, and protecting digital environments.',
-  },
-  {
-    slug: 'embedded',
-    name: 'Embedded',
-    category: 'technical',
-    categoryLabel: 'Technical Track',
-    featured: false,
-    shortDescription: 'Works close to hardware through embedded systems practice, microcontrollers, firmware, and device integration.',
-  },
-  {
-    slug: 'pcb-design',
-    name: 'PCB Design',
-    category: 'technical',
-    categoryLabel: 'Technical Track',
-    featured: false,
-    shortDescription: 'Designs and validates printed circuit boards from schematic capture and layout to hardware prototyping.',
-  },
-  {
-    slug: 'solidworks',
-    name: 'SolidWorks',
-    category: 'technical',
-    categoryLabel: 'Technical Track',
-    featured: false,
-    shortDescription: 'Develops 3D CAD modeling, mechanical assemblies, and engineering design skills using SolidWorks.',
-  },
-  {
-    slug: 'mobile-application',
-    name: 'Mobile Application',
-    category: 'technical',
-    categoryLabel: 'Technical Track',
-    featured: false,
-    shortDescription: 'Builds mobile applications with a focus on architecture, usability, and practical end-to-end delivery.',
-  },
-  {
-    slug: 'flutter',
-    name: 'Flutter',
-    category: 'technical',
-    categoryLabel: 'Technical Track',
-    featured: false,
-    shortDescription: 'Develops cross-platform mobile applications using Flutter and Dart through hands-on projects and UI practice.',
-  },
-  {
-    slug: 'cyber-security-offensive',
-    name: 'Cyber Security (Offensive)',
-    category: 'technical',
-    categoryLabel: 'Technical Track',
-    featured: false,
-    shortDescription: 'Builds offensive security awareness through ethical testing, vulnerability analysis, and hands-on challenges.',
-  },
-  {
-    slug: 'problem-solving',
-    name: 'Problem Solving',
-    category: 'technical',
-    categoryLabel: 'Technical Track',
-    featured: false,
-    shortDescription: 'Strengthens algorithmic thinking, data structures, and competitive programming through regular practice.',
-  },
-  {
-    slug: 'hr',
-    name: 'HR',
-    category: 'non-technical',
-    categoryLabel: 'Non-Technical',
-    featured: false,
-    shortDescription: 'Supports recruitment, member onboarding, performance tracking, and internal team coordination across the branch.',
-  },
-  {
-    slug: 'marketing',
-    name: 'Marketing',
-    category: 'non-technical',
-    categoryLabel: 'Non-Technical',
-    featured: false,
-    shortDescription: 'Supports branch visibility, audience growth, and campaign planning with focused promotional strategy.',
-  },
-  {
-    slug: 'people-culture',
-    name: 'People & Culture',
-    category: 'non-technical',
-    categoryLabel: 'Non-Technical',
-    featured: false,
-    shortDescription: 'Fosters member engagement, team well-being, internal community initiatives, and a healthy branch culture.',
-  },
-  {
-    slug: 'logistics-events',
-    name: 'Logistics & Events',
-    category: 'non-technical',
-    categoryLabel: 'Non-Technical',
-    featured: false,
-    shortDescription: 'Plans and executes on-ground logistics, venue operations, and seamless coordination for branch events.',
-  },
-  {
-    slug: 'public-relations-fundraising',
-    name: 'Public Relations & Fundraising',
-    category: 'non-technical',
-    categoryLabel: 'Non-Technical',
-    featured: false,
-    shortDescription: 'Builds external partnerships, sponsorships, institutional relations, and public representation for the branch.',
-  },
-  {
-    slug: 'graphic-design',
-    name: 'Graphic Design',
-    category: 'non-technical',
-    categoryLabel: 'Non-Technical',
-    featured: false,
-    shortDescription: 'Crafts the branch visual identity, event branding, and creative graphics across print and digital channels.',
-  },
-  {
-    slug: 'content-creation',
-    name: 'Content Creation',
-    category: 'non-technical',
-    categoryLabel: 'Non-Technical',
-    featured: false,
-    shortDescription: 'Produces compelling copy, stories, and multimedia content that communicate branch activities clearly.',
-  },
-]
+const CATEGORY_ORDER = ['technical', 'non-technical']
 
-const TABS = [
-  { id: 'all', label: 'All Committees' },
-  { id: 'technical', label: 'Technical Committees' },
-  { id: 'non-technical', label: 'Non-Technical Committees' },
-]
-
-export default function CommitteeDirectory() {
-  const [activeTab, setActiveTab] = useState('all')
-  const [loading, setLoading] = useState(true)
-  const [remoteIcons, setRemoteIcons] = useState({})
+export default function CommitteeDirectory({ initialCommittees = null }) {
+  const [fetchedCommittees, setFetchedCommittees] = useState(null)
+  const [activeCategory, setActiveCategory] = useState('technical')
+  const [selectedSlug, setSelectedSlug] = useState(null)
+  const tabRefs = useRef([])
+  const panelRef = useRef(null)
 
   useEffect(() => {
+    if (Array.isArray(initialCommittees) && initialCommittees.length > 0) return
     let active = true
     fetchCommitteesResult()
-      .then(res => {
-        if (!active || !res?.committees) return
-        const map = {}
-        for (const c of res.committees) {
-          if (c?.slug && c?.icon) map[c.slug] = c.icon
+      .then((res) => {
+        if (active && Array.isArray(res?.committees) && res.committees.length > 0) {
+          setFetchedCommittees(res.committees)
         }
-        setRemoteIcons(map)
       })
       .catch(() => {})
-      .finally(() => {
-        if (active) setLoading(false)
-      })
-    return () => { active = false }
-  }, [])
+    return () => {
+      active = false
+    }
+  }, [initialCommittees])
 
-  const filteredCommittees = COMMITTEES_DATA.filter(committee => {
-    if (activeTab === 'all') return true
-    return committee.category === activeTab
-  })
+  const committeesList = useMemo(() => {
+    if (Array.isArray(initialCommittees) && initialCommittees.length > 0) {
+      return initialCommittees
+    }
+    if (Array.isArray(fetchedCommittees) && fetchedCommittees.length > 0) {
+      return fetchedCommittees
+    }
+    return staticCommittees
+  }, [initialCommittees, fetchedCommittees])
+
+  const grouped = useMemo(() => {
+    return {
+      technical: committeesList.filter((c) => c.category === 'technical'),
+      'non-technical': committeesList.filter((c) => c.category === 'non-technical'),
+    }
+  }, [committeesList])
+
+  const currentList = grouped[activeCategory] || []
+  const selectedCommittee =
+    currentList.find((c) => c.slug === selectedSlug) ||
+    currentList[0] ||
+    committeesList[0]
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !panelRef.current) return
+    if (typeof window.matchMedia !== 'function') return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    const panel = panelRef.current
+    const ctx = gsap.context(() => {
+      const items = panel.querySelectorAll('[data-committee="item"]')
+      if (items.length === 0) return
+      gsap.fromTo(
+        items,
+        { opacity: 0.4, y: 10 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.35,
+          stagger: 0.025,
+          ease: 'power2.out',
+          clearProps: 'opacity,transform',
+        },
+      )
+    }, panelRef)
+
+    return () => ctx.revert()
+  }, [activeCategory])
+
+  function switchCategory(categoryId) {
+    setActiveCategory(categoryId)
+    const first = (grouped[categoryId] || [])[0]
+    setSelectedSlug(first?.slug || null)
+  }
+
+  function handleTabKeyDown(e, index) {
+    let nextIndex = null
+    if (e.key === 'ArrowRight') nextIndex = (index + 1) % CATEGORY_ORDER.length
+    else if (e.key === 'ArrowLeft')
+      nextIndex = (index - 1 + CATEGORY_ORDER.length) % CATEGORY_ORDER.length
+    else if (e.key === 'Home') nextIndex = 0
+    else if (e.key === 'End') nextIndex = CATEGORY_ORDER.length - 1
+
+    if (nextIndex !== null) {
+      e.preventDefault()
+      const nextId = CATEGORY_ORDER[nextIndex]
+      switchCategory(nextId)
+      tabRefs.current[nextIndex]?.focus()
+    }
+  }
+
+  const activeMeta = COMMITTEE_CATEGORY_META[activeCategory]
 
   return (
     <section
       aria-labelledby="committee-directory-heading"
-      className="border-t border-outline-variant/20 bg-[#070d18] py-20 text-[#F0F4F8]"
+      className="bg-surface py-16 md:py-24"
     >
-      <div className="container mx-auto max-w-6xl px-6 md:px-12">
-        {/* Header */}
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-bold uppercase tracking-widest text-[#00b5e2]">
-            Branch Structure
-          </p>
-          <h2
-            id="committee-directory-heading"
-            className="mt-3 text-3xl font-extrabold tracking-tight text-[#F0F4F8] md:text-5xl"
-          >
-            Committee Directory
-          </h2>
-          <p className="mt-4 text-base leading-relaxed text-[#9BA9B4]">
-            19 specialized teams — 12 technical and 7 non-technical committees driving innovation, events, and creative outreach at IEEE HITU.
-          </p>
+      <div className="mx-auto w-full max-w-7xl px-5 sm:px-8">
+        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div className="max-w-2xl">
+            <h2
+              id="committee-directory-heading"
+              className="text-balance text-3xl font-black leading-tight tracking-tight text-on-surface md:text-4xl"
+            >
+              Find where you belong.
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-on-surface-variant">
+              {activeMeta.description}
+            </p>
+          </div>
 
-          {/* Filtering Tabs */}
           <div
             role="tablist"
-            aria-label="Committee Categories"
-            className="mt-8 inline-flex items-center rounded-full border border-white/10 bg-[#0b1324]/80 p-1.5 backdrop-blur-md"
+            aria-label="Committee categories"
+            className="grid w-full grid-cols-2 gap-1 rounded-lg border border-outline-variant/60 bg-surface-container-low p-1 sm:inline-flex sm:w-fit sm:items-center sm:gap-1.5"
           >
-            {TABS.map(tab => {
-              const isActive = activeTab === tab.id
+            {CATEGORY_ORDER.map((categoryId, index) => {
+              const meta = COMMITTEE_CATEGORY_META[categoryId]
+              const count = grouped[categoryId]?.length ?? 0
+              const isActive = activeCategory === categoryId
               return (
                 <button
-                  key={tab.id}
+                  key={categoryId}
+                  ref={(el) => {
+                    tabRefs.current[index] = el
+                  }}
+                  type="button"
                   role="tab"
-                  id={`tab-${tab.id}`}
-                  aria-controls={`panel-${tab.id}`}
+                  id={`committee-tab-${categoryId}`}
                   aria-selected={isActive}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`rounded-full px-5 py-2 text-xs font-semibold tracking-wide transition-all duration-300 md:text-sm ${
+                  aria-controls={`committee-panel-${categoryId}`}
+                  tabIndex={isActive ? 0 : -1}
+                  onClick={() => switchCategory(categoryId)}
+                  onKeyDown={(e) => handleTabKeyDown(e, index)}
+                  className={`min-h-10 cursor-pointer rounded-md px-3 py-2 text-center text-xs font-bold tracking-wide transition-[border-color] duration-150 sm:px-4 sm:text-sm ${
                     isActive
-                      ? 'bg-[#00629b] text-white shadow-md shadow-[#00629b]/30'
-                      : 'text-[#9BA9B4] hover:bg-white/5 hover:text-white'
+                      ? 'bg-primary text-on-primary'
+                      : 'text-on-surface-variant hover:bg-surface-container-lowest hover:text-on-surface'
                   }`}
                 >
-                  {tab.label}
+                  {meta.label} ({count})
                 </button>
               )
             })}
           </div>
         </div>
 
-        {/* Content State */}
-        {loading ? (
-          <div role="status" className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
-            <span className="sr-only">Loading committee directory...</span>
-            <Skeleton className="h-72 rounded-2xl bg-white/5 md:col-span-2" />
-            <Skeleton className="h-72 rounded-2xl bg-white/5 md:col-span-2" />
-            {Array.from({ length: 4 }, (_, idx) => (
-              <Skeleton key={idx} className="h-48 rounded-2xl bg-white/5" />
-            ))}
-          </div>
-        ) : (
-          <div
-            id={`panel-${activeTab}`}
-            role="tabpanel"
-            aria-labelledby={`tab-${activeTab}`}
-            className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4 md:gap-5"
-          >
-            {filteredCommittees.map(committee => {
-              if (committee.featured) {
-                return (
-                  <article
-                    key={committee.slug}
-                    className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-[#0b1324] p-6 transition-all duration-300 hover:border-cyan-400/40 hover:shadow-[0_0_30px_-5px_rgba(0,181,226,0.2)] md:col-span-2 md:p-8"
-                  >
-                    {/* Background glow accent */}
-                    <div
-                      aria-hidden="true"
-                      className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-[#00629b]/15 blur-3xl transition-all duration-500 group-hover:bg-[#00b5e2]/25"
-                    />
-
-                    <div>
-                      <div className="flex items-center justify-between">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-[#00b5e2] transition-colors duration-200 group-hover:border-cyan-400/40 group-hover:text-cyan-300">
-                          <CommitteeIcon slug={committee.slug} icon={remoteIcons[committee.slug]} className="h-6 w-6" />
-                        </div>
-                        <span className="rounded-full border border-[#00b5e2]/30 bg-[#00629b]/20 px-3 py-1 text-[11px] font-medium tracking-wide text-cyan-300">
-                          {committee.categoryLabel}
-                        </span>
-                      </div>
-
-                      <h3 className="mt-5 text-2xl font-bold tracking-tight text-[#F0F4F8] md:text-3xl">
-                        {committee.name}
-                      </h3>
-                      <p className="mt-3 text-sm leading-relaxed text-[#9BA9B4] md:text-base">
-                        {committee.shortDescription}
-                      </p>
-
-                      {committee.techTags && committee.techTags.length > 0 && (
-                        <div className="mt-6 flex flex-wrap gap-2">
-                          {committee.techTags.map(tag => (
-                            <span
-                              key={tag}
-                              className="rounded-md border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium text-cyan-200"
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="mt-8 flex items-center justify-between border-t border-white/5 pt-4">
-                      <Link
-                        href={`/committees/${committee.slug}`}
-                        aria-label={`Learn more about ${committee.name}`}
-                        className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#00b5e2] transition-colors duration-200 hover:text-cyan-300 focus:outline-none focus:ring-2 focus:ring-[#00b5e2]"
-                      >
-                        <span>Learn more</span>
-                        <span aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-1">→</span>
-                      </Link>
-                      <span className="text-xs text-[#9BA9B4]/60">Primary Track</span>
-                    </div>
-                  </article>
-                )
-              }
-
+        <div
+          ref={panelRef}
+          id={`committee-panel-${activeCategory}`}
+          role="tabpanel"
+          aria-labelledby={`committee-tab-${activeCategory}`}
+          className="mt-10 grid gap-8 lg:grid-cols-12 lg:items-start"
+        >
+          {/* Compact selector directory */}
+          <ul className="flex flex-wrap gap-2 sm:grid sm:grid-cols-2 sm:gap-2.5 lg:col-span-7">
+            {currentList.map((committee) => {
+              const isSelected = selectedCommittee?.slug === committee.slug
               return (
-                <Link
-                  key={committee.slug}
-                  href={`/committees/${committee.slug}`}
-                  aria-label={`View ${committee.name} committee`}
-                  className="group relative flex flex-col justify-between rounded-2xl border border-white/10 bg-[#0b1324] p-5 transition-all duration-300 hover:-translate-y-1 hover:border-cyan-400/40 hover:shadow-[0_0_24px_-4px_rgba(0,181,226,0.25)] focus:outline-none focus:ring-2 focus:ring-[#00b5e2] md:p-6"
-                >
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-[#00b5e2] transition-colors duration-200 group-hover:border-cyan-400/40 group-hover:text-cyan-300">
-                        <CommitteeIcon slug={committee.slug} icon={remoteIcons[committee.slug]} className="h-5 w-5" />
-                      </div>
-                      <span className="text-[11px] font-medium text-[#9BA9B4]/70">
-                        {committee.category === 'technical' ? 'Technical' : 'Non-Technical'}
+                <li key={committee.slug} data-committee="item" className="max-w-full">
+                  <button
+                    type="button"
+                    aria-pressed={isSelected}
+                    onClick={() => setSelectedSlug(committee.slug)}
+                    className={`flex min-h-11 w-full cursor-pointer items-center justify-between gap-3 rounded-lg border px-3.5 py-2.5 text-left transition-[border-color] duration-150 sm:px-4 ${
+                      isSelected
+                        ? 'border-primary bg-surface-container-lowest text-on-surface'
+                        : 'border-outline-variant/50 bg-surface-container-low text-on-surface-variant hover:border-primary/50 hover:bg-surface-container-lowest hover:text-on-surface'
+                    }`}
+                  >
+                    <span className="flex min-w-0 items-center gap-3">
+                      <span
+                        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md transition-colors ${
+                          isSelected
+                            ? 'bg-primary/15 text-primary'
+                            : 'bg-surface-container text-on-surface-variant'
+                        }`}
+                      >
+                        <CommitteeIcon
+                          slug={committee.slug}
+                          icon={committee.icon}
+                          className="h-4 w-4"
+                        />
                       </span>
-                    </div>
-
-                    <h3 className="mt-4 text-lg font-bold tracking-tight text-[#F0F4F8] transition-colors duration-200 group-hover:text-white">
-                      {committee.name}
-                    </h3>
-                    <p className="mt-2 line-clamp-3 text-xs leading-relaxed text-[#9BA9B4]">
-                      {committee.shortDescription}
-                    </p>
-                  </div>
-
-                  <div className="mt-5 flex items-center justify-between border-t border-white/5 pt-3">
-                    <span className="text-xs font-semibold text-[#00b5e2] transition-colors duration-200 group-hover:text-cyan-300">
-                      View committee
+                      <span className="truncate text-sm font-bold text-on-surface">
+                        {committee.name}
+                      </span>
                     </span>
-                    <span aria-hidden="true" className="text-xs text-[#00b5e2] transition-transform duration-200 group-hover:translate-x-1">
-                      →
-                    </span>
-                  </div>
-                </Link>
+                    <ChevronRight
+                      className={`hidden h-4 w-4 shrink-0 transition-transform sm:block ${
+                        isSelected
+                          ? 'translate-x-0.5 text-primary'
+                          : 'text-on-surface-variant/50'
+                      }`}
+                      aria-hidden="true"
+                    />
+                  </button>
+                </li>
               )
             })}
-          </div>
-        )}
+          </ul>
 
-        {/* Directory Footer CTA */}
-        <div className="mt-14 text-center">
+          {/* Contextual committee spotlight */}
+          {selectedCommittee && (
+            <aside
+              data-committee="spotlight"
+              aria-live="polite"
+              className="relative overflow-hidden rounded-xl border border-outline-variant/60 bg-surface-container-lowest p-6 sm:p-8 lg:sticky lg:top-24 lg:col-span-5"
+            >
+              <span
+                aria-hidden="true"
+                className="wedge-notch pointer-events-none absolute right-0 top-0 h-5 w-5 bg-primary"
+              />
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl border border-outline-variant/40 bg-surface-container-low p-3 sm:h-24 sm:w-24">
+                  <CommitteeVisual
+                    slug={selectedCommittee.slug}
+                    icon={selectedCommittee.icon}
+                    className="h-full w-full"
+                  />
+                </div>
+                <span className="inline-flex items-center rounded-sm bg-primary-fixed px-2.5 py-1 text-xs font-bold text-on-primary-fixed">
+                  {selectedCommittee.categoryLabel || activeMeta.shortLabel}
+                </span>
+              </div>
+
+              <h3 className="mt-6 text-2xl font-black tracking-tight text-on-surface">
+                {selectedCommittee.name}
+              </h3>
+              <p className="mt-3 text-base leading-relaxed text-on-surface-variant">
+                {selectedCommittee.shortDescription}
+              </p>
+
+              <div className="mt-7 border-t border-outline-variant/40 pt-5">
+                <Link
+                  href={`/committees/${selectedCommittee.slug}`}
+                  className="btn btn-primary btn-wedge inline-flex items-center gap-2"
+                >
+                  <span>View {selectedCommittee.name}</span>
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Link>
+              </div>
+            </aside>
+          )}
+        </div>
+
+        <div className="mt-10 border-t border-outline-variant/40 pt-6">
           <Link
             href="/committees"
-            className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-6 py-3 text-xs font-bold uppercase tracking-widest text-[#F0F4F8] transition-all duration-300 hover:border-[#00b5e2]/40 hover:bg-white/10 hover:text-white"
+            className="group inline-flex min-h-11 items-center gap-2 text-sm font-bold text-primary transition-colors hover:text-[var(--primary-strong)]"
           >
-            <span>Explore All {COMMITTEES_DATA.length} Detailed Committee Records</span>
-            <span aria-hidden="true">→</span>
+            <span>Explore all {committeesList.length} committees</span>
+            <ArrowRight
+              className="h-4 w-4 transition-transform duration-150 group-hover:translate-x-1 motion-reduce:transform-none"
+              aria-hidden="true"
+            />
           </Link>
         </div>
       </div>

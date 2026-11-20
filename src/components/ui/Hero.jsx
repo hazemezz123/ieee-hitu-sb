@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { committees } from "@/features/committees/data/committees";
 import LogoMark from "@/components/ui/LogoMark";
 
 function ConstellationCanvas() {
@@ -73,7 +72,6 @@ function ConstellationCanvas() {
     const render = () => {
       ctx.clearRect(0, 0, width, height);
 
-      // Draw particles
       for (let i = 0; i < count; i++) {
         const p = particles[i];
         if (!reducedMotion) {
@@ -91,7 +89,6 @@ function ConstellationCanvas() {
         ctx.fill();
       }
 
-      // Draw node links
       const maxDist = 110;
       for (let i = 0; i < count; i++) {
         for (let j = i + 1; j < count; j++) {
@@ -113,7 +110,6 @@ function ConstellationCanvas() {
         }
       }
 
-      // Draw interactive mouse links
       if (mouse.x !== null && mouse.y !== null) {
         const mouseMaxDist = 140;
         for (let i = 0; i < count; i++) {
@@ -158,7 +154,7 @@ function ConstellationCanvas() {
   );
 }
 
-export default function Hero() {
+export default function Hero({ recruitmentOpen = true }) {
   const scopeRef = useRef(null);
 
   useEffect(() => {
@@ -174,7 +170,10 @@ export default function Hero() {
       const paths = [diamondPath, archPath].filter(Boolean);
       if (paths.length > 0) {
         paths.forEach((path) => {
-          const length = typeof path.getTotalLength === "function" ? path.getTotalLength() : 4000;
+          const length =
+            typeof path.getTotalLength === "function"
+              ? path.getTotalLength()
+              : 4000;
           gsap.set(path, {
             strokeDasharray: length,
             strokeDashoffset: length,
@@ -186,7 +185,7 @@ export default function Hero() {
       }
 
       const tl = gsap.timeline({
-        defaults: { duration: 0.7, ease: "power2.out" },
+        defaults: { duration: 0.55, ease: "power2.out" },
       });
 
       if (paths.length > 0) {
@@ -194,64 +193,49 @@ export default function Hero() {
           paths,
           {
             strokeDashoffset: 0,
-            duration: 1.2,
+            duration: 0.95,
             ease: "power2.out",
-            stagger: 0.15,
+            stagger: 0.12,
           },
           0,
         )
-        .to(
-          paths,
-          {
-            fillOpacity: 1,
-            duration: 0.5,
-            ease: "power1.inOut",
-          },
-          "-=0.3",
-        )
-        .to(
-          paths,
-          {
-            strokeWidth: 0.25,
-            duration: 0.3,
-            ease: "power1.out",
-            clearProps: "stroke,strokeWidth,strokeDasharray,strokeDashoffset,fillOpacity",
-          },
-          "-=0.2",
-        );
+          .to(
+            paths,
+            {
+              fillOpacity: 1,
+              duration: 0.4,
+              ease: "power1.inOut",
+            },
+            0.55,
+          )
+          .to(
+            paths,
+            {
+              strokeWidth: 0.25,
+              duration: 0.25,
+              ease: "power1.out",
+              clearProps:
+                "stroke,strokeWidth,strokeDasharray,strokeDashoffset,fillOpacity",
+            },
+            0.75,
+          );
       }
 
-      tl.from('[data-hero="slogan"]', { opacity: 0, y: 24 }, "-=0.1")
-        .from('[data-hero="copy"]', { opacity: 0, y: 24 }, "-=0.4")
-        .from(
-          '[data-hero="stat"]',
-          { opacity: 0, y: 16, stagger: 0.08 },
-          "-=0.4",
-        )
+      tl.from('[data-hero="headline"]', { opacity: 0, y: 18 }, 0.35)
+        .from('[data-hero="slogan"]', { opacity: 0, y: 18 }, 0.45)
+        .from('[data-hero="copy"]', { opacity: 0, y: 16 }, 0.55)
         .from(
           '[data-hero="ctas"] > *',
-          { opacity: 0, y: 16, stagger: 0.08 },
-          "-=0.4",
+          { opacity: 0, y: 14, stagger: 0.08 },
+          0.65,
         );
-      scope.querySelectorAll('[data-hero="count"]').forEach((el) => {
-        const target = Number(el.dataset.countTarget || 0);
-        const obj = { value: 0 };
-        gsap.to(obj, {
-          value: target,
-          duration: 1.1,
-          ease: "power2.out",
-          delay: 0.5,
-          onUpdate: () => {
-            el.textContent = `+${Math.round(obj.value)}`;
-          },
-        });
-      });
+
       const mm = gsap.matchMedia();
       mm.add(
         "(min-width: 768px) and (prefers-reduced-motion: no-preference)",
         () => {
           gsap.to('[data-hero="bg"]', {
-            yPercent: 12,
+            yPercent: 10,
             ease: "none",
             scrollTrigger: {
               trigger: scope,
@@ -263,16 +247,25 @@ export default function Hero() {
         },
       );
     }, scope);
+
     return () => {
       ctx.revert();
     };
   }, []);
 
+  const primaryAction = recruitmentOpen
+    ? { label: "Join the Branch", href: "/join-us" }
+    : { label: "Explore Committees", href: "/committees" };
+
+  const secondaryAction = recruitmentOpen
+    ? { label: "Explore Committees", href: "/committees" }
+    : { label: "View Events", href: "/events" };
+
   return (
     <section
       ref={scopeRef}
       aria-labelledby="home-title"
-      className="relative grid min-h-[100svh] items-center overflow-hidden bg-[#070d18] pt-[var(--navbar-height)]"
+      className="relative grid min-h-[92svh] items-center overflow-hidden bg-[#070d18] pt-[var(--navbar-height)] md:min-h-[100svh]"
     >
       <div
         data-hero="bg"
@@ -290,70 +283,56 @@ export default function Hero() {
       </div>
       <div
         data-hero="content"
-        className="container relative z-10 mx-auto flex max-w-4xl flex-col items-center px-6 py-8 text-center md:px-12 md:py-10"
+        className="mx-auto flex w-full max-w-4xl flex-col items-center px-5 py-12 text-center sm:px-8 md:py-16 relative z-10"
       >
         <LogoMark
           data-hero="logo"
           variant="white"
-          className="w-full max-w-[9rem] md:max-w-[11rem]"
+          className="w-full max-w-[7.5rem] md:max-w-[9.5rem]"
         />
-        <h1 id="home-title" className="sr-only">
+        <h1
+          id="home-title"
+          data-hero="headline"
+          className="mt-6 text-balance text-3xl font-black leading-[1.08] tracking-tight text-[#F0F4F8] sm:text-5xl md:text-[3.25rem]"
+        >
           IEEE HITU Student Branch
         </h1>
-        <p
-          data-hero="copy"
-          className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-[#9BA9B4] md:text-lg"
-        >
-          The IEEE student branch at Helwan International Technological
-          University — hands-on workshops, technical committees, and a community
-          that learns and builds together.
-        </p>
         <img
           data-hero="slogan"
           src="/logos/slogan/ieeehitu-slogan-white.svg"
-          alt="IEEE HITU Student Branch slogan"
+          alt="Beyond Labels. Beyond Limits."
+          width={1189}
+          height={115}
           fetchPriority="high"
           decoding="async"
           onError={(e) => {
             e.currentTarget.style.display = "none";
           }}
-          style={{
-            filter:
-              "drop-shadow(0 0 10px rgba(255, 255, 255, 0.45)) drop-shadow(0 0 28px rgba(255, 255, 255, 0.22))",
-          }}
-          className="mx-auto mt-4 h-auto w-full max-w-xs object-contain"
+          className="mx-auto mt-4 h-auto w-full max-w-[16rem] object-contain sm:max-w-xs"
         />
-        <dl className="mt-5 flex flex-wrap justify-center gap-x-8 gap-y-4">
-          <div className="flex flex-col" data-hero="stat">
-            <dt className="order-2 mt-1 text-sm text-[#9BA9B4]">Committees</dt>
-            <dd
-              className="order-1 text-3xl font-black leading-none text-[#F0F4F8]"
-              data-hero="count"
-              data-count-target={committees.length}
-            >
-              +{committees.length}
-            </dd>
-          </div>
-          <div className="flex flex-col" data-hero="stat">
-            <dt className="order-2 mt-1 text-sm text-[#9BA9B4]">Members</dt>
-            <dd
-              className="order-1 text-3xl font-black leading-none text-[#F0F4F8]"
-              data-hero="count"
-              data-count-target={180}
-            >
-              +180
-            </dd>
-          </div>
-        </dl>
+        <p
+          data-hero="copy"
+          className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-[#B6C4D1] sm:text-lg"
+        >
+          A student-led community at Helwan International Technological
+          University where technology, ambition, and collaboration come
+          together.
+        </p>
         <div
           data-hero="ctas"
-          className="mt-5 flex flex-wrap justify-center gap-3"
+          className="mt-8 flex flex-wrap items-center justify-center gap-3.5"
         >
-          <Link className="btn btn-primary" href="/events">
-            View events
+          <Link
+            className="btn btn-primary btn-wedge"
+            href={primaryAction.href}
+          >
+            {primaryAction.label}
           </Link>
-          <Link className="btn btn-secondary" href="/join-us">
-            Join the branch
+          <Link
+            className="btn border border-white/30 bg-white/[0.06] text-[#F0F4F8] hover:border-white/60 hover:bg-white/[0.12]"
+            href={secondaryAction.href}
+          >
+            {secondaryAction.label}
           </Link>
         </div>
       </div>

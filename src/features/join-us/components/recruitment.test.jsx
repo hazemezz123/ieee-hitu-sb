@@ -1,4 +1,4 @@
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import Home from '@/features/home/components/HomePage'
 import AboutPage from '@/features/about/components/AboutPage'
@@ -69,23 +69,23 @@ describe('recruitment pages', () => {
     const { container } = renderPage(<Home />)
 
     expect(screen.getByRole('heading', { level: 1, name: 'IEEE HITU Student Branch' })).toBeTruthy()
-    expect(screen.getByRole('link', { name: /view events/i }).getAttribute('href')).toBe('/events')
+    expect(screen.getByAltText('Beyond Labels. Beyond Limits.')).toBeTruthy()
     expect(screen.getByRole('link', { name: /join the branch/i }).getAttribute('href')).toBe('/join-us')
+    expect(screen.getAllByRole('link', { name: /explore committees/i }).some(l => l.getAttribute('href') === '/committees')).toBe(true)
     expect(screen.getByRole('img', { name: /ieee hitu student branch logo/i })).toBeTruthy()
     expect(container.querySelector('main')).toBeNull()
-    expect(screen.queryByText('Beyond Labels. Beyond Limits.')).toBeNull()
     expect(screen.queryByText(/learn, grow, connect/i)).toBeNull()
   })
 
-  it('orders featured, next, and recent records', async () => {
+  it('orders upcoming events cleanly on home with featured and secondary items', async () => {
     renderPage(<Home />)
 
     await screen.findByText('Next Lab')
-    expect(screen.getByRole('heading', { level: 2, name: 'Featured next event' })).toBeTruthy()
+    expect(screen.getByRole('heading', { level: 2, name: /learning beyond the classroom\./i })).toBeTruthy()
+    expect(screen.getByText('Upcoming Event')).toBeTruthy()
     expect(screen.getByRole('heading', { level: 3, name: 'Next Lab' })).toBeTruthy()
-    expect(screen.getByRole('heading', { level: 3, name: 'Later Lab' })).toBeTruthy()
-    const recent = screen.getByRole('heading', { level: 2, name: 'Recent events' }).parentElement.textContent
-    expect(recent.indexOf('Recent Workshop')).toBeLessThan(recent.indexOf('Older Workshop'))
+    expect(screen.getByRole('heading', { level: 4, name: 'Later Lab' })).toBeTruthy()
+    expect(screen.queryByRole('heading', { level: 2, name: 'Recent events' })).toBeNull()
   })
 
   it('shows the featured event image clearly on the home page', async () => {
@@ -97,8 +97,8 @@ describe('recruitment pages', () => {
 
     const featured = await screen.findByRole('img', { name: 'Later Lab' })
     expect(featured.getAttribute('src')).toBe('/later-card.jpg')
-    expect(featured.closest('article').className).toContain('grid')
-    expect(screen.getByRole('link', { name: 'Read Later Lab event record' }).getAttribute('href')).toBe('/events/later')
+    expect(featured.closest('article').querySelector('.grid')).toBeTruthy()
+    expect(screen.getByRole('link', { name: /view event details/i }).getAttribute('href')).toBe('/events/later')
   })
 
   it('renders community partners from the source in the partnerships grid', async () => {
@@ -124,48 +124,53 @@ describe('recruitment pages', () => {
     expect(lightImg.className).not.toMatch(/invert|grayscale|brightness-0|hue-rotate/)
   })
 
-  it('orders Home bands as identity, partners, featured, next, and recent', async () => {
+  it('orders Home bands with events before gallery and partners below gallery', async () => {
     renderPage(<Home />)
 
     await screen.findByText('Next Lab')
     const nodes = [
       screen.getByRole('heading', { level: 1 }),
+      screen.getByRole('heading', { name: /learning beyond the classroom\./i }),
+      screen.getByRole('heading', { name: /moments that inspire/i }),
       screen.getByRole('heading', { name: 'Partners we build with' }),
-      screen.getByRole('heading', { name: 'Featured next event' }),
-      screen.getByRole('heading', { name: 'Next events' }),
-      screen.getByRole('heading', { name: 'Recent events' }),
     ]
     nodes.slice(1).forEach((node, index) => {
       expect(nodes[index].compareDocumentPosition(node) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
     })
   })
 
-  it('shows the recruitment band after the hero when open', async () => {
+  it('shows Join the Branch and Explore Committees in the recruitment band when open', async () => {
     fetchRecruitmentForm.mockResolvedValue({ slug: 'heads', title: 'Heads', description: 'Lead description', isOpen: true })
     renderPage(<Home />)
 
-    const cta = await screen.findByRole('link', { name: /start your application/i })
-    expect(cta.getAttribute('href')).toBe('/join-us')
+    expect(await screen.findByText('Recruitment open')).toBeTruthy()
     const h1 = screen.getByRole('heading', { level: 1 })
-    const band = screen.getByRole('heading', { name: /join an ieee hitu committee/i })
+    const band = screen.getByRole('heading', { name: /your future starts beyond the classroom\./i })
     expect(h1.compareDocumentPosition(band) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    const section = band.closest('section')
+    expect(screen.getAllByRole('link', { name: /join the branch/i }).every(l => l.getAttribute('href') === '/join-us')).toBe(true)
+    expect(within(section).getByRole('link', { name: /explore committees/i }).getAttribute('href')).toBe('/committees')
   })
 
-  it('hides the recruitment band when closed', async () => {
+  it('shows closed recruitment status and alternative committee/event paths when closed', async () => {
     fetchRecruitmentForm.mockResolvedValue({ slug: 'heads', title: 'Heads', isOpen: false })
     renderPage(<Home />)
 
-    await screen.findByText('Next Lab')
-    expect(screen.queryByRole('heading', { name: /join an ieee hitu committee/i })).toBeNull()
+    expect(await screen.findByText('Recruitment currently closed')).toBeTruthy()
+    const band = screen.getByRole('heading', { name: /your future starts beyond the classroom\./i })
+    const section = band.closest('section')
+    expect(screen.queryByRole('link', { name: /join the branch/i })).toBeNull()
+    expect(within(section).getByRole('link', { name: /explore committees/i }).getAttribute('href')).toBe('/committees')
+    expect(within(section).getByRole('link', { name: /view events/i }).getAttribute('href')).toBe('/events')
   })
 
-  it('falls back to a band description covering director and instructor', async () => {
-    fetchRecruitmentForm.mockResolvedValue({ slug: 'heads', title: 'Heads', description: '', isOpen: true })
+  it('omits marketing descriptions and announcement channels in the minimal recruitment CTA', async () => {
+    fetchRecruitmentForm.mockResolvedValue({ slug: 'heads', title: 'Heads', description: 'Lead description', isOpen: true })
     renderPage(<Home />)
 
-    expect(
-      await screen.findByText(/Apply as a Member, Head, Vice-Head, Manager, Director, or Instructor\./)
-    ).toBeTruthy()
+    expect(await screen.findByText('Recruitment open')).toBeTruthy()
+    expect(screen.queryByText('Lead description')).toBeNull()
+    expect(screen.queryByText(/Announcement channels/i)).toBeNull()
   })
 
   it('renders duplicate slugs only once across Home event records', async () => {
@@ -183,7 +188,7 @@ describe('recruitment pages', () => {
     fetchEventsResult.mockResolvedValue({ events: events.slice(0, 2), source: 'fallback' })
     renderPage(<Home />)
 
-    expect(await screen.findByText(/showing the static event archive/i)).toBeTruthy()
+    expect(await screen.findByText(/showing saved branch event records/i)).toBeTruthy()
     expect(screen.getByText('Later Lab')).toBeTruthy()
   })
 
@@ -191,9 +196,9 @@ describe('recruitment pages', () => {
     fetchEventsResult.mockResolvedValue({ events: [], source: 'remote' })
     renderPage(<Home />)
 
-    expect(await screen.findByText(/no events are available/i)).toBeTruthy()
-    expect(screen.queryByRole('heading', { name: /next events/i })).toBeNull()
-    expect(screen.queryByRole('heading', { name: /recent events/i })).toBeNull()
+    expect(await screen.findByText(/no published events yet/i)).toBeTruthy()
+    expect(screen.queryByText('Upcoming Event')).toBeNull()
+    expect(screen.queryByText('Recent Highlight')).toBeNull()
   })
 
   it('reports unavailable dates without calling a non-empty archive empty', async () => {
@@ -203,8 +208,8 @@ describe('recruitment pages', () => {
     })
     renderPage(<Home />)
 
-    expect(await screen.findByText('Event dates are not available yet.')).toBeTruthy()
-    expect(screen.queryByText(/no events are available/i)).toBeNull()
+    expect(await screen.findByText('Event schedule dates are not available yet.')).toBeTruthy()
+    expect(screen.queryByText(/no published events yet/i)).toBeNull()
   })
 
   it('links valid event records but leaves slugless event titles as plain text', async () => {
@@ -215,24 +220,24 @@ describe('recruitment pages', () => {
     renderPage(<Home />)
 
     await screen.findByText('Slugless Event')
-    expect(screen.getByRole('link', { name: 'Read Next Lab event record' }).getAttribute('href')).toBe('/events/next')
+    expect(screen.getByRole('link', { name: /view event details/i }).getAttribute('href')).toBe('/events/next')
     expect(screen.queryByRole('link', { name: /slugless event/i })).toBeNull()
-    expect(screen.getByRole('heading', { level: 3, name: 'Slugless Event' })).toBeTruthy()
+    expect(screen.getByRole('heading', { level: 4, name: 'Slugless Event' })).toBeTruthy()
   })
 
-  it('omits the Next events section when only the featured upcoming event exists', async () => {
+  it('omits secondary event rows when only one upcoming event exists', async () => {
     fetchEventsResult.mockResolvedValue({ events: [events[2]], source: 'remote' })
     renderPage(<Home />)
 
     expect(await screen.findByRole('heading', { level: 3, name: 'Next Lab' })).toBeTruthy()
-    expect(screen.queryByRole('heading', { name: 'Next events' })).toBeNull()
+    expect(screen.queryByRole('heading', { name: 'More Upcoming Events' })).toBeNull()
   })
 
   it('shows a pending event state without briefly reporting zero', () => {
     fetchEventsResult.mockReturnValue(new Promise(() => {}))
     renderPage(<Home />)
 
-    expect(screen.getAllByRole('status').some(el => el.textContent.includes('Loading event records'))).toBe(true)
+    expect(screen.getAllByRole('status').some(el => el.textContent.includes('Loading events and activities'))).toBe(true)
     expect(screen.queryByLabelText('0 events')).toBeNull()
   })
 
@@ -241,8 +246,8 @@ describe('recruitment pages', () => {
     renderPage(<Home />)
 
     expect(await screen.findByRole('alert')).toBeTruthy()
-    expect(screen.getByText(/event data could not be loaded/i)).toBeTruthy()
-    expect(screen.queryByText(/static event archive/i)).toBeNull()
+    expect(screen.getByText(/events could not be loaded right now/i)).toBeTruthy()
+    expect(screen.queryByText(/saved branch event records/i)).toBeNull()
     expect(screen.queryByLabelText('0 events')).toBeNull()
   })
 
@@ -266,6 +271,28 @@ describe('recruitment pages', () => {
     // Prominent entry point to the Founders Team view stays available
     const foundersLink = screen.getByRole('link', { name: /founders team|meet our founders/i })
     expect(foundersLink.getAttribute('href')).toBe('/about/founders')
+  })
+
+  it('preserves the Local Student Branch vs. Global IEEE Membership explanation and external IEEE links on About', () => {
+    renderPage(<AboutPage />)
+
+    expect(screen.getByRole('heading', { name: 'Local Student Branch vs. Global IEEE Membership' })).toBeTruthy()
+    expect(
+      screen.getByText(/Joining an IEEE HITU Student Branch committee connects you with local campus tracks/i),
+    ).toBeTruthy()
+
+    const expectedLinks = [
+      [/^ieee\.org$/i, 'https://www.ieee.org/'],
+      [/^official ieee membership$/i, 'https://www.ieee.org/membership.html'],
+      [/^ieee xplore$/i, 'https://ieeexplore.ieee.org/'],
+    ]
+
+    for (const [name, href] of expectedLinks) {
+      const link = screen.getByRole('link', { name })
+      expect(link.getAttribute('href')).toBe(href)
+      expect(link.getAttribute('target')).toBe('_blank')
+      expect(link.getAttribute('rel')).toContain('noopener')
+    }
   })
 
   it('renders the founders view with a heading, honest empty state, and navigation', async () => {

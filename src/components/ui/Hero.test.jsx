@@ -1,7 +1,6 @@
 import { cleanup, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import Hero from './Hero'
-import { committees } from '@/features/committees/data/committees'
 
 vi.mock('next/link', () => ({
   default: ({ href, children, ...rest }) => <a href={href} {...rest}>{children}</a>,
@@ -10,7 +9,7 @@ vi.mock('next/link', () => ({
 afterEach(() => { cleanup() })
 
 describe('Hero', () => {
-  it('uses the colored logo treatment and keeps CTA destinations', () => {
+  it('renders a visible semantic H1, branch logo, and open-recruitment CTAs by default', () => {
     render(<Hero />)
 
     const logo = screen.getByRole('img', { name: /ieee hitu student branch logo/i })
@@ -18,51 +17,44 @@ describe('Hero', () => {
     expect(logo.querySelector('[data-logo="diamond"]')).toBeTruthy()
     expect(logo.querySelector('[data-logo="arch"]')).toBeTruthy()
 
-    expect(screen.getByRole('link', { name: /view events/i }).getAttribute('href')).toBe('/events')
+    const heading = screen.getByRole('heading', { level: 1, name: /ieee hitu student branch/i })
+    expect(heading.classList.contains('sr-only')).toBe(false)
+
     expect(screen.getByRole('link', { name: /join the branch/i }).getAttribute('href')).toBe('/join-us')
+    expect(screen.getByRole('link', { name: /explore committees/i }).getAttribute('href')).toBe('/committees')
   })
 
-  it('centers the hero content with a screen-reader-only heading', () => {
+  it('adapts CTAs cleanly when recruitment is closed', () => {
+    render(<Hero recruitmentOpen={false} />)
+
+    expect(screen.queryByRole('link', { name: /join the branch/i })).toBeNull()
+    expect(screen.getByRole('link', { name: /explore committees/i }).getAttribute('href')).toBe('/committees')
+    expect(screen.getByRole('link', { name: /view events/i }).getAttribute('href')).toBe('/events')
+  })
+
+  it('centers the hero content and moves detailed statistics out of the hero', () => {
     const { container } = render(<Hero />)
 
     const section = container.querySelector('section')
-    expect(section.className).toContain('min-h-[100svh]')
+    expect(section.className).toContain('min-h-')
+    expect(section.querySelector('dl')).toBeNull()
 
     const hero = section.querySelector('[data-hero="content"]')
     expect(hero.classList.contains('text-center')).toBe(true)
     expect(hero.classList.contains('items-center')).toBe(true)
-
-    // The visible title lives in the logo artwork; the h1 stays for assistive tech.
-    const heading = screen.getByRole('heading', { name: /ieee hitu student branch/i })
-    expect(heading.classList.contains('sr-only')).toBe(true)
+    expect(screen.getByText(/Helwan International Technological University/i)).toBeTruthy()
   })
 
-  it('shows committee and member statistics above the CTAs', () => {
+  it('renders the white slogan artwork cleanly without CSS filter inversions or heavy glow', () => {
     render(<Hero />)
 
-    expect(screen.getByText(`+${committees.length}`)).toBeTruthy()
-    expect(screen.getByText('Committees')).toBeTruthy()
-    expect(screen.getByText('+180')).toBeTruthy()
-    expect(screen.getByText('Members')).toBeTruthy()
-
-    const stats = screen.getByText(`+${committees.length}`).closest('dl')
-    const ctas = screen.getByRole('link', { name: /view events/i }).closest('div')
-    expect(stats.compareDocumentPosition(ctas) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
-  })
-
-  it('shows the white slogan artwork with a soft white glow', () => {
-    render(<Hero />)
-
-    const slogan = screen.getByAltText(/slogan/i)
+    const slogan = screen.getByAltText(/beyond labels\. beyond limits\./i)
     expect(slogan.getAttribute('src')).toBe('/logos/slogan/ieeehitu-slogan-white.svg')
-    const style = slogan.getAttribute('style') || ''
-    expect(style).toContain('drop-shadow')
-    expect(style).toContain('255, 255, 255')
+    expect(slogan.getAttribute('style')).toBeNull()
     expect(slogan.classList.contains('object-contain')).toBe(true)
     expect(slogan.classList.contains('h-auto')).toBe(true)
     expect(slogan.classList.contains('brightness-0')).toBe(false)
     expect(slogan.classList.contains('invert')).toBe(false)
-    // Transparent PNG: no white badge wrapper around the artwork.
     expect(slogan.closest('.bg-white')).toBeNull()
   })
 
@@ -80,18 +72,18 @@ describe('Hero', () => {
     const { container } = render(<Hero />)
     const section = container.querySelector('section')
     expect(section.querySelector('[data-hero="logo"]')).toBeTruthy()
+    expect(section.querySelector('[data-hero="headline"]')).toBeTruthy()
     expect(section.querySelector('[data-hero="slogan"]')).toBeTruthy()
     expect(section.querySelector('[data-hero="copy"]')).toBeTruthy()
-    expect(section.querySelectorAll('[data-hero="stat"]').length).toBe(2)
     expect(section.querySelector('[data-hero="ctas"]')).toBeTruthy()
-    // Content visible pre-animation: no opacity-0 utility on hooks
+
     for (const el of section.querySelectorAll('[data-hero]')) {
       const cls = typeof el.className === 'string' ? el.className : (el.getAttribute('class') || '')
       expect(cls).not.toMatch(/opacity-0/)
     }
   })
 
-  it('renders modern IEEE navy background, radial glow, canvas and z-index layers', () => {
+  it('renders modern IEEE navy background, radial accent, canvas and z-index layers', () => {
     const { container } = render(<Hero />)
     const section = container.querySelector('section')
     expect(section.className).toContain('bg-[#070d18]')

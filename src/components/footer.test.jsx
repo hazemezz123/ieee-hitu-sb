@@ -2,11 +2,16 @@ import { describe, it, expect, afterEach, vi } from 'vitest'
 import { render, screen, fireEvent, cleanup } from '@testing-library/react'
 import Footer from './footer'
 
+const nav = vi.hoisted(() => ({ pathname: '/about' }))
+vi.mock('next/navigation', () => ({
+  usePathname: () => nav.pathname,
+}))
 vi.mock('next/link', () => ({
   default: ({ href, children, ...rest }) => <a href={href} {...rest}>{children}</a>,
 }))
 
 afterEach(() => {
+  nav.pathname = '/about'
   cleanup()
   vi.restoreAllMocks()
 })
@@ -20,6 +25,15 @@ describe('Footer', () => {
 
     const cta = screen.getByRole('link', { name: 'Join IEEE' })
     expect(cta.getAttribute('href')).toBe('/join-us')
+  })
+
+  it('omits the compact CTA on the landing page because RecruitmentBand concludes the page', () => {
+    nav.pathname = '/'
+    render(<Footer />)
+
+    expect(screen.queryByRole('heading', { name: 'Build. Connect. Innovate.' })).toBeNull()
+    expect(screen.queryByRole('link', { name: 'Join IEEE' })).toBeNull()
+    expect(screen.getByText('IEEE HITU Student Branch')).toBeTruthy()
   })
 
   it('uses dual light and dark official brand logos without CSS filters', () => {

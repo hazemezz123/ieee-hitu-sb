@@ -27,7 +27,7 @@ export const metadata = {
   keywords: [
     'IEEE',
     'IEEE HITU',
-    'Heliopolis International Technological University',
+    'Helwan International Technological University',
     'student branch',
     'engineering',
     'workshops',
@@ -95,8 +95,14 @@ export default function RootLayout({ children }) {
         </Script>
         <ThemeProvider>
           <LenisProvider>
+            <a
+              href="#main-content"
+              className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-sm focus:bg-primary focus:px-4 focus:py-2.5 focus:text-sm focus:font-bold focus:text-on-primary"
+            >
+              Skip to main content
+            </a>
             <Navbar />
-            <main>{children}</main>
+            <main id="main-content">{children}</main>
             <Footer />
           </LenisProvider>
         </ThemeProvider>

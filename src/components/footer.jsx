@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { ArrowRight, ArrowUp } from 'lucide-react'
 import BrandLogo from '@/components/ui/BrandLogo'
 
@@ -60,6 +61,8 @@ const FOOTER_LINK_CLASSES =
   'inline-flex min-h-8 items-center text-sm text-on-surface-variant transition-colors duration-150 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary'
 
 export default function Footer() {
+  const pathname = usePathname()
+  const showCompactCta = pathname !== '/'
   const year = new Date().getFullYear()
 
   function scrollToTop() {
@@ -88,27 +91,29 @@ export default function Footer() {
       />
 
       <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
-        {/* 1. Compact Call-to-Action Area */}
-        <div className="flex flex-col gap-4 border-b border-outline-variant/60 py-7 sm:flex-row sm:items-center sm:justify-between md:py-9">
-          <div>
-            <h2 className="text-xl font-bold tracking-tight text-on-surface sm:text-2xl">
-              Build. Connect. Innovate.
-            </h2>
-            <p className="mt-1 text-sm text-on-surface-variant">
-              Be part of the next generation of engineers.
-            </p>
+        {/* 1. Compact Call-to-Action Area (shown on inner pages; Home has its own full-width RecruitmentBand) */}
+        {showCompactCta && (
+          <div className="flex flex-col gap-4 border-b border-outline-variant/60 py-7 sm:flex-row sm:items-center sm:justify-between md:py-9">
+            <div>
+              <h2 className="text-xl font-bold tracking-tight text-on-surface sm:text-2xl">
+                Build. Connect. Innovate.
+              </h2>
+              <p className="mt-1 text-sm text-on-surface-variant">
+                Be part of the next generation of engineers.
+              </p>
+            </div>
+            <Link
+              href="/join-us"
+              className="btn btn-primary group inline-flex shrink-0 items-center gap-2 self-start sm:self-auto"
+            >
+              <span>Join IEEE</span>
+              <ArrowRight
+                className="h-4 w-4 transition-transform duration-150 group-hover:translate-x-1 motion-reduce:transform-none"
+                aria-hidden="true"
+              />
+            </Link>
           </div>
-          <Link
-            href="/join-us"
-            className="btn btn-primary group inline-flex shrink-0 items-center gap-2 self-start sm:self-auto"
-          >
-            <span>Join IEEE</span>
-            <ArrowRight
-              className="h-4 w-4 transition-transform duration-150 group-hover:translate-x-1 motion-reduce:transform-none"
-              aria-hidden="true"
-            />
-          </Link>
-        </div>
+        )}
 
         {/* 2. Main Footer Content */}
         <div className="grid gap-8 py-8 md:grid-cols-[1.2fr_1fr] md:gap-10 md:py-11 lg:grid-cols-[1.45fr_1fr] lg:gap-12">

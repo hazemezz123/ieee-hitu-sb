@@ -5,6 +5,9 @@ export const galleryPhotos = [
   {
     id: 'techne-1',
     src: cloudinary('v1792177495', 'jwreo5k3fipyev2wfhqx'),
+    fallbackSrc: '/gallery/techne1.webp',
+    width: 1200,
+    height: 1600,
     alt: 'IEEE HITU at Techne Summit',
     title: 'Techne Summit',
     caption: 'Branch representation and technology exhibition at Techne Summit.',
@@ -12,6 +15,9 @@ export const galleryPhotos = [
   {
     id: 'techne-2',
     src: cloudinary('v1792177496', 'xajhkvbvcfrqtfe6ydam'),
+    fallbackSrc: '/gallery/techne2.webp',
+    width: 1600,
+    height: 1200,
     alt: 'Techne Summit technical discussion',
     title: 'Techne Summit Discussions',
     caption: 'Connecting with technology leaders and industry innovators.',
@@ -19,6 +25,9 @@ export const galleryPhotos = [
   {
     id: 'techne-3',
     src: cloudinary('v1792177497', 'kczcm4ohsjoxfhrrggwn'),
+    fallbackSrc: '/gallery/techne3.webp',
+    width: 1200,
+    height: 1600,
     alt: 'Techne Summit booth and demos',
     title: 'Techne Summit Booth',
     caption: 'Demonstrating student projects and engineering initiatives.',
@@ -26,6 +35,9 @@ export const galleryPhotos = [
   {
     id: 'techne-4',
     src: cloudinary('v1792177498', 'uqwowlpmvv3pxwm0a9nc'),
+    fallbackSrc: '/gallery/techne4.webp',
+    width: 1280,
+    height: 720,
     alt: 'Techne Summit branch team',
     title: 'Techne Summit Delegation',
     caption: 'IEEE HITU Student Branch delegation celebrating summit success.',
@@ -33,6 +45,9 @@ export const galleryPhotos = [
   {
     id: 'event-1',
     src: cloudinary('v1792177499', 'f15dknjdvkcddoelxh5c'),
+    fallbackSrc: '/gallery/Event1.webp',
+    width: 1254,
+    height: 1254,
     alt: 'Branch technical workshop session',
     title: 'Hands-on Technical Workshop',
     caption: 'Engaging workshops empowering members with practical engineering skills.',
@@ -40,6 +55,9 @@ export const galleryPhotos = [
   {
     id: 'cg-1',
     src: cloudinary('v1792177500', 'ors6vlxeeo0yj9hyit3y'),
+    fallbackSrc: '/gallery/Consulting-Group1.webp',
+    width: 960,
+    height: 1280,
     alt: 'Consulting Group collaborative session',
     title: 'Consulting Group Kickoff',
     caption: 'Interactive problem solving and strategy formulation.',
@@ -47,6 +65,9 @@ export const galleryPhotos = [
   {
     id: 'cg-2',
     src: cloudinary('v1792177501', 'ubotvam5efptood4td8h'),
+    fallbackSrc: '/gallery/Consulting-Group2.webp',
+    width: 960,
+    height: 1280,
     alt: 'Consulting Group presentations',
     title: 'Consulting Group Presentations',
     caption: 'Teams pitching innovative solutions and technical frameworks.',
@@ -54,6 +75,9 @@ export const galleryPhotos = [
   {
     id: 'cg-3',
     src: cloudinary('v1792177501', 'lgb4o7zb3rexawjcl1ky'),
+    fallbackSrc: '/gallery/Consulting-Group3.webp',
+    width: 960,
+    height: 1280,
     alt: 'Consulting Group breakout discussions',
     title: 'Breakout Ideation',
     caption: 'Deep-dive collaborative sessions tackling engineering challenges.',
@@ -61,6 +85,9 @@ export const galleryPhotos = [
   {
     id: 'cg-4',
     src: cloudinary('v1792177503', 'c8rv53hmgwu9f2nylmys'),
+    fallbackSrc: '/gallery/Consulting-Group4.webp',
+    width: 2818,
+    height: 1472,
     alt: 'Consulting Group concluding session',
     title: 'Consulting Group Completion',
     caption: 'Celebrating participant achievements and certificates.',

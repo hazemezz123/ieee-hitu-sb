@@ -1,5 +1,6 @@
 import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest'
 import { render, screen, fireEvent, cleanup } from '@testing-library/react'
+import gsap from 'gsap'
 import PartnershipCarousel from './PartnershipCarousel'
 
 const { fetchPartnersResult } = vi.hoisted(() => ({
@@ -108,6 +109,74 @@ describe('PartnershipCarousel (Borderless Partner Marquee)', () => {
 
     expect(screen.getByLabelText('Broken Logo Co').querySelector('img')).toBeNull()
     expect(screen.getByLabelText('Broken Logo Co').textContent).toContain('Broken Logo Co')
+  })
+
+  it('smoothly decelerates and resumes marquee velocity via GSAP timeScale on hover and focus', async () => {
+    const originalMatchMedia = window.matchMedia
+    Object.defineProperty(window, 'matchMedia', {
+      configurable: true,
+      writable: true,
+      value: vi.fn(() => ({ matches: false })),
+    })
+
+    const fakeTween = { timeScale: 1, kill: vi.fn() }
+    const toSpy = vi.spyOn(gsap, 'to').mockImplementation((target, vars) => {
+      if (target === fakeTween && typeof vars?.timeScale === 'number') {
+        target.timeScale = vars.timeScale
+      }
+      return fakeTween
+    })
+    const killSpy = vi.spyOn(gsap, 'killTweensOf').mockImplementation(() => {})
+
+    try {
+      fetchPartnersResult.mockResolvedValue({
+        partners: [{ _id: 1, name: 'Risk Solutions', logo: '/logos/partners/risk-solutions.svg' }],
+        source: 'remote',
+      })
+
+      render(<PartnershipCarousel />)
+      const region = await screen.findByRole('region', { name: 'Partner logos showcase' })
+
+      fireEvent.mouseEnter(region)
+      expect(killSpy).toHaveBeenCalledWith(fakeTween)
+      expect(toSpy).toHaveBeenCalledWith(
+        fakeTween,
+        expect.objectContaining({ timeScale: 0, duration: 0.55, ease: 'power2.out' }),
+      )
+
+      fireEvent.mouseLeave(region)
+      expect(toSpy).toHaveBeenCalledWith(
+        fakeTween,
+        expect.objectContaining({ timeScale: 1, duration: 0.65, ease: 'power2.inOut' }),
+      )
+
+      fireEvent.focus(region)
+      expect(toSpy).toHaveBeenLastCalledWith(
+        fakeTween,
+        expect.objectContaining({ timeScale: 0 }),
+      )
+    } finally {
+      Object.defineProperty(window, 'matchMedia', {
+        configurable: true,
+        writable: true,
+        value: originalMatchMedia,
+      })
+    }
+  })
+
+  it('toggles manual pause and resume state with the accessible button', async () => {
+    fetchPartnersResult.mockResolvedValue({
+      partners: [{ _id: 1, name: 'Risk Solutions', logo: '/logos/partners/risk-solutions.svg' }],
+      source: 'remote',
+    })
+    render(<PartnershipCarousel />)
+
+    const pauseBtn = await screen.findByRole('button', { name: /pause partner logos scrolling/i })
+    expect(pauseBtn.getAttribute('aria-pressed')).toBe('false')
+    fireEvent.click(pauseBtn)
+
+    const resumeBtn = screen.getByRole('button', { name: /resume partner logos scrolling/i })
+    expect(resumeBtn.getAttribute('aria-pressed')).toBe('true')
   })
 
   it('renders nothing when there are no partners', async () => {

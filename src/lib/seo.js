@@ -39,10 +39,10 @@ export const siteConfig = {
   siteUrl: resolveDefaultSiteUrl(),
   name: 'IEEE HITU Student Branch',
   shortName: 'IEEE HITU',
-  defaultTitle: 'IEEE HITU Student Branch | Heliopolis International Technological University',
+  defaultTitle: 'IEEE HITU Student Branch | Helwan International Technological University',
   titleTemplate: '%s | IEEE HITU',
   description:
-    'The official IEEE student branch at Heliopolis International Technological University — workshops, technical committees, events, and community.',
+    'The official IEEE student branch at Helwan International Technological University — workshops, technical committees, events, and community.',
   locale: 'en_US',
   ogImage: '/og-cover.png',
 }

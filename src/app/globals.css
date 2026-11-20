@@ -783,19 +783,311 @@ a {
   display: flex;
   width: max-content;
   will-change: transform;
-  animation: partners-marquee 38s linear infinite;
 }
-.partners-marquee-viewport:hover .partners-marquee-track,
-.partners-marquee-viewport:focus-visible .partners-marquee-track,
-.partners-marquee-viewport:focus-within .partners-marquee-track {
+
+.gallery-marquee-viewport {
+  position: relative;
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 4%,
+    black 94%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 4%,
+    black 94%,
+    transparent
+  );
+}
+.gallery-marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.faq-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 220ms var(--ease-out-cubic),
+    opacity 200ms ease;
+}
+.faq-panel[data-open="true"] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+.faq-panel-inner {
+  overflow: hidden;
+}
+
+/* Mission & Vision living engineering blueprint background & ambient motion */
+.mv-blueprint-section {
+  --mv-bg: #edf2f6;
+  --mv-grid-minor: rgba(0, 98, 155, 0.055);
+  --mv-grid-major: rgba(0, 71, 111, 0.095);
+  --mv-line-soft: rgba(0, 71, 111, 0.14);
+  --mv-line-accent: rgba(0, 98, 155, 0.24);
+  --mv-node: rgba(0, 98, 155, 0.45);
+  --mv-signal: #00629b;
+  --mv-depth-a: rgba(0, 98, 155, 0.06);
+  --mv-depth-b: rgba(57, 115, 142, 0.05);
+  background-color: var(--mv-bg);
+}
+[data-theme="dark"] .mv-blueprint-section {
+  --mv-bg: #101b2d;
+  --mv-grid-minor: rgba(106, 174, 214, 0.055);
+  --mv-grid-major: rgba(106, 174, 214, 0.105);
+  --mv-line-soft: rgba(106, 174, 214, 0.16);
+  --mv-line-accent: rgba(143, 202, 232, 0.28);
+  --mv-node: rgba(143, 202, 232, 0.55);
+  --mv-signal: #8fcae8;
+  --mv-depth-a: rgba(0, 114, 206, 0.12);
+  --mv-depth-b: rgba(106, 174, 214, 0.08);
+}
+
+.mv-grid-layer {
+  background-image:
+    linear-gradient(to right, var(--mv-grid-minor) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--mv-grid-minor) 1px, transparent 1px),
+    linear-gradient(to right, var(--mv-grid-major) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--mv-grid-major) 1px, transparent 1px);
+  background-size:
+    32px 32px,
+    32px 32px,
+    128px 128px,
+    128px 128px;
+  mask-image: radial-gradient(ellipse 92% 88% at 50% 50%, black 48%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 92% 88% at 50% 50%, black 48%, transparent 100%);
+  animation: mv-grid-drift 38s linear infinite;
+  will-change: transform;
+}
+
+.mv-rotate-cw {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mv-rotate-cw 96s linear infinite;
+}
+
+.mv-rotate-ccw {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mv-rotate-ccw 74s linear infinite;
+}
+
+.mv-node-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mv-node-pulse 9s ease-in-out infinite;
+}
+
+.mv-schematic-breathe {
+  animation: mv-schematic-breathe 16s ease-in-out infinite;
+}
+
+.mv-signal {
+  stroke-dasharray: 14 120;
+  stroke-dashoffset: 14;
+  opacity: 0;
+  animation: mv-signal-travel 9.5s linear infinite;
+}
+
+.mv-blueprint-section[data-mv-inview="false"] .mv-ambient {
   animation-play-state: paused;
 }
-@keyframes partners-marquee {
+
+@keyframes mv-grid-drift {
   from {
     transform: translate3d(0, 0, 0);
   }
   to {
-    transform: translate3d(-50%, 0, 0);
+    transform: translate3d(32px, 32px, 0);
+  }
+}
+
+@keyframes mv-rotate-cw {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes mv-rotate-ccw {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes mv-node-pulse {
+  0%,
+  100% {
+    opacity: 0.32;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.14);
+  }
+}
+
+@keyframes mv-schematic-breathe {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+@keyframes mv-signal-travel {
+  0% {
+    stroke-dashoffset: 14;
+    opacity: 0;
+  }
+  5% {
+    opacity: 0.9;
+  }
+  26% {
+    stroke-dashoffset: -102;
+    opacity: 0.9;
+  }
+  31%,
+  100% {
+    stroke-dashoffset: -114;
+    opacity: 0;
+  }
+}
+
+/* Why Join IEEE HITU feature accent lines & tailored icon micro-interactions */
+.why-accent-base {
+  transition: background-color 260ms ease;
+}
+
+.why-accent-bar {
+  transform: scaleX(0.14);
+  opacity: 0.55;
+  transition:
+    transform 380ms var(--ease-out-expo),
+    opacity 260ms ease;
+}
+
+.why-feature-title {
+  transition: color 240ms ease;
+}
+
+.why-icon {
+  transition:
+    color 240ms ease,
+    transform 280ms var(--ease-out-cubic);
+}
+
+.why-icon--cpu rect:last-of-type {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.why-icon--code path {
+  transition: transform 300ms var(--ease-out-cubic);
+}
+
+.why-icon--network rect {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 280ms var(--ease-out-cubic);
+}
+
+.why-icon--compass path {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 380ms var(--ease-out-cubic);
+}
+
+.why-icon--layers path {
+  transition: transform 300ms var(--ease-out-cubic);
+}
+
+.why-icon--users path,
+.why-icon--users circle {
+  transition: transform 300ms var(--ease-out-cubic);
+}
+
+@keyframes why-cpu-pulse {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.22);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (hover: hover) {
+  .why-feature:hover .why-accent-base {
+    background-color: var(--color-outline-variant);
+  }
+  .why-feature:hover .why-accent-bar {
+    opacity: 1;
+  }
+  .why-feature:hover .why-feature-title {
+    color: var(--primary-strong);
+  }
+  .why-feature:hover .why-icon {
+    color: var(--primary-strong);
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .why-feature:hover .why-accent-bar {
+    transform: scaleX(1);
+  }
+  .why-feature:hover .why-icon--cpu {
+    transform: scale(1.04);
+  }
+  .why-feature:hover .why-icon--cpu rect:last-of-type {
+    animation: why-cpu-pulse 450ms var(--ease-out-cubic) 1;
+  }
+  .why-feature:hover .why-icon--code path:first-of-type {
+    transform: translateX(1.5px);
+  }
+  .why-feature:hover .why-icon--code path:last-of-type {
+    transform: translateX(-1.5px);
+  }
+  .why-feature:hover .why-icon--network rect:nth-of-type(3) {
+    transform: scale(1.16);
+    transition-delay: 0ms;
+  }
+  .why-feature:hover .why-icon--network rect:nth-of-type(2) {
+    transform: scale(1.16);
+    transition-delay: 60ms;
+  }
+  .why-feature:hover .why-icon--network rect:nth-of-type(1) {
+    transform: scale(1.16);
+    transition-delay: 120ms;
+  }
+  .why-feature:hover .why-icon--compass path {
+    transform: rotate(24deg);
+  }
+  .why-feature:hover .why-icon--layers path:nth-of-type(1) {
+    transform: translateY(-1.75px);
+  }
+  .why-feature:hover .why-icon--layers path:nth-of-type(3) {
+    transform: translateY(1.75px);
+  }
+  .why-feature:hover .why-icon--users circle,
+  .why-feature:hover .why-icon--users path:nth-of-type(1) {
+    transform: translateY(-1.5px);
+    transition-delay: 0ms;
+  }
+  .why-feature:hover .why-icon--users path:nth-of-type(2),
+  .why-feature:hover .why-icon--users path:nth-of-type(3) {
+    transform: translateY(-1.5px);
+    transition-delay: 55ms;
   }
 }
 
@@ -854,6 +1146,30 @@ a {
   }
   .partners-marquee-clone {
     display: none;
+  }
+  .gallery-marquee-viewport {
+    mask-image: none;
+    -webkit-mask-image: none;
+    overflow-x: auto;
+  }
+  .gallery-marquee-track {
+    width: max-content;
+    animation: none;
+    transform: none;
+  }
+  .gallery-marquee-clone {
+    display: none;
+  }
+  .mv-ambient {
+    animation: none !important;
+  }
+  .mv-signal {
+    display: none;
+  }
+  .why-icon,
+  .why-icon * {
+    animation: none !important;
+    transform: none !important;
   }
 }
 

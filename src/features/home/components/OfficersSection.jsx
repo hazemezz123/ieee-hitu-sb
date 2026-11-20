@@ -1,7 +1,8 @@
 'use client'
 
 import { useCallback, useState } from 'react'
-import { Mail } from 'lucide-react'
+import Link from 'next/link'
+import { ArrowRight, Mail } from 'lucide-react'
 import Reveal from '@/components/ui/Reveal'
 import { initialsOf } from '@/features/about/components/MemberCard'
 import { officers } from '../data/officers'
@@ -71,27 +72,27 @@ const SOCIAL_ORDER = ['linkedin', 'github', 'twitter', 'instagram', 'facebook', 
 // Icon links for the socials object; renders nothing when no URL is set.
 export function SocialLinks({ name, socials, size = 'sm', align = 'justify-start', className = '' }) {
   const links = SOCIAL_ORDER
-    .map(key => ({ key, href: socials?.[key] }))
+    .map((key) => ({ key, href: socials?.[key] }))
     .filter(({ href }) => typeof href === 'string' && href.trim() !== '')
 
   if (links.length === 0) return null
 
-  const buttonSize = size === 'lg' ? 'h-9 w-9' : 'h-8 w-8'
   const iconSize = size === 'lg' ? 'h-5 w-5' : 'h-4 w-4'
 
   return (
-    <div className={`${className} ${align} flex flex-wrap items-center gap-1 opacity-90 transition-opacity duration-300 group-hover:opacity-100`}>
+    <div
+      className={`${className} ${align} -ml-2 flex flex-wrap items-center gap-0.5 opacity-90 transition-opacity duration-300 group-hover:opacity-100`}
+    >
       {links.map(({ key, href }) => {
         const Icon = SOCIAL_ICONS[key]
         const isMail = href.startsWith('mailto:')
-        // Bare glyph (no chip background or border); hover is a simple color shift.
         return (
           <a
             key={key}
             href={href}
             aria-label={`${SOCIAL_LABELS[key]} - ${name}`}
             {...(isMail ? {} : { target: '_blank', rel: 'noopener noreferrer' })}
-            className={`inline-flex ${buttonSize} items-center justify-center rounded-full text-primary transition-colors duration-200 hover:text-[var(--primary-strong)] focus-visible:ring-2 focus-visible:ring-primary`}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full text-primary transition-colors duration-200 hover:bg-surface-container hover:text-[var(--primary-strong)] focus-visible:ring-2 focus-visible:ring-primary"
           >
             <Icon aria-hidden="true" className={iconSize} />
           </a>
@@ -102,16 +103,11 @@ export function SocialLinks({ name, socials, size = 'sm', align = 'justify-start
 }
 
 // Portrait + initials fallback + broken-image handling, shared by every officer card.
-// `framed` adds the 45° IEEE corner cut; skip it when the portrait does not sit
-// at a card corner, so the blue notch can anchor the card edge instead.
-// Pass `imgClassName` to normalize portraits inside a gradient frame.
 function OfficerPortrait({ officer, framed = true, imgClassName = '' }) {
   const [failed, setFailed] = useState(false)
   const showImg = Boolean(officer.img) && !failed
 
-  // A missing file 404s before hydration attaches onError, leaving the image
-  // already broken (complete=true, naturalWidth=0) when React attaches it.
-  const catchBrokenPortrait = useCallback(node => {
+  const catchBrokenPortrait = useCallback((node) => {
     if (node && node.complete && node.naturalWidth === 0) setFailed(true)
   }, [])
 
@@ -132,8 +128,12 @@ function OfficerPortrait({ officer, framed = true, imgClassName = '' }) {
       src={officer.img}
       alt={officer.alt}
       loading="lazy"
+      decoding="async"
       onError={() => setFailed(true)}
-      className={imgClassName || (framed ? 'wedge-frame h-full w-full object-cover' : 'h-full w-full object-cover')}
+      className={
+        imgClassName ||
+        (framed ? 'wedge-frame h-full w-full object-cover' : 'h-full w-full object-cover')
+      }
     />
   )
 }
@@ -145,12 +145,21 @@ function OfficerCard({ officer }) {
   return (
     <li data-reveal="officer" className="mx-auto w-full max-w-xs sm:max-w-none">
       <article className="card group h-full overflow-hidden">
-        <div data-portrait="frame" className="h-64 w-full overflow-hidden flex items-end justify-center pt-4">
-          <OfficerPortrait officer={officer} framed={false} imgClassName={`h-full w-auto object-contain object-bottom ${baseScale} ${origin} transition-transform duration-300 ${hoverScale}`} />
+        <div
+          data-portrait="frame"
+          className="flex h-64 w-full items-end justify-center overflow-hidden pt-4"
+        >
+          <OfficerPortrait
+            officer={officer}
+            framed={false}
+            imgClassName={`h-full w-auto object-contain object-bottom ${baseScale} ${origin} transition-transform duration-300 motion-reduce:transform-none ${hoverScale}`}
+          />
         </div>
         <div className="p-5 md:p-6">
           <h3 className="text-lg font-bold tracking-tight text-on-surface">{officer.name}</h3>
-          <p className="mt-1 text-xs font-bold uppercase tracking-widest text-primary">{officer.role}</p>
+          <p className="mt-1 text-xs font-bold uppercase tracking-widest text-primary">
+            {officer.role}
+          </p>
           <SocialLinks name={officer.name} socials={officer.socials} className="mt-3" />
         </div>
       </article>
@@ -169,7 +178,9 @@ export function ChairwomanCard({ officer }) {
           </div>
           <div className="flex flex-1 flex-col justify-center p-6 text-center md:max-w-md md:px-8 md:py-6 md:text-left">
             <h3 className="text-3xl font-bold tracking-tight text-on-surface">{officer.name}</h3>
-            <p className="mt-2 text-xs font-bold uppercase tracking-widest text-primary">{officer.role}</p>
+            <p className="mt-2 text-xs font-bold uppercase tracking-widest text-primary">
+              {officer.role}
+            </p>
             {officer.bio ? <p className="mt-4 text-on-surface-variant">{officer.bio}</p> : null}
             <SocialLinks
               name={officer.name}
@@ -181,7 +192,12 @@ export function ChairwomanCard({ officer }) {
           </div>
         </div>
         <span aria-hidden="true" className="wedge-notch absolute right-0 top-0 h-6 w-6 bg-primary" />
-        <span aria-hidden="true" className="pointer-events-none absolute -bottom-2 right-2 select-none text-8xl font-black tracking-tighter text-primary opacity-10">IEEE</span>
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute -bottom-2 right-2 select-none text-8xl font-black tracking-tighter text-primary opacity-10"
+        >
+          IEEE
+        </span>
       </article>
     </li>
   )
@@ -192,21 +208,45 @@ export default function OfficersSection() {
   const [chairwoman, ...rest] = officers
 
   return (
-    <section aria-labelledby="officers-heading" className="py-16 md:py-20">
-      <div className="container mx-auto max-w-6xl px-6 md:px-12">
+    <section
+      aria-labelledby="officers-heading"
+      className="border-t border-outline-variant/30 bg-surface-container-low py-16 md:py-24"
+    >
+      <div className="mx-auto w-full max-w-7xl px-5 sm:px-8">
         <Reveal>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <p className="section-label">Executive Officers</p>
-              <h2 id="officers-heading" className="mt-3 text-3xl font-bold text-on-surface">Meet the officers</h2>
+              <h2
+                id="officers-heading"
+                className="mt-2 text-balance text-3xl font-black tracking-tight text-on-surface md:text-4xl"
+              >
+                Meet the officers
+              </h2>
             </div>
-            <p className="max-w-sm text-on-surface-variant">The leadership team behind IEEE HITU Student Branch.</p>
+            <div className="flex flex-col items-start gap-2 sm:items-end">
+              <p className="max-w-sm text-sm text-on-surface-variant sm:text-right">
+                The leadership team behind IEEE HITU Student Branch.
+              </p>
+              <Link
+                href="/about"
+                className="group inline-flex min-h-10 items-center gap-1.5 text-sm font-bold text-primary transition-colors hover:text-[var(--primary-strong)]"
+              >
+                <span>View board &amp; founders</span>
+                <ArrowRight
+                  className="h-4 w-4 transition-transform duration-150 group-hover:translate-x-1 motion-reduce:transform-none"
+                  aria-hidden="true"
+                />
+              </Link>
+            </div>
           </div>
         </Reveal>
         <Reveal staggerChildren="[data-reveal='officer']">
           <ul className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 md:gap-8">
             <ChairwomanCard officer={chairwoman} />
-            {rest.map(officer => <OfficerCard key={officer.name} officer={officer} />)}
+            {rest.map((officer) => (
+              <OfficerCard key={officer.name} officer={officer} />
+            ))}
           </ul>
         </Reveal>
       </div>
