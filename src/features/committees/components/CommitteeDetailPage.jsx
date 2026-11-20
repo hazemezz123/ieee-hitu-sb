@@ -7,7 +7,7 @@ import AnimatedSection from '@/components/ui/AnimatedSection'
 import { findCommitteeLeaders } from '@/lib/presentation'
 import { fetchCommitteeDetailResult } from '@/features/committees/hooks/useCommittees'
 import Skeleton from '@/components/ui/Skeleton'
-import CommitteeIcon from '@/components/ui/CommitteeIcon'
+import CommitteeVisual from '@/components/ui/CommitteeVisual'
 
 export default function CommitteeDetailPage({ initialDetail, slug: propSlug }) {
   const params = useParams()
@@ -66,7 +66,12 @@ export default function CommitteeDetailPage({ initialDetail, slug: propSlug }) {
       <AnimatedSection trigger="load">
         <header className="container mx-auto max-w-6xl px-6 py-16 sm:px-8 md:px-12 md:py-24">
           <Link className="inline-flex min-h-11 items-center text-sm font-bold text-primary" href="/committees">All committees</Link>
-          <h1 className="mt-8 flex items-center gap-3 text-4xl font-black text-on-surface md:text-6xl"><CommitteeIcon slug={committee.slug} className="h-9 w-9 shrink-0 text-primary md:h-12 md:w-12" />{committee.name}</h1>
+          <div className="mt-8 flex flex-wrap items-center gap-5">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border border-outline-variant/50 bg-surface-container-low p-2.5 md:h-20 md:w-20">
+              <CommitteeVisual slug={committee.slug} icon={committee.icon} className="h-full w-full" />
+            </div>
+            <h1 className="text-4xl font-black text-on-surface md:text-6xl">{committee.name}</h1>
+          </div>
           <dl className="mt-8 flex flex-wrap gap-x-12 gap-y-4 text-sm">
             <div><dt className="text-on-surface-variant">Category</dt><dd className="mt-1 font-semibold text-on-surface">{committee.categoryLabel}</dd></div>
           </dl>

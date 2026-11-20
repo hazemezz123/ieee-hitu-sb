@@ -1,4 +1,8 @@
+'use client'
+
 import Link from 'next/link'
+import { ArrowRight, ArrowUp } from 'lucide-react'
+import BrandLogo from '@/components/ui/BrandLogo'
 
 // Brand glyphs are small inline SVGs (simple-icons path data, CC0) because
 // the installed lucide-react no longer ships brand icons.
@@ -26,57 +30,176 @@ function LinkedinIcon({ className }) {
   )
 }
 
-const socials = [
+const SOCIAL_LINKS = [
   { name: 'Facebook', href: 'https://www.facebook.com/ieeehitusb', Icon: FacebookIcon },
   { name: 'Instagram', href: 'https://www.instagram.com/ieee.hitu.sb/', Icon: InstagramIcon },
   { name: 'LinkedIn', href: 'https://www.linkedin.com/company/hitu-ieee-sb/posts/', Icon: LinkedinIcon },
 ]
 
-const links = [
-  { name: 'About', href: '/about' },
-  { name: 'Committees', href: '/committees' },
-  { name: 'Events', href: '/events' },
-  { name: 'Gallery', href: '/gallery' },
-  { name: 'Join Us', href: '/join-us' },
-  { name: 'Contact', href: '/contact' },
+const NAV_GROUPS = [
+  {
+    title: 'Explore',
+    links: [
+      { name: 'About Us', href: '/about' },
+      { name: 'Committees', href: '/committees' },
+      { name: 'Events', href: '/events' },
+      { name: 'Gallery', href: '/gallery' },
+    ],
+  },
+  {
+    title: 'Get Involved',
+    links: [
+      { name: 'Become a Member', href: '/join-us' },
+      { name: 'Partner With Us', href: '/contact' },
+      { name: 'Contact Us', href: '/contact' },
+    ],
+  },
 ]
 
+const FOOTER_LINK_CLASSES =
+  'inline-flex min-h-8 items-center text-sm text-on-surface-variant transition-colors duration-150 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary'
+
 export default function Footer() {
+  const year = new Date().getFullYear()
+
+  function scrollToTop() {
+    if (typeof window === 'undefined') return
+    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
+    window.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' })
+  }
+
   return (
-    <footer className="border-t border-outline-variant bg-inverse-surface text-white">
-      <div className="mx-auto grid max-w-7xl gap-10 px-6 py-12 sm:px-8 md:grid-cols-[1.4fr_1fr] md:py-16">
-        <div>
-          <img src="https://res.cloudinary.com/dweqigxnz/image/upload/f_auto,q_auto,w_400,c_limit/v1792178198/ieee-brand/hxgultwyrc7cq9ae9nny.png" alt="IEEE HITU Student Branch" className="mb-5 h-10 w-auto brightness-0 invert" />
-          <p className="max-w-xl text-sm leading-6 text-white/75">
-            The IEEE Student Branch at Helwan International Technological University, Cairo, Egypt.
-          </p>
-          <div className="mt-5 flex items-center gap-3">
-            {socials.map(({ name, href, Icon }) => (
-              <a
-                key={name}
-                href={href}
-                aria-label={name}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white/75 transition-colors hover:border-white/60 hover:text-white"
-              >
-                <Icon className="h-5 w-5" />
-              </a>
-            ))}
+    <footer className="relative overflow-hidden border-t border-outline-variant bg-surface-container-lowest text-on-surface">
+      {/* Subtle IEEE-blue top datum rule & faint masked engineering grid */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-primary/80"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 text-primary opacity-[0.045] dark:opacity-[0.06]"
+        style={{
+          backgroundImage:
+            'linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+          maskImage: 'radial-gradient(ellipse 85% 75% at 85% 15%, black 20%, transparent 80%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 85% 75% at 85% 15%, black 20%, transparent 80%)',
+        }}
+      />
+
+      <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
+        {/* 1. Compact Call-to-Action Area */}
+        <div className="flex flex-col gap-4 border-b border-outline-variant/60 py-7 sm:flex-row sm:items-center sm:justify-between md:py-9">
+          <div>
+            <h2 className="text-xl font-bold tracking-tight text-on-surface sm:text-2xl">
+              Build. Connect. Innovate.
+            </h2>
+            <p className="mt-1 text-sm text-on-surface-variant">
+              Be part of the next generation of engineers.
+            </p>
           </div>
+          <Link
+            href="/join-us"
+            className="btn btn-primary group inline-flex shrink-0 items-center gap-2 self-start sm:self-auto"
+          >
+            <span>Join IEEE</span>
+            <ArrowRight
+              className="h-4 w-4 transition-transform duration-150 group-hover:translate-x-1 motion-reduce:transform-none"
+              aria-hidden="true"
+            />
+          </Link>
         </div>
-        <nav aria-label="Footer navigation" className="grid grid-cols-2 gap-x-4 gap-y-2 sm:grid-cols-3 md:grid-cols-2">
-          {links.map(link => (
-            <Link key={link.name} href={link.href} className="text-sm text-white/75 underline-offset-4 hover:text-white hover:underline">
-              {link.name}
+
+        {/* 2. Main Footer Content */}
+        <div className="grid gap-8 py-8 md:grid-cols-[1.2fr_1fr] md:gap-10 md:py-11 lg:grid-cols-[1.45fr_1fr] lg:gap-12">
+          <div className="max-w-md">
+            <Link
+              href="/"
+              aria-label="IEEE HITU Student Branch home"
+              className="inline-flex items-center gap-3.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+            >
+              <BrandLogo
+                lightSrc="/logos/brand/ieee-hitu-color.svg"
+                darkSrc="/logos/brand/ieee-hitu-white.svg"
+                alt="IEEE HITU Student Branch"
+                size="footer"
+                surface="none"
+              />
+              <div>
+                <p className="text-base font-bold tracking-tight text-on-surface">
+                  IEEE HITU Student Branch
+                </p>
+                <p className="text-xs font-medium text-on-surface-variant">
+                  Cairo, Egypt
+                </p>
+              </div>
             </Link>
-          ))}
-        </nav>
-      </div>
-      <div className="border-t border-white/20">
-        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-6 py-5 text-xs text-white/65 sm:px-8 md:flex-row md:justify-between">
-          <p>&copy; 2026 IEEE HITU Student Branch</p>
-          <p>Helwan International Technological University</p>
+
+            <p className="mt-4 text-sm leading-relaxed text-on-surface-variant">
+              A student-led engineering community advancing hands-on workshops, technical innovation, and collaborative growth at HITU.
+            </p>
+
+            <div className="-ml-2.5 mt-4 flex items-center gap-1">
+              {SOCIAL_LINKS.map(social => (
+                <a
+                  key={social.name}
+                  href={social.href}
+                  aria-label={social.name}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-md text-on-surface-variant transition-colors duration-150 hover:bg-surface-container hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                >
+                  <social.Icon className="h-[18px] w-[18px]" />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <nav
+            aria-label="Footer navigation"
+            className="grid grid-cols-2 gap-8 sm:gap-10"
+          >
+            {NAV_GROUPS.map(group => (
+              <div key={group.title}>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-on-surface">
+                  {group.title}
+                </h3>
+                <ul className="mt-3 space-y-1.5">
+                  {group.links.map(link => (
+                    <li key={link.name}>
+                      <Link href={link.href} className={FOOTER_LINK_CLASSES}>
+                        {link.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </nav>
+        </div>
+
+        {/* 3. Bottom Utility Bar */}
+        <div className="flex flex-col gap-3 border-t border-outline-variant/60 py-5 text-xs text-on-surface-variant sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
+            <p>&copy; {year} IEEE HITU Student Branch</p>
+            <span aria-hidden="true" className="hidden text-outline-variant sm:inline">
+              &middot;
+            </span>
+            <p>Helwan International Technological University</p>
+          </div>
+
+          <button
+            type="button"
+            onClick={scrollToTop}
+            aria-label="Back to top"
+            className="group inline-flex min-h-8 cursor-pointer items-center gap-1.5 self-start font-semibold text-on-surface-variant transition-colors duration-150 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:self-auto"
+          >
+            <span>Back to top</span>
+            <ArrowUp
+              className="h-3.5 w-3.5 transition-transform duration-150 group-hover:-translate-y-0.5 motion-reduce:transform-none"
+              aria-hidden="true"
+            />
+          </button>
         </div>
       </div>
     </footer>

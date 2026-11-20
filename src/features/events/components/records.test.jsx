@@ -67,15 +67,15 @@ const renderGallery = () => render(<GalleryPage />)
 const rosterFixture = [
   { name: 'Sample AI Head', committee: 'AI', position: 'Head', email: 'ai@example.com', phone: '01000000001' },
   { name: 'Sample Automation Head', committee: 'Automation', position: 'Head' },
-  { name: 'Sample CS Vice Head', committee: 'CS', position: 'Vice Head' },
+  { name: 'Sample IoT Vice Head', committee: 'IoT', position: 'Vice Head' },
   { name: 'Sample Embedded Head', committee: 'Embedded', position: 'Head' },
   { name: 'Sample HR Head', committee: 'HR', position: 'Head' },
-  { name: 'Sample T&D Vice Head', committee: 'T&D', position: 'Vice Head' },
   { name: 'Sample Marketing Head', committee: 'Marketing', position: 'Head' },
-  { name: 'Sample Multi Media Head', committee: 'Multi Media', position: 'Head' },
-  { name: 'Sample PR Head', committee: 'PR', position: 'Head' },
-  { name: 'Sample Robotics Head', committee: 'Robotic', position: 'Head' },
+  { name: 'Sample Graphic Design Head', committee: 'Graphic Design', position: 'Head' },
+  { name: 'Sample Public Relations Head', committee: 'Public Relations & Fundraising', position: 'Head' },
+  { name: 'Sample SolidWorks Head', committee: 'SolidWorks', position: 'Head' },
   { name: 'Sample Web Manager', committee: 'Web', position: 'Technical Software Manager' },
+  { name: 'Sample CS Vice Head', committee: 'CS', position: 'Vice Head' },
   { name: 'Sample DS Member', committee: 'DS', position: '' },
 ]
 
@@ -104,7 +104,7 @@ beforeEach(() => {
 
 describe('committee records', () => {
   it('keeps only the repository-backed committee fields', () => {
-    expect(committees).toHaveLength(12)
+    expect(committees).toHaveLength(19)
     for (const committee of committees) {
       expect(Object.keys(committee).sort()).toEqual([
         'category',
@@ -117,26 +117,41 @@ describe('committee records', () => {
     }
   })
 
-  it('renders every committee as a record grouped by category', async () => {
+  it('renders every committee card in a filterable two-column grid', async () => {
     const { container } = renderRoute('/committees')
 
-    await screen.findByRole('heading', { level: 1, name: 'Committee directory' })
-    expect(screen.getByLabelText('12 committee records')).toBeTruthy()
-    const technical = screen.getByRole('heading', { level: 2, name: 'Technical committees' }).parentElement
-    const nonTechnical = screen.getByRole('heading', { level: 2, name: 'Non-technical committees' }).parentElement
-    const lists = screen.getAllByRole('list')
+    await screen.findByRole('heading', { level: 1, name: 'Explore Our Committees' })
+    expect(screen.getByLabelText('19 committee records')).toBeTruthy()
+    expect(screen.getByText((_, node) => node.tagName === 'P' && node.textContent === '12 technical · 7 non-technical')).toBeTruthy()
+    expect(screen.getByRole('tab', { name: 'All (19)' }).getAttribute('aria-selected')).toBe('true')
+    const techTab = screen.getByRole('tab', { name: 'Technical (12)' })
+    const nonTechTab = screen.getByRole('tab', { name: 'Non-Technical (7)' })
 
-    expect(lists).toHaveLength(2)
-    expect(lists[0].tagName).toBe('UL')
-    expect(lists[1].tagName).toBe('UL')
+    const list = screen.getByRole('list')
+    expect(list.tagName).toBe('UL')
+    expect(list.className).toContain('md:grid-cols-2')
 
     committees.forEach(committee => {
       const link = screen.getByRole('link', { name: `View ${committee.name} committee record` })
       expect(link.getAttribute('href')).toBe(`/committees/${committee.slug}`)
       expect(link.classList.contains('min-h-11')).toBe(true)
       expect(link.classList.contains('items-center')).toBe(true)
-      expect((committee.category === 'technical' ? technical : nonTechnical).contains(link)).toBe(true)
+      expect(list.contains(link)).toBe(true)
     })
+
+    const joinLink = screen.getByRole('link', { name: /interested in joining us/i })
+    expect(joinLink.getAttribute('href')).toBe('/join-us')
+
+    fireEvent.click(techTab)
+    expect(techTab.getAttribute('aria-selected')).toBe('true')
+    expect(within(list).getAllByRole('listitem')).toHaveLength(12)
+    expect(screen.queryByRole('link', { name: 'View HR committee record' })).toBeNull()
+
+    fireEvent.click(nonTechTab)
+    expect(nonTechTab.getAttribute('aria-selected')).toBe('true')
+    expect(within(list).getAllByRole('listitem')).toHaveLength(7)
+    expect(screen.queryByRole('link', { name: 'View Automation committee record' })).toBeNull()
+
     expect(container.querySelector('main')).toBeNull()
     expect(container.querySelector('.card-hover')).toBeNull()
     expect(container.querySelector('.material-symbols-outlined')).toBeNull()
@@ -145,13 +160,13 @@ describe('committee records', () => {
   it('shows explicitly aliased leadership without managers or private contacts', async () => {
     renderRoute('/committees')
 
-    await screen.findByRole('heading', { level: 1, name: 'Committee directory' })
+    await screen.findByRole('heading', { level: 1, name: 'Explore Our Committees' })
     for (const name of [
       'Sample AI Head',
       'Sample Automation Head',
       'Sample HR Head',
-      'Sample T&D Vice Head',
-      'Sample Multi Media Head',
+      'Sample IoT Vice Head',
+      'Sample Graphic Design Head',
     ]) expect(screen.getByText(name)).toBeTruthy()
 
     expect(screen.queryByText('Sample Web Manager')).toBeNull()
@@ -193,9 +208,9 @@ describe('committee records', () => {
   })
 
   it('does not infer cyber leadership from CS or DS roster labels', async () => {
-    for (const slug of ['cyber-defensive', 'cyber-offensive']) {
+    for (const slug of ['cyber-security-defensive', 'cyber-security-offensive']) {
       const page = renderRoute(`/committees/${slug}`)
-      await screen.findByRole('heading', { level: 1, name: slug === 'cyber-defensive' ? 'Cyber Defensive' : 'Cyber Offensive' })
+      await screen.findByRole('heading', { level: 1, name: slug === 'cyber-security-defensive' ? 'Cyber Security (Defensive)' : 'Cyber Security (Offensive)' })
       expect(screen.queryByRole('heading', { name: 'Leadership' })).toBeNull()
       for (const member of rosterFixture.filter(item => ['CS', 'DS'].includes(item.committee))) {
         expect(screen.queryByText(member.name)).toBeNull()

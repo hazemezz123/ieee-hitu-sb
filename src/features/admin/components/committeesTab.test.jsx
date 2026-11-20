@@ -58,7 +58,7 @@ describe('committees tab', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Save Committee' }))
 
     expect(turso.createCommittee).toHaveBeenCalledWith({
-      name: 'AI & Robotics', slug: 'ai-robotics', category: 'technical', shortDescription: 'Builds robots.',
+      name: 'AI & Robotics', slug: 'ai-robotics', category: 'technical', shortDescription: 'Builds robots.', icon: '',
     })
     expect(await screen.findByText('1 committee')).toBeTruthy()
   })
@@ -121,5 +121,26 @@ describe('committees tab', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Delete' }))
     expect(screen.getByText(/members will also be deleted/i)).toBeTruthy()
+  })
+
+  it('allows overriding and resetting a committee custom icon', async () => {
+    const withIcon = { ...committee, icon: 'https://cdn/ai-custom.svg' }
+    turso.fetchCommittees.mockResolvedValueOnce([committee]).mockResolvedValueOnce([withIcon]).mockResolvedValueOnce([committee])
+    render(<CommitteesTab />)
+    await screen.findByText('AI')
+
+    fireEvent.click(screen.getByRole('button', { name: 'Edit' }))
+    expect(screen.getByText('Using built-in custom SVG icon')).toBeTruthy()
+    fireEvent.change(screen.getByPlaceholderText('Or paste an image URL'), { target: { value: 'https://cdn/ai-custom.svg' } })
+    expect(screen.getByText('Custom icon override active')).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: 'Save Committee' }))
+    expect(turso.updateCommittee).toHaveBeenCalledWith(2, expect.objectContaining({ icon: 'https://cdn/ai-custom.svg' }))
+
+    await screen.findByText('AI')
+    fireEvent.click(screen.getByRole('button', { name: 'Edit' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Reset to default icon' }))
+    expect(screen.getByText('Using built-in custom SVG icon')).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: 'Save Committee' }))
+    expect(turso.updateCommittee).toHaveBeenLastCalledWith(2, expect.objectContaining({ icon: '' }))
   })
 })

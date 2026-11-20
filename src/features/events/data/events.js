@@ -53,7 +53,7 @@ export const events = [
     gallery: [
       { src: 'https://res.cloudinary.com/dweqigxnz/image/upload/f_auto,q_auto,w_800/v1775792545/web-head_kd8plg.png', caption: 'Workshop instructor demonstrating HTML structure' },
     ],
-    organizerCommittee: 'Web',
+    organizerCommittee: 'Web Development',
   }),
   createEvent({
     title: 'IEEE Day Celebration 2025',
@@ -67,7 +67,7 @@ export const events = [
     gallery: [
       { src: 'https://res.cloudinary.com/dweqigxnz/image/upload/f_auto,q_auto,w_800/v1775792545/web-head_kd8plg.png', caption: 'IEEE Day group photo' },
     ],
-    organizerCommittee: 'PR & OC',
+    organizerCommittee: 'Logistics & Events',
   }),
   createEvent({
     title: 'AI Study Camp — Level 1',
@@ -80,7 +80,7 @@ export const events = [
     excerpt: 'A five-day intensive study camp covering Python, data analysis, and introductory machine learning.',
     description: 'An intensive five-day study camp designed to give members a strong foundation in AI. The program covers Python programming, data analysis with pandas, visualization with matplotlib, and an introduction to machine learning with scikit-learn.\n\nEach day combines morning theory sessions with afternoon hands-on labs. Members who complete all five days receive a branch certificate of completion.',
     gallery: [],
-    organizerCommittee: 'AI',
+    organizerCommittee: 'Artificial Intelligence',
   }),
 ];
 

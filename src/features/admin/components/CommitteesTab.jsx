@@ -17,8 +17,9 @@ import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import Skeleton from '@/components/ui/Skeleton'
 import PhotoInput from './PhotoInput'
 import Select from '@/components/ui/Select'
+import CommitteeIcon from '@/components/ui/CommitteeIcon'
 
-const emptyCommittee = { name: '', slug: '', category: 'technical', shortDescription: '' }
+const emptyCommittee = { name: '', slug: '', category: 'technical', shortDescription: '', icon: '' }
 const emptyMember = { name: '', position: '', email: '', phone: '', img: '' }
 
 export default function CommitteesTab() {
@@ -27,6 +28,7 @@ export default function CommitteesTab() {
   const [error, setError] = useState(null)
   const [selected, setSelected] = useState(null)
   const [committeeForm, setCommitteeForm] = useState(null)
+  const [iconFile, setIconFile] = useState(null)
   const [memberForm, setMemberForm] = useState(null)
   const [memberFile, setMemberFile] = useState(null)
   const [memberUrl, setMemberUrl] = useState('')
@@ -52,12 +54,15 @@ export default function CommitteesTab() {
     setError(null)
     setSaving(true)
     try {
+      const icon = iconFile ? await uploadToCloudinary(iconFile) : (committeeForm.icon || '').trim()
+      const payload = { ...committeeForm, icon }
       if (committeeForm._id) {
-        await updateCommittee(committeeForm._id, committeeForm)
+        await updateCommittee(committeeForm._id, payload)
       } else {
-        await createCommittee({ ...committeeForm, slug: committeeForm.slug || slugify(committeeForm.name) })
+        await createCommittee({ ...payload, slug: payload.slug || slugify(payload.name) })
       }
       setCommitteeForm(null)
+      setIconFile(null)
       await load()
     } catch (err) {
       setError(err.message)
@@ -157,7 +162,7 @@ export default function CommitteesTab() {
           <h2 className="text-2xl md:text-3xl font-black tracking-tight">
             {committeeForm._id ? 'Edit Committee' : 'New Committee'}
           </h2>
-          <button type="button" onClick={() => setCommitteeForm(null)} className="btn btn-ghost text-xs">Cancel</button>
+          <button type="button" onClick={() => { setCommitteeForm(null); setIconFile(null) }} className="btn btn-ghost text-xs">Cancel</button>
         </div>
         {error && <div className="mb-6 p-4 bg-error/10 border border-error/30 rounded-lg text-sm text-error">{error}</div>}
         <label className="form-label" htmlFor="committee-name">Name</label>
@@ -189,6 +194,33 @@ export default function CommitteesTab() {
           value={committeeForm.shortDescription}
           onChange={e => setCommitteeForm({ ...committeeForm, shortDescription: e.target.value })}
         />
+        <div className="mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <label className="form-label mb-0" htmlFor="committee-icon">Custom Icon (optional)</label>
+            {(committeeForm.icon || iconFile) && (
+              <button
+                type="button"
+                className="btn btn-ghost text-xs"
+                onClick={() => { setIconFile(null); setCommitteeForm({ ...committeeForm, icon: '' }) }}
+              >
+                Reset to default icon
+              </button>
+            )}
+          </div>
+          <div className="mb-3 flex items-center gap-3 rounded-lg border border-outline-variant/20 bg-surface-container-low p-3">
+            <CommitteeIcon slug={committeeForm.slug || slugify(committeeForm.name)} icon={committeeForm.icon} className="h-8 w-8 shrink-0 text-primary" />
+            <span className="text-xs text-on-surface-variant">
+              {iconFile ? `Selected file: ${iconFile.name}` : (committeeForm.icon ? 'Custom icon override active' : 'Using built-in custom SVG icon')}
+            </span>
+          </div>
+          <PhotoInput
+            id="committee-icon"
+            file={iconFile}
+            setFile={setIconFile}
+            url={committeeForm.icon || ''}
+            setUrl={icon => setCommitteeForm({ ...committeeForm, icon })}
+          />
+        </div>
         <button type="submit" className="btn btn-primary" disabled={saving}>
           {saving ? 'Saving...' : 'Save Committee'}
         </button>
@@ -206,7 +238,7 @@ export default function CommitteesTab() {
           </p>
         </div>
         <div className="flex gap-3">
-          <button onClick={() => setCommitteeForm({ ...emptyCommittee })} className="btn btn-primary text-xs">+ New Committee</button>
+          <button onClick={() => { setCommitteeForm({ ...emptyCommittee }); setIconFile(null) }} className="btn btn-primary text-xs">+ New Committee</button>
           <button onClick={load} className="btn btn-secondary text-xs" disabled={loading}>Refresh</button>
         </div>
       </div>
@@ -242,7 +274,12 @@ export default function CommitteesTab() {
           <tbody>
             {committees.map(committee => (
               <tr key={committee._id} className="border-b border-outline-variant/10 hover:bg-surface-container/50 transition-colors">
-                <td className="py-3 pr-4 font-medium">{committee.name}</td>
+                <td className="py-3 pr-4 font-medium">
+                  <span className="inline-flex items-center gap-2">
+                    <CommitteeIcon slug={committee.slug} icon={committee.icon} className="h-5 w-5 shrink-0 text-primary" />
+                    <span>{committee.name}</span>
+                  </span>
+                </td>
                 <td className="py-3 pr-4 text-on-surface-variant hidden sm:table-cell">{committee.categoryLabel}</td>
                 <td className="py-3 pr-4 text-on-surface-variant hidden md:table-cell">
                   {committee.memberCount} {committee.memberCount === 1 ? 'member' : 'members'}
@@ -250,7 +287,7 @@ export default function CommitteesTab() {
                 <td className="py-3">
                   <div className="flex gap-2">
                     <button onClick={() => openMembers(committee)} className="btn btn-ghost text-xs">Members</button>
-                    <button onClick={() => setCommitteeForm({ ...committee })} className="btn btn-ghost text-xs">Edit</button>
+                    <button onClick={() => { setCommitteeForm({ ...committee, icon: committee.icon || '' }); setIconFile(null) }} className="btn btn-ghost text-xs">Edit</button>
                     <button onClick={() => setDeleteTarget({ kind: 'committee', item: committee })} className="btn btn-ghost text-xs text-error">Delete</button>
                   </div>
                 </td>

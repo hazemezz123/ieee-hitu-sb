@@ -79,9 +79,9 @@ describe('committee source', () => {
 
   it('falls back to static detail on failure', async () => {
     turso.fetchCommitteeBySlug.mockRejectedValue(new Error('offline'))
-    const result = await fetchCommitteeDetailResult('web')
+    const result = await fetchCommitteeDetailResult('web-development')
     expect(result.source).toBe('fallback')
-    expect(result.committee).toEqual(structuredClone(staticCommittees.find(c => c.slug === 'web')))
+    expect(result.committee).toEqual(structuredClone(staticCommittees.find(c => c.slug === 'web-development')))
     expect(result.members).toEqual(structuredClone(staticBoardMembers))
 
     const missing = await fetchCommitteeDetailResult('ghost')

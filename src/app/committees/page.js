@@ -4,7 +4,7 @@ import { absoluteUrl } from '@/lib/seo'
 export const metadata = {
   title: 'Committees',
   description:
-    'Explore IEEE HITU technical and non-technical committees — AI, Web, Robotics, Embedded, Cyber, PR, Media, Marketing, HR and more.',
+    'Explore IEEE HITU’s 19 technical and non-technical committees — AI, Web, Mobile, Cyber Security, Embedded, IoT, HR, Marketing, Graphic Design, and more.',
   alternates: { canonical: absoluteUrl('/committees') },
 }
 

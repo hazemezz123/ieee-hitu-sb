@@ -101,29 +101,27 @@ describe('recruitment pages', () => {
     expect(screen.getByRole('link', { name: 'Read Later Lab event record' }).getAttribute('href')).toBe('/events/later')
   })
 
-  it('renders community partners from the source in the partnerships carousel', async () => {
+  it('renders community partners from the source in the partnerships grid', async () => {
     renderPage(<Home />)
 
-    expect(await screen.findAllByLabelText('Risk Solutions')).toHaveLength(2)
-    expect(screen.getAllByLabelText('IEEE HSB')).toHaveLength(2)
+    expect(await screen.findByLabelText('Risk Solutions')).toBeTruthy()
+    expect(screen.getByLabelText('IEEE HSB')).toBeTruthy()
     expect(screen.getByRole('heading', { name: 'Partners we build with' })).toBeTruthy()
   })
 
-  it('ensures light-colored logos have contrast in protective pills', async () => {
+  it('renders dedicated contrasting surfaces and authentic brand assets without CSS filters', async () => {
     fetchPartnersResult.mockResolvedValue({
-      partners: [{ name: 'White Logo Co', logo: 'https://cdn/white.png' }],
+      partners: [{ name: 'Make X', logo: '/logos/partners/make-x.svg', logoDark: true }],
       source: 'remote',
     })
     renderPage(<Home />)
 
-    const tiles = await screen.findAllByLabelText('White Logo Co')
-    expect(tiles).toHaveLength(2)
-    for (const tile of tiles) {
-      expect(tile.className).toContain('bg-slate-50/80')
-      const img = tile.querySelector('img')
-      expect(img.className).toContain('brightness-0')
-      expect(img.className).toContain('group-hover:brightness-100')
-    }
+    const tile = await screen.findByLabelText('Make X')
+    const img = tile.querySelector('img')
+    expect(img.getAttribute('src')).toBe('/logos/partners/make-x.svg')
+    expect(img.parentElement.getAttribute('data-logo-surface')).toBe('dark')
+    expect(img.parentElement.className).toContain('bg-[#101820]')
+    expect(img.className).not.toMatch(/invert|grayscale|brightness-0|hue-rotate/)
   })
 
   it('orders Home bands as identity, partners, featured, next, and recent', async () => {
@@ -252,7 +250,7 @@ describe('recruitment pages', () => {
     const { container } = renderPage(<AboutPage />)
 
     expect(screen.getByLabelText('more than 60 sessions')).toBeTruthy()
-    expect(screen.getByLabelText('5 community partnerships')).toBeTruthy()
+    expect(screen.getByLabelText(`${communityPartners.length} community partnerships`)).toBeTruthy()
     expect(screen.getByRole('heading', { level: 1, name: /about ieee hitu student branch/i })).toBeTruthy()
     expect(screen.queryByRole('heading', { name: /meet our board members/i })).toBeNull()
     expect(container.querySelector('main')).toBeNull()

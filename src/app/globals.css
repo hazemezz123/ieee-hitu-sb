@@ -654,8 +654,7 @@ a {
   color: var(--primary-strong);
 }
 
-/* Theme-aware navbar logo: full color in light mode, white in dark mode
-   (dark-mode tokens + the data-theme rule land with the dark-mode feature). */
+/* Navbar brand logo renders official light/dark SVG variants via BrandLogo without CSS filters. */
 .navbar-logo {
   display: block;
 }
@@ -861,9 +860,6 @@ a {
   color: #06283d;
 }
 
-/* Theme-aware navbar logo: full color in light mode, white in dark mode. */
-[data-theme="dark"] .navbar-logo {
-  filter: brightness(0) invert(1);
-}
+/* Theme-aware navbar logo switches via official SVG variants rather than CSS filters. */
 
 .reveal-will-change { will-change: transform, opacity; }

@@ -1,17 +1,25 @@
 import { slugify } from './slugify'
 
 const committeeAliases = {
-  ai: ['AI'],
-  automations: ['Automation'],
-  cs: ['CS'],
-  ds: ['DS'],
+  'artificial-intelligence': ['AI', 'Artificial Intelligence'],
+  automation: ['Automation', 'Automations'],
+  'content-creation': ['Content Creation'],
+  'cyber-security-defensive': ['Cyber Security (Defensive)', 'Cyber Defensive'],
+  'cyber-security-offensive': ['Cyber Security (Offensive)', 'Cyber Offensive'],
   embedded: ['Embedded'],
-  'hr-td': ['HR', 'T&D'],
+  flutter: ['Flutter'],
+  'graphic-design': ['Graphic Design'],
+  hr: ['HR'],
+  iot: ['IoT'],
+  'logistics-events': ['Logistics & Events'],
   marketing: ['Marketing'],
-  'multi-media': ['Multi Media'],
-  'pr-oc': ['PR', 'OC'],
-  robotics: ['Robotic'],
-  web: ['Web'],
+  'mobile-application': ['Mobile Application'],
+  'pcb-design': ['PCB Design'],
+  'people-culture': ['People & Culture'],
+  'problem-solving': ['Problem Solving'],
+  'public-relations-fundraising': ['Public Relations & Fundraising'],
+  solidworks: ['SolidWorks'],
+  'web-development': ['Web', 'Web Development'],
 }
 
 const eventTime = event => event.date == null ? NaN : new Date(event.date).getTime()
@@ -32,10 +40,11 @@ export const getRecentEvents = (events, now = new Date(), limit = events.length)
   sortEvents(events).filter(event => Number.isFinite(eventTime(event)) && eventTime(event) < now).reverse().slice(0, limit)
 
 export const findCommitteeLeaders = (slug, members) => {
-  const aliases = committeeAliases[slug]
-  if (!aliases) return []
+  const aliases = committeeAliases[slug] || []
   return members.filter(member =>
-    (aliases.includes(member.committee) || slugify(member.committee) === slug) && /^(Head|Vice Head)$/.test(member.position),
+    Boolean(member.committee)
+    && (aliases.includes(member.committee) || slugify(member.committee) === slug)
+    && /^(Head|Vice Head)$/.test(member.position),
   )
 }
 

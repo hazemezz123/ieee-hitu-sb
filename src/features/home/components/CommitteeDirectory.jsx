@@ -8,118 +8,183 @@ import { fetchCommitteesResult } from '@/features/committees/hooks/useCommittees
 
 export const COMMITTEES_DATA = [
   {
-    slug: 'ai',
-    name: 'AI',
+    slug: 'artificial-intelligence',
+    name: 'Artificial Intelligence',
     category: 'technical',
     categoryLabel: 'Technical Track',
     featured: true,
-    shortDescription: 'Explores artificial intelligence and machine learning through hands-on neural network experiments, computer vision, and team projects.',
+    shortDescription: 'Explores artificial intelligence and machine learning through practical learning, experiments, and team-led projects.',
     techTags: ['PyTorch', 'TensorFlow', 'Computer Vision', 'NLP'],
   },
   {
-    slug: 'web',
-    name: 'Web',
+    slug: 'web-development',
+    name: 'Web Development',
     category: 'technical',
     categoryLabel: 'Technical Track',
     featured: true,
-    shortDescription: 'Creates modern full-stack web experiences and scalable cloud platforms with industry-standard development workflows.',
+    shortDescription: 'Creates modern web experiences and strengthens frontend, backend, and full-stack engineering skills.',
     techTags: ['Next.js', 'React', 'Tailwind CSS', 'Node.js'],
   },
   {
-    slug: 'cs',
-    name: 'CS',
+    slug: 'automation',
+    name: 'Automation',
     category: 'technical',
     categoryLabel: 'Technical Track',
     featured: false,
-    shortDescription: 'Builds strong computer science foundations through data structures, problem-solving, and software craftsmanship.',
+    shortDescription: 'Improves workflows and engineering processes through automation systems, scripting, and industrial control concepts.',
   },
   {
-    slug: 'cyber-defensive',
-    name: 'Cyber Defensive',
+    slug: 'iot',
+    name: 'IoT',
     category: 'technical',
     categoryLabel: 'Technical Track',
     featured: false,
-    shortDescription: 'Hardens systems, analyzes digital vulnerabilities, and protects networks through modern defensive security.',
+    shortDescription: 'Connects sensors, hardware, and cloud platforms to design smart, networked Internet of Things solutions.',
   },
   {
-    slug: 'cyber-offensive',
-    name: 'Cyber Offensive',
+    slug: 'cyber-security-defensive',
+    name: 'Cyber Security (Defensive)',
     category: 'technical',
     categoryLabel: 'Technical Track',
     featured: false,
-    shortDescription: 'Uncovers threat vectors and builds offensive awareness through ethical penetration testing and CTF challenges.',
+    shortDescription: 'Focuses on secure systems, defensive practices, threat monitoring, and protecting digital environments.',
   },
   {
     slug: 'embedded',
-    name: 'Embedded Systems',
+    name: 'Embedded',
     category: 'technical',
     categoryLabel: 'Technical Track',
     featured: false,
-    shortDescription: 'Designs at the hardware-software boundary using microcontrollers, low-level firmware, and IoT devices.',
+    shortDescription: 'Works close to hardware through embedded systems practice, microcontrollers, firmware, and device integration.',
   },
   {
-    slug: 'robotics',
-    name: 'Robotics',
+    slug: 'pcb-design',
+    name: 'PCB Design',
     category: 'technical',
     categoryLabel: 'Technical Track',
     featured: false,
-    shortDescription: 'Integrates mechanics, sensory control, and algorithmic logic to engineer autonomous robotic platforms.',
+    shortDescription: 'Designs and validates printed circuit boards from schematic capture and layout to hardware prototyping.',
   },
   {
-    slug: 'automations',
-    name: 'Automations',
+    slug: 'solidworks',
+    name: 'SolidWorks',
     category: 'technical',
     categoryLabel: 'Technical Track',
     featured: false,
-    shortDescription: 'Streamlines operational workflows, scripting tools, and continuous integration to drive efficiency.',
+    shortDescription: 'Develops 3D CAD modeling, mechanical assemblies, and engineering design skills using SolidWorks.',
   },
   {
-    slug: 'pr-oc',
-    name: 'PR & OC',
-    category: 'operations',
-    categoryLabel: 'Operations & Media',
+    slug: 'mobile-application',
+    name: 'Mobile Application',
+    category: 'technical',
+    categoryLabel: 'Technical Track',
     featured: false,
-    shortDescription: 'Coordinates branch outreach, brand voice, external relations, and smooth on-ground event management.',
+    shortDescription: 'Builds mobile applications with a focus on architecture, usability, and practical end-to-end delivery.',
   },
   {
-    slug: 'multi-media',
-    name: 'Multi Media',
-    category: 'operations',
-    categoryLabel: 'Operations & Media',
+    slug: 'flutter',
+    name: 'Flutter',
+    category: 'technical',
+    categoryLabel: 'Technical Track',
     featured: false,
-    shortDescription: 'Produces dynamic visual storytelling, photography, videography, and graphic design for branch media.',
+    shortDescription: 'Develops cross-platform mobile applications using Flutter and Dart through hands-on projects and UI practice.',
+  },
+  {
+    slug: 'cyber-security-offensive',
+    name: 'Cyber Security (Offensive)',
+    category: 'technical',
+    categoryLabel: 'Technical Track',
+    featured: false,
+    shortDescription: 'Builds offensive security awareness through ethical testing, vulnerability analysis, and hands-on challenges.',
+  },
+  {
+    slug: 'problem-solving',
+    name: 'Problem Solving',
+    category: 'technical',
+    categoryLabel: 'Technical Track',
+    featured: false,
+    shortDescription: 'Strengthens algorithmic thinking, data structures, and competitive programming through regular practice.',
+  },
+  {
+    slug: 'hr',
+    name: 'HR',
+    category: 'non-technical',
+    categoryLabel: 'Non-Technical',
+    featured: false,
+    shortDescription: 'Supports recruitment, member onboarding, performance tracking, and internal team coordination across the branch.',
   },
   {
     slug: 'marketing',
     name: 'Marketing',
-    category: 'operations',
-    categoryLabel: 'Operations & Media',
+    category: 'non-technical',
+    categoryLabel: 'Non-Technical',
     featured: false,
-    shortDescription: 'Drives audience engagement, campaign strategy, social media growth, and student community presence.',
+    shortDescription: 'Supports branch visibility, audience growth, and campaign planning with focused promotional strategy.',
   },
   {
-    slug: 'hr-td',
-    name: 'HR - T&D',
-    category: 'operations',
-    categoryLabel: 'Operations & Media',
+    slug: 'people-culture',
+    name: 'People & Culture',
+    category: 'non-technical',
+    categoryLabel: 'Non-Technical',
     featured: false,
-    shortDescription: 'Empowers branch members through skill training, personal development, team performance, and cultural care.',
+    shortDescription: 'Fosters member engagement, team well-being, internal community initiatives, and a healthy branch culture.',
+  },
+  {
+    slug: 'logistics-events',
+    name: 'Logistics & Events',
+    category: 'non-technical',
+    categoryLabel: 'Non-Technical',
+    featured: false,
+    shortDescription: 'Plans and executes on-ground logistics, venue operations, and seamless coordination for branch events.',
+  },
+  {
+    slug: 'public-relations-fundraising',
+    name: 'Public Relations & Fundraising',
+    category: 'non-technical',
+    categoryLabel: 'Non-Technical',
+    featured: false,
+    shortDescription: 'Builds external partnerships, sponsorships, institutional relations, and public representation for the branch.',
+  },
+  {
+    slug: 'graphic-design',
+    name: 'Graphic Design',
+    category: 'non-technical',
+    categoryLabel: 'Non-Technical',
+    featured: false,
+    shortDescription: 'Crafts the branch visual identity, event branding, and creative graphics across print and digital channels.',
+  },
+  {
+    slug: 'content-creation',
+    name: 'Content Creation',
+    category: 'non-technical',
+    categoryLabel: 'Non-Technical',
+    featured: false,
+    shortDescription: 'Produces compelling copy, stories, and multimedia content that communicate branch activities clearly.',
   },
 ]
 
 const TABS = [
   { id: 'all', label: 'All Committees' },
-  { id: 'technical', label: 'Technical Tracks' },
-  { id: 'operations', label: 'Operations & Media' },
+  { id: 'technical', label: 'Technical Committees' },
+  { id: 'non-technical', label: 'Non-Technical Committees' },
 ]
 
 export default function CommitteeDirectory() {
   const [activeTab, setActiveTab] = useState('all')
   const [loading, setLoading] = useState(true)
+  const [remoteIcons, setRemoteIcons] = useState({})
 
   useEffect(() => {
     let active = true
     fetchCommitteesResult()
+      .then(res => {
+        if (!active || !res?.committees) return
+        const map = {}
+        for (const c of res.committees) {
+          if (c?.slug && c?.icon) map[c.slug] = c.icon
+        }
+        setRemoteIcons(map)
+      })
       .catch(() => {})
       .finally(() => {
         if (active) setLoading(false)
@@ -150,7 +215,7 @@ export default function CommitteeDirectory() {
             Committee Directory
           </h2>
           <p className="mt-4 text-base leading-relaxed text-[#9BA9B4]">
-            Thirteen specialized teams driving technical excellence, event management, and creative outreach at IEEE HITU.
+            19 specialized teams — 12 technical and 7 non-technical committees driving innovation, events, and creative outreach at IEEE HITU.
           </p>
 
           {/* Filtering Tabs */}
@@ -215,7 +280,7 @@ export default function CommitteeDirectory() {
                     <div>
                       <div className="flex items-center justify-between">
                         <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-[#00b5e2] transition-colors duration-200 group-hover:border-cyan-400/40 group-hover:text-cyan-300">
-                          <CommitteeIcon slug={committee.slug} className="h-6 w-6" />
+                          <CommitteeIcon slug={committee.slug} icon={remoteIcons[committee.slug]} className="h-6 w-6" />
                         </div>
                         <span className="rounded-full border border-[#00b5e2]/30 bg-[#00629b]/20 px-3 py-1 text-[11px] font-medium tracking-wide text-cyan-300">
                           {committee.categoryLabel}
@@ -268,10 +333,10 @@ export default function CommitteeDirectory() {
                   <div>
                     <div className="flex items-center justify-between">
                       <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-[#00b5e2] transition-colors duration-200 group-hover:border-cyan-400/40 group-hover:text-cyan-300">
-                        <CommitteeIcon slug={committee.slug} className="h-5 w-5" />
+                        <CommitteeIcon slug={committee.slug} icon={remoteIcons[committee.slug]} className="h-5 w-5" />
                       </div>
                       <span className="text-[11px] font-medium text-[#9BA9B4]/70">
-                        {committee.category === 'technical' ? 'Technical' : 'Operations'}
+                        {committee.category === 'technical' ? 'Technical' : 'Non-Technical'}
                       </span>
                     </div>
 
@@ -303,7 +368,7 @@ export default function CommitteeDirectory() {
             href="/committees"
             className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-6 py-3 text-xs font-bold uppercase tracking-widest text-[#F0F4F8] transition-all duration-300 hover:border-[#00b5e2]/40 hover:bg-white/10 hover:text-white"
           >
-            <span>Explore All 12 Detailed Committee Records</span>
+            <span>Explore All {COMMITTEES_DATA.length} Detailed Committee Records</span>
             <span aria-hidden="true">→</span>
           </Link>
         </div>

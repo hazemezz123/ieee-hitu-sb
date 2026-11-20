@@ -15,18 +15,25 @@ describe('CommitteeDirectory Bento Grid', () => {
   beforeEach(() => {
     fetchCommitteesResult.mockResolvedValue({
       committees: [
-        { slug: 'ai', name: 'AI', category: 'technical' },
-        { slug: 'web', name: 'Web', category: 'technical' },
-        { slug: 'cs', name: 'CS', category: 'technical' },
-        { slug: 'cyber-defensive', name: 'Cyber Defensive', category: 'technical' },
-        { slug: 'cyber-offensive', name: 'Cyber Offensive', category: 'technical' },
+        { slug: 'automation', name: 'Automation', category: 'technical' },
+        { slug: 'iot', name: 'IoT', category: 'technical' },
+        { slug: 'cyber-security-defensive', name: 'Cyber Security (Defensive)', category: 'technical' },
         { slug: 'embedded', name: 'Embedded', category: 'technical' },
-        { slug: 'robotics', name: 'Robotics', category: 'technical' },
-        { slug: 'automations', name: 'Automations', category: 'technical' },
-        { slug: 'pr-oc', name: 'PR & OC', category: 'non-technical' },
-        { slug: 'multi-media', name: 'Multi Media', category: 'non-technical' },
+        { slug: 'pcb-design', name: 'PCB Design', category: 'technical' },
+        { slug: 'solidworks', name: 'SolidWorks', category: 'technical' },
+        { slug: 'web-development', name: 'Web Development', category: 'technical' },
+        { slug: 'mobile-application', name: 'Mobile Application', category: 'technical' },
+        { slug: 'flutter', name: 'Flutter', category: 'technical' },
+        { slug: 'artificial-intelligence', name: 'Artificial Intelligence', category: 'technical' },
+        { slug: 'cyber-security-offensive', name: 'Cyber Security (Offensive)', category: 'technical' },
+        { slug: 'problem-solving', name: 'Problem Solving', category: 'technical' },
+        { slug: 'hr', name: 'HR', category: 'non-technical' },
         { slug: 'marketing', name: 'Marketing', category: 'non-technical' },
-        { slug: 'hr-td', name: 'HR - T&D', category: 'non-technical' },
+        { slug: 'people-culture', name: 'People & Culture', category: 'non-technical' },
+        { slug: 'logistics-events', name: 'Logistics & Events', category: 'non-technical' },
+        { slug: 'public-relations-fundraising', name: 'Public Relations & Fundraising', category: 'non-technical' },
+        { slug: 'graphic-design', name: 'Graphic Design', category: 'non-technical' },
+        { slug: 'content-creation', name: 'Content Creation', category: 'non-technical' },
       ],
       source: 'remote',
     })
@@ -40,35 +47,35 @@ describe('CommitteeDirectory Bento Grid', () => {
     render(<CommitteeDirectory />)
     expect(screen.getByRole('heading', { level: 2, name: /committee directory/i })).toBeTruthy()
     expect(screen.getByRole('tab', { name: /all committees/i })).toBeTruthy()
-    expect(screen.getByRole('tab', { name: /technical tracks/i })).toBeTruthy()
-    expect(screen.getByRole('tab', { name: /operations & media/i })).toBeTruthy()
+    expect(screen.getByRole('tab', { name: /^technical committees$/i })).toBeTruthy()
+    expect(screen.getByRole('tab', { name: /^non-technical committees$/i })).toBeTruthy()
   })
 
   it('renders responsive bento grid structure and dark mode styling', async () => {
     render(<CommitteeDirectory />)
     await waitFor(() => {
-      expect(screen.getByText('AI')).toBeTruthy()
+      expect(screen.getByText('Artificial Intelligence')).toBeTruthy()
     })
     const panel = screen.getByRole('tabpanel')
     expect(panel.className).toContain('grid-cols-1')
     expect(panel.className).toContain('md:grid-cols-3')
     expect(panel.className).toContain('lg:grid-cols-4')
 
-    const aiArticle = screen.getByText('AI').closest('article')
+    const aiArticle = screen.getByText('Artificial Intelligence').closest('article')
     expect(aiArticle.className).toContain('md:col-span-2')
     expect(aiArticle.className).toContain('rounded-2xl')
     expect(aiArticle.className).toContain('bg-[#0b1324]')
   })
 
-  it('renders all 12 committees by default', async () => {
+  it('renders all 19 committees by default', async () => {
     render(<CommitteeDirectory />)
     await waitFor(() => {
-      expect(screen.getByText('AI')).toBeTruthy()
-      expect(screen.getByText('Web')).toBeTruthy()
-      expect(screen.getByText('PR & OC')).toBeTruthy()
+      expect(screen.getByText('Artificial Intelligence')).toBeTruthy()
+      expect(screen.getByText('Web Development')).toBeTruthy()
+      expect(screen.getByText('Logistics & Events')).toBeTruthy()
     })
     const links = screen.getAllByRole('link', { name: /view|learn more/i })
-    expect(links.length).toBeGreaterThanOrEqual(12)
+    expect(links.length).toBeGreaterThanOrEqual(19)
   })
 
   it('renders featured cards with tech tags and learn more action', async () => {
@@ -77,41 +84,61 @@ describe('CommitteeDirectory Bento Grid', () => {
       expect(screen.getByText('PyTorch')).toBeTruthy()
       expect(screen.getByText('Next.js')).toBeTruthy()
     })
-    const aiLearnMore = screen.getByRole('link', { name: /learn more about ai/i })
-    expect(aiLearnMore.getAttribute('href')).toBe('/committees/ai')
+    const aiLearnMore = screen.getByRole('link', { name: /learn more about artificial intelligence/i })
+    expect(aiLearnMore.getAttribute('href')).toBe('/committees/artificial-intelligence')
 
-    const webLearnMore = screen.getByRole('link', { name: /learn more about web/i })
-    expect(webLearnMore.getAttribute('href')).toBe('/committees/web')
+    const webLearnMore = screen.getByRole('link', { name: /learn more about web development/i })
+    expect(webLearnMore.getAttribute('href')).toBe('/committees/web-development')
   })
 
-  it('filters to technical committees when Technical Tracks tab is selected', async () => {
+  it('filters to technical committees when Technical Committees tab is selected', async () => {
     render(<CommitteeDirectory />)
     await waitFor(() => {
-      expect(screen.getByText('AI')).toBeTruthy()
+      expect(screen.getByText('Artificial Intelligence')).toBeTruthy()
     })
-    const techTab = screen.getByRole('tab', { name: /technical tracks/i })
+    const techTab = screen.getByRole('tab', { name: /^technical committees$/i })
     fireEvent.click(techTab)
 
-    expect(screen.getByText('AI')).toBeTruthy()
-    expect(screen.getByText('Web')).toBeTruthy()
-    expect(screen.getByText('CS')).toBeTruthy()
-    expect(screen.queryByText('PR & OC')).toBeNull()
+    expect(screen.getByText('Artificial Intelligence')).toBeTruthy()
+    expect(screen.getByText('Web Development')).toBeTruthy()
+    expect(screen.getByText('Automation')).toBeTruthy()
+    expect(screen.getByText('IoT')).toBeTruthy()
+    expect(screen.getByText('Cyber Security (Defensive)')).toBeTruthy()
+    expect(screen.getByText('Problem Solving')).toBeTruthy()
+    expect(screen.queryByText('Logistics & Events')).toBeNull()
     expect(screen.queryByText('Marketing')).toBeNull()
   })
 
-  it('filters to operations & media committees when Operations & Media tab is selected', async () => {
+  it('filters to non-technical committees when Non-Technical Committees tab is selected', async () => {
     render(<CommitteeDirectory />)
     await waitFor(() => {
-      expect(screen.getByText('PR & OC')).toBeTruthy()
+      expect(screen.getByText('Logistics & Events')).toBeTruthy()
     })
-    const opsTab = screen.getByRole('tab', { name: /operations & media/i })
-    fireEvent.click(opsTab)
+    const nonTechTab = screen.getByRole('tab', { name: /^non-technical committees$/i })
+    fireEvent.click(nonTechTab)
 
-    expect(screen.getByText('PR & OC')).toBeTruthy()
-    expect(screen.getByText('Multi Media')).toBeTruthy()
+    expect(screen.getByText('HR')).toBeTruthy()
     expect(screen.getByText('Marketing')).toBeTruthy()
-    expect(screen.getByText('HR - T&D')).toBeTruthy()
-    expect(screen.queryByText('AI')).toBeNull()
-    expect(screen.queryByText('Web')).toBeNull()
+    expect(screen.getByText('People & Culture')).toBeTruthy()
+    expect(screen.getByText('Logistics & Events')).toBeTruthy()
+    expect(screen.getByText('Public Relations & Fundraising')).toBeTruthy()
+    expect(screen.getByText('Graphic Design')).toBeTruthy()
+    expect(screen.getByText('Content Creation')).toBeTruthy()
+    expect(screen.queryByText('Artificial Intelligence')).toBeNull()
+    expect(screen.queryByText('Web Development')).toBeNull()
+  })
+
+  it('applies custom icon overrides returned from remote committees', async () => {
+    fetchCommitteesResult.mockResolvedValue({
+      committees: [
+        { slug: 'flutter', name: 'Flutter', category: 'technical', icon: 'https://cdn.example.com/flutter.png' },
+      ],
+      source: 'remote',
+    })
+    const { container } = render(<CommitteeDirectory />)
+    await waitFor(() => {
+      const img = container.querySelector('img[src="https://cdn.example.com/flutter.png"]')
+      expect(img).toBeTruthy()
+    })
   })
 })

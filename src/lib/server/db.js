@@ -139,7 +139,8 @@ const SCHEMA_STATEMENTS = [
      name TEXT NOT NULL,
      slug TEXT UNIQUE NOT NULL,
      category TEXT NOT NULL,
-     short_description TEXT
+     short_description TEXT,
+     icon TEXT
    )`,
   `CREATE TABLE IF NOT EXISTS committee_members (
      id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -199,6 +200,14 @@ export async function ensureSchema() {
     }
   }
 
+  const committeeTableResult = await execute("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'committees'")
+  if ((committeeTableResult?.rows || []).length > 0) {
+    const info = await execute('PRAGMA table_info(committees)')
+    if (!(info?.rows || []).some(row => row.name === 'icon')) {
+      await execute('ALTER TABLE committees ADD COLUMN icon TEXT')
+    }
+  }
+
   const headsCheck = await execute("SELECT id FROM recruitment_forms WHERE slug = 'heads'")
   if ((headsCheck?.rows || []).length === 0) {
     await execute(
@@ -217,6 +226,11 @@ function rowToPhoto(row) {
   }
 }
 
+const COMMITTEE_CATEGORY_LABELS = {
+  technical: 'Technical',
+  'non-technical': 'Non-Technical',
+}
+
 function rowToCommittee(row) {
   const cat = typeof row.category === 'string' ? row.category : ''
   return {
@@ -224,8 +238,9 @@ function rowToCommittee(row) {
     name: String(row.name || ''),
     slug: String(row.slug || ''),
     category: cat,
-    categoryLabel: cat ? capitalize(cat) : '',
+    categoryLabel: COMMITTEE_CATEGORY_LABELS[cat] || (cat ? capitalize(cat) : ''),
     shortDescription: row.short_description || '',
+    icon: row.icon || '',
     memberCount: Number(row.member_count) || 0,
   }
 }
@@ -277,16 +292,16 @@ export async function fetchCommitteeBySlug(slug) {
 
 export async function createCommittee(data) {
   const result = await execute(
-    'INSERT INTO committees (name, slug, category, short_description) VALUES (?, ?, ?, ?)',
-    [data.name, data.slug, data.category, data.shortDescription || '']
+    'INSERT INTO committees (name, slug, category, short_description, icon) VALUES (?, ?, ?, ?, ?)',
+    [data.name, data.slug, data.category, data.shortDescription || '', data.icon || '']
   )
   return result?.last_insert_rowid
 }
 
 export async function updateCommittee(id, data) {
   await execute(
-    'UPDATE committees SET name = ?, slug = ?, category = ?, short_description = ? WHERE id = ?',
-    [data.name, data.slug, data.category, data.shortDescription || '', id]
+    'UPDATE committees SET name = ?, slug = ?, category = ?, short_description = ?, icon = ? WHERE id = ?',
+    [data.name, data.slug, data.category, data.shortDescription || '', data.icon || '', id]
   )
 }
 

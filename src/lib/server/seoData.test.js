@@ -12,8 +12,8 @@ describe('seoData', () => {
   })
 
   it('returns static fallback committee when DB unconfigured', async () => {
-    const c = await getCommitteeForSeo('web')
-    expect(c?.slug).toBe('web')
+    const c = await getCommitteeForSeo('web-development')
+    expect(c?.slug).toBe('web-development')
   })
 
   it('returns null for unknown committee slug', async () => {

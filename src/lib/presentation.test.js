@@ -50,40 +50,51 @@ describe('presentation selectors', () => {
 
   it('matches every explicit committee alias and excludes managers', () => {
     const aliases = {
-      ai: ['AI'],
-      automations: ['Automation'],
+      'artificial-intelligence': ['AI', 'Artificial Intelligence'],
+      automation: ['Automation', 'Automations'],
+      'content-creation': ['Content Creation'],
+      'cyber-security-defensive': ['Cyber Security (Defensive)', 'Cyber Defensive'],
+      'cyber-security-offensive': ['Cyber Security (Offensive)', 'Cyber Offensive'],
       embedded: ['Embedded'],
-      'hr-td': ['HR', 'T&D'],
+      flutter: ['Flutter'],
+      'graphic-design': ['Graphic Design'],
+      hr: ['HR'],
+      iot: ['IoT'],
+      'logistics-events': ['Logistics & Events'],
       marketing: ['Marketing'],
-      'multi-media': ['Multi Media'],
-      'pr-oc': ['PR', 'OC'],
-      robotics: ['Robotic'],
-      web: ['Web'],
+      'mobile-application': ['Mobile Application'],
+      'pcb-design': ['PCB Design'],
+      'people-culture': ['People & Culture'],
+      'problem-solving': ['Problem Solving'],
+      'public-relations-fundraising': ['Public Relations & Fundraising'],
+      solidworks: ['SolidWorks'],
+      'web-development': ['Web', 'Web Development'],
     }
     const members = Object.values(aliases).flat().map((committee, index) => ({
       name: `${committee}-${index}`,
       committee,
       position: index % 2 ? 'Vice Head' : 'Head',
     }))
-    members.push({ name: 'Manager', committee: 'Web', position: 'Technical Software Manager' })
+    members.push({ name: 'Manager', committee: 'Web Development', position: 'Technical Software Manager' })
 
     for (const [slug, committees] of Object.entries(aliases)) {
       expect(findCommitteeLeaders(slug, members).map(member => member.committee)).toEqual(committees)
     }
-    expect(findCommitteeLeaders('web', members).map(member => member.name)).not.toContain('Manager')
+    expect(findCommitteeLeaders('web-development', members).map(member => member.name)).not.toContain('Manager')
     expect(findCommitteeLeaders('unknown', members)).toEqual([])
   })
 
   it('matches DB display names that slugify to the route', () => {
     const members = [
-      { name: 'Roster', committee: 'Robotic', position: 'Head' },
-      { name: 'Display', committee: 'Robotics', position: 'Head' },
-      { name: 'Slugged', committee: 'PR & OC', position: 'Vice Head' },
-      { name: 'Manager', committee: 'Robotics', position: 'Technical Manager' },
+      { name: 'PublicRel', committee: 'Public Relations & Fundraising', position: 'Head' },
+      { name: 'CyberDef', committee: 'Cyber Security (Defensive)', position: 'Head' },
+      { name: 'Logistics', committee: 'Logistics & Events', position: 'Vice Head' },
+      { name: 'Manager', committee: 'Logistics & Events', position: 'Technical Manager' },
     ]
 
-    expect(findCommitteeLeaders('robotics', members).map(member => member.name)).toEqual(['Roster', 'Display'])
-    expect(findCommitteeLeaders('pr-oc', members).map(member => member.name)).toEqual(['Slugged'])
+    expect(findCommitteeLeaders('public-relations-fundraising', members).map(member => member.name)).toEqual(['PublicRel'])
+    expect(findCommitteeLeaders('cyber-security-defensive', members).map(member => member.name)).toEqual(['CyberDef'])
+    expect(findCommitteeLeaders('logistics-events', members).map(member => member.name)).toEqual(['Logistics'])
   })
 
   it('keeps event metadata on gallery images', () => {

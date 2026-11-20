@@ -58,4 +58,23 @@ describe('server turso client', () => {
     })
     await expect(fetchEvents()).rejects.toThrow('no such table')
   })
+
+  it('maps committee rows with Technical and Non-Technical categoryLabel and icon', async () => {
+    vi.resetModules()
+    const { fetchCommittees } = await import('./db.js')
+    fetchMock.mockResolvedValue(
+      okRows(
+        [{ name: 'id' }, { name: 'name' }, { name: 'slug' }, { name: 'category' }, { name: 'short_description' }, { name: 'icon' }, { name: 'member_count' }],
+        [
+          [{ type: 'integer', value: '1' }, text('Automation'), text('automation'), text('technical'), text('Auto'), text('https://cdn/auto.svg'), { type: 'integer', value: '0' }],
+          [{ type: 'integer', value: '2' }, text('HR'), text('hr'), text('non-technical'), text('People'), { type: 'null' }, { type: 'integer', value: '0' }],
+        ],
+      ),
+    )
+    const committees = await fetchCommittees()
+    expect(committees).toEqual([
+      { _id: 1, name: 'Automation', slug: 'automation', category: 'technical', categoryLabel: 'Technical', shortDescription: 'Auto', icon: 'https://cdn/auto.svg', memberCount: 0 },
+      { _id: 2, name: 'HR', slug: 'hr', category: 'non-technical', categoryLabel: 'Non-Technical', shortDescription: 'People', icon: '', memberCount: 0 },
+    ])
+  })
 })
