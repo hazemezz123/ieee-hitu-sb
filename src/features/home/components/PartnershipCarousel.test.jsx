@@ -10,7 +10,7 @@ vi.mock('@/features/home/hooks/usePartners', () => ({
   fetchPartnersResult,
 }))
 
-describe('PartnershipCarousel (Responsive Partner Grid)', () => {
+describe('PartnershipCarousel (Borderless Partner Marquee)', () => {
   beforeEach(() => {
     fetchPartnersResult.mockReset()
   })
@@ -20,7 +20,7 @@ describe('PartnershipCarousel (Responsive Partner Grid)', () => {
     vi.restoreAllMocks()
   })
 
-  it('renders a single responsive grid of equal-height logo cards with prominent sizing', async () => {
+  it('renders a borderless seamless marquee with an aria-hidden clone row and focusable pause region', async () => {
     fetchPartnersResult.mockResolvedValue({
       partners: [
         { _id: 1, name: 'Risk Solutions', logo: '/logos/partners/risk-solutions.svg', logoDark: false },
@@ -33,24 +33,30 @@ describe('PartnershipCarousel (Responsive Partner Grid)', () => {
 
     expect(await screen.findByRole('heading', { name: 'Partners we build with' })).toBeTruthy()
 
-    const lists = container.querySelectorAll('ul')
-    expect(lists).toHaveLength(1)
-    expect(lists[0].className).toContain('flex-wrap')
+    const region = screen.getByRole('region', { name: 'Partner logos showcase' })
+    expect(region.getAttribute('tabindex')).toBe('0')
+    expect(region.className).toContain('partners-marquee-viewport')
+
+    const allLists = container.querySelectorAll('ul')
+    expect(allLists).toHaveLength(2)
+    expect(allLists[0].getAttribute('aria-hidden')).toBeNull()
+    expect(allLists[1].getAttribute('aria-hidden')).toBe('true')
+    expect(allLists[1].className).toContain('partners-marquee-clone')
 
     const riskTile = screen.getByLabelText('Risk Solutions')
-    const img = riskTile.querySelector('img')
-    expect(img.className).toContain('object-contain')
-    expect(img.parentElement.className).toContain('h-32')
-    expect(img.parentElement.getAttribute('data-logo-surface')).toBe('light')
+    const riskImgs = riskTile.querySelectorAll('img')
+    expect(riskImgs).toHaveLength(2)
+    expect(riskImgs[0].parentElement.getAttribute('data-logo-surface')).toBe('none')
+    expect(riskImgs[0].parentElement.className).not.toMatch(/bg-white|bg-\[#101820\]|rounded-2xl/)
 
     expect(screen.getByLabelText('Text Only Partner').textContent).toContain('Text Only Partner')
   })
 
-  it('uses dedicated contrasting surfaces and per-logo optical sizing without CSS filters', async () => {
+  it('renders dual light and dark transparent variants with optical sizing and zero CSS filters', async () => {
     fetchPartnersResult.mockResolvedValue({
       partners: [
         { _id: 1, name: 'Make X', logo: '/logos/partners/make-x.svg', logoDark: true },
-        { _id: 2, name: 'IEEE HSB', logo: '/logos/originals/ieee-hsb.png', logoDark: false },
+        { _id: 2, name: 'IEEE HSB', logo: '/logos/partners/ieee-hsb-light.png', logoDark: false },
         { _id: 3, name: 'GDG Cairo', logo: '/logos/partners/gdg-cairo-light.svg', logoDark: false },
         { _id: 4, name: 'CARERHA', logo: '/logos/partners/carerha.svg', logoDark: true },
       ],
@@ -59,34 +65,33 @@ describe('PartnershipCarousel (Responsive Partner Grid)', () => {
 
     render(<PartnershipCarousel />)
 
-    const makeXImg = await screen.findByRole('img', { name: 'Make X' })
-    const hsbImg = screen.getByRole('img', { name: 'IEEE HSB' })
-    const gdgImg = screen.getByRole('img', { name: 'GDG Cairo' })
-    const carerhaImg = screen.getByRole('img', { name: 'CARERHA' })
+    const makeXTile = await screen.findByLabelText('Make X')
+    const [makeXLight, makeXDark] = makeXTile.querySelectorAll('img')
+    expect(makeXLight.getAttribute('src')).toBe('/logos/partners/make-x-light.svg')
+    expect(makeXLight.className).toContain('dark:hidden')
+    expect(makeXDark.getAttribute('src')).toBe('/logos/partners/make-x.svg')
+    expect(makeXDark.className).toContain('dark:block')
+    expect(makeXLight.style.maxWidth).toBe('min(100%, 162px)')
+    expect(makeXLight.className).not.toMatch(/invert|grayscale|brightness-0|hue-rotate/)
 
-    expect(makeXImg.getAttribute('src')).toBe('/logos/partners/make-x.svg')
-    expect(makeXImg.parentElement.getAttribute('data-logo-surface')).toBe('dark')
-    expect(makeXImg.parentElement.className).toContain('bg-[#101820]')
-    expect(makeXImg.style.maxWidth).toBe('min(100%, 188px)')
-    expect(makeXImg.className).not.toMatch(/invert|grayscale|brightness-0|hue-rotate/)
+    const hsbTile = screen.getByLabelText('IEEE HSB')
+    const [hsbLight, hsbDark] = hsbTile.querySelectorAll('img')
+    expect(hsbLight.getAttribute('src')).toBe('/logos/partners/ieee-hsb-light.png')
+    expect(hsbDark.getAttribute('src')).toBe('/logos/partners/ieee-hsb-dark.png')
+    expect(hsbLight.style.maxHeight).toBe('min(100%, 66px)')
 
-    expect(hsbImg.getAttribute('src')).toBe('/logos/originals/ieee-hsb.png')
-    expect(hsbImg.parentElement.getAttribute('data-logo-surface')).toBe('light')
-    expect(hsbImg.parentElement.className).toContain('bg-white')
-    expect(hsbImg.style.maxHeight).toBe('min(100%, 91px)')
-    expect(hsbImg.className).not.toMatch(/invert|grayscale|brightness-0|hue-rotate/)
+    const gdgTile = screen.getByLabelText('GDG Cairo')
+    const [gdgLight, gdgDark] = gdgTile.querySelectorAll('img')
+    expect(gdgLight.getAttribute('src')).toBe('/logos/partners/gdg-cairo-light.svg')
+    expect(gdgDark.getAttribute('src')).toBe('/logos/partners/gdg-cairo-dark.svg')
+    expect(gdgLight.style.maxWidth).toBe('min(100%, 171px)')
 
-    expect(gdgImg.getAttribute('src')).toBe('/logos/partners/gdg-cairo-light.svg')
-    expect(gdgImg.parentElement.getAttribute('data-logo-surface')).toBe('light')
-    expect(gdgImg.parentElement.className).toContain('bg-white')
-    expect(gdgImg.style.maxWidth).toBe('min(100%, 192px)')
-    expect(gdgImg.className).not.toMatch(/invert|grayscale|brightness-0|hue-rotate/)
-
-    expect(carerhaImg.getAttribute('src')).toBe('/logos/partners/carerha.svg')
-    expect(carerhaImg.parentElement.getAttribute('data-logo-surface')).toBe('dark')
-    expect(carerhaImg.parentElement.className).toContain('bg-[#101820]')
-    expect(carerhaImg.style.maxWidth).toBe('min(100%, 204px)')
-    expect(carerhaImg.className).not.toMatch(/invert|grayscale|brightness-0|hue-rotate/)
+    const carerhaTile = screen.getByLabelText('CARERHA')
+    const [carerhaLight, carerhaDark] = carerhaTile.querySelectorAll('img')
+    expect(carerhaLight.getAttribute('src')).toBe('/logos/partners/carerha-light.svg')
+    expect(carerhaDark.getAttribute('src')).toBe('/logos/partners/carerha.svg')
+    expect(carerhaLight.style.maxWidth).toBe('min(100%, 176px)')
+    expect(carerhaLight.className).not.toMatch(/invert|grayscale|brightness-0|hue-rotate/)
   })
 
   it('falls back to partner name when a logo fails to load', async () => {
@@ -97,7 +102,8 @@ describe('PartnershipCarousel (Responsive Partner Grid)', () => {
 
     render(<PartnershipCarousel />)
 
-    const img = await screen.findByRole('img', { name: 'Broken Logo Co' })
+    const tile = await screen.findByLabelText('Broken Logo Co')
+    const img = tile.querySelector('img')
     fireEvent.error(img)
 
     expect(screen.getByLabelText('Broken Logo Co').querySelector('img')).toBeNull()

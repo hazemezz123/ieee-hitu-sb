@@ -335,17 +335,96 @@ async function generatePartnerThemeVariants() {
   await fs.writeFile(`${PARTNERS_OUT_DIR}/risk-solutions-dark.svg`, riskDark, 'utf8')
   reports.push({ id: 'risk-solutions-dark', outputPath: `${PARTNERS_OUT_DIR}/risk-solutions-dark.svg`, bytes: Buffer.byteLength(riskDark, 'utf8') })
 
-  // consulting-group: neutral near-black typography -> crisp white while keeping crimson A mark unchanged
+  // consulting-group: neutral near-black typography (both explicit hex fills and implicit default black) -> crisp white while keeping crimson A mark unchanged
   const cgSrc = await fs.readFile(`${PARTNERS_OUT_DIR}/consulting-group.svg`, 'utf8')
-  const cgDark = cgSrc.replace(/fill="(#[0-9a-fA-F]{3,6})"/g, (full, hex) => {
+  const cgDarkWithExplicit = cgSrc.replace(/fill="(#[0-9a-fA-F]{3,6})"/g, (full, hex) => {
     const rgb = parseHexColor(hex)
     if (!rgb) return full
     const [r, g, b] = rgb
     if (Math.max(r, g, b) <= 32) return 'fill="#f8fafc"'
     return full
   })
+  const cgDark = cgDarkWithExplicit.replace('<svg ', '<svg fill="#f8fafc" ')
   await fs.writeFile(`${PARTNERS_OUT_DIR}/consulting-group-dark.svg`, cgDark, 'utf8')
   reports.push({ id: 'consulting-group-dark', outputPath: `${PARTNERS_OUT_DIR}/consulting-group-dark.svg`, bytes: Buffer.byteLength(cgDark, 'utf8') })
+
+  // carerha: white monochrome wordmark & emblem -> slate dark-ink light-mode variant
+  const carerhaSrc = await fs.readFile(`${PARTNERS_OUT_DIR}/carerha.svg`, 'utf8')
+  const carerhaLight = carerhaSrc.replace(/fill="#fdfcf[cd]"/gi, 'fill="#0f172a"')
+  await fs.writeFile(`${PARTNERS_OUT_DIR}/carerha-light.svg`, carerhaLight, 'utf8')
+  reports.push({ id: 'carerha-light', outputPath: `${PARTNERS_OUT_DIR}/carerha-light.svg`, bytes: Buffer.byteLength(carerhaLight, 'utf8') })
+
+  // bridgex-2026 (trimmed raster): tight transparent crop for light mode + bright navy->white/blue dark-mode variant preserving the gradient X
+  const bridgeRaw = await sharp(`${ORIGINALS_DIR}/bridgex-2026.png`)
+    .ensureAlpha()
+    .trim({ threshold: 10 })
+    .raw()
+    .toBuffer({ resolveWithObject: true })
+  const bridgeLightBuf = await sharp(bridgeRaw.data, {
+    raw: { width: bridgeRaw.info.width, height: bridgeRaw.info.height, channels: 4 },
+  }).png({ compressionLevel: 9 }).toBuffer()
+  await fs.writeFile(`${PARTNERS_OUT_DIR}/bridgex-2026-light.png`, bridgeLightBuf)
+  reports.push({ id: 'bridgex-2026-light', outputPath: `${PARTNERS_OUT_DIR}/bridgex-2026-light.png`, bytes: bridgeLightBuf.length })
+
+  const bridgeDarkData = Buffer.from(bridgeRaw.data)
+  const bw = bridgeRaw.info.width
+  const bh = bridgeRaw.info.height
+  for (let y = 0; y < bh; y++) {
+    for (let x = 0; x < bw; x++) {
+      const idx = (y * bw + x) * 4
+      const r = bridgeDarkData[idx]
+      const g = bridgeDarkData[idx + 1]
+      const b = bridgeDarkData[idx + 2]
+      const a = bridgeDarkData[idx + 3]
+      if (a === 0) continue
+
+      const inBridgeOrLeftSummit = x < 1485 || (y > 460 && x < 1515 && r < 45 && g < 85)
+      if (inBridgeOrLeftSummit && b >= r) {
+        // Dark navy BRIDGE / SUMMIT typography + left/right bars -> crisp #f8fafc
+        const inkMix = Math.max(0, Math.min(1, 1 - r / 120))
+        bridgeDarkData[idx] = Math.round(r + (248 - r) * inkMix)
+        bridgeDarkData[idx + 1] = Math.round(g + (250 - g) * inkMix)
+        bridgeDarkData[idx + 2] = Math.round(b + (252 - b) * inkMix)
+      } else if (!inBridgeOrLeftSummit && b > r + 15) {
+        // Seamless X -> luminous IEEE blue (#5ab4e6) blending into the orange right side
+        const blueStrength = Math.max(0, Math.min(1, (b - r) / 110))
+        bridgeDarkData[idx] = Math.min(255, Math.round(r + 88 * blueStrength))
+        bridgeDarkData[idx + 1] = Math.min(255, Math.round(g + 132 * blueStrength))
+        bridgeDarkData[idx + 2] = Math.min(255, Math.round(b + 140 * blueStrength))
+      }
+    }
+  }
+  const bridgeDarkBuf = await sharp(bridgeDarkData, {
+    raw: { width: bw, height: bh, channels: 4 },
+  }).png({ compressionLevel: 9 }).toBuffer()
+  await fs.writeFile(`${PARTNERS_OUT_DIR}/bridgex-2026-dark.png`, bridgeDarkBuf)
+  reports.push({ id: 'bridgex-2026-dark', outputPath: `${PARTNERS_OUT_DIR}/bridgex-2026-dark.png`, bytes: bridgeDarkBuf.length })
+
+  // ieee-hsb (trimmed raster): remove side whitespace for light mode + lifted IEEE blue variant for dark surfaces
+  const hsbRaw = await sharp(`${ORIGINALS_DIR}/ieee-hsb.png`)
+    .ensureAlpha()
+    .trim({ threshold: 10 })
+    .raw()
+    .toBuffer({ resolveWithObject: true })
+  const hsbLightBuf = await sharp(hsbRaw.data, {
+    raw: { width: hsbRaw.info.width, height: hsbRaw.info.height, channels: 4 },
+  }).png({ compressionLevel: 9 }).toBuffer()
+  await fs.writeFile(`${PARTNERS_OUT_DIR}/ieee-hsb-light.png`, hsbLightBuf)
+  reports.push({ id: 'ieee-hsb-light', outputPath: `${PARTNERS_OUT_DIR}/ieee-hsb-light.png`, bytes: hsbLightBuf.length })
+
+  const hsbDarkData = Buffer.from(hsbRaw.data)
+  for (let i = 0; i < hsbDarkData.length; i += 4) {
+    if (hsbDarkData[i + 3] === 0) continue
+    // Lift IEEE blue #05699a -> bright #62b6e5 while preserving glossy highlight shading
+    hsbDarkData[i] = Math.min(255, Math.round(hsbDarkData[i] * 0.72 + 94))
+    hsbDarkData[i + 1] = Math.min(255, Math.round(hsbDarkData[i + 1] * 0.72 + 108))
+    hsbDarkData[i + 2] = Math.min(255, Math.round(hsbDarkData[i + 2] * 0.72 + 118))
+  }
+  const hsbDarkBuf = await sharp(hsbDarkData, {
+    raw: { width: hsbRaw.info.width, height: hsbRaw.info.height, channels: 4 },
+  }).png({ compressionLevel: 9 }).toBuffer()
+  await fs.writeFile(`${PARTNERS_OUT_DIR}/ieee-hsb-dark.png`, hsbDarkBuf)
+  reports.push({ id: 'ieee-hsb-dark', outputPath: `${PARTNERS_OUT_DIR}/ieee-hsb-dark.png`, bytes: hsbDarkBuf.length })
 
   return reports
 }

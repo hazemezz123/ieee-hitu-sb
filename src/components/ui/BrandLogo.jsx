@@ -30,6 +30,7 @@ const SIZE_CLASSES = {
   md: 'h-12 min-w-[116px] max-w-[180px] px-3.5 py-2',
   lg: 'h-16 min-w-[140px] max-w-[216px] px-4 py-2.5',
   card: 'h-32 sm:h-36 w-full px-6 py-5',
+  showcase: 'h-16 sm:h-[4.5rem] w-auto px-0 py-0',
   nav: 'h-9 w-auto px-0 py-0',
   footer: 'h-14 sm:h-16 w-auto px-0 py-0',
 }
@@ -57,6 +58,7 @@ export default function BrandLogo({
   opticalScale,
   maxWidth,
   maxHeight,
+  decorative = false,
   loading = 'eager',
   className = '',
   imgClassName = '',
@@ -64,6 +66,7 @@ export default function BrandLogo({
 }) {
   const [failedSrcs, setFailedSrcs] = useState({})
   const label = alt || name || 'Brand logo'
+  const imgAlt = decorative ? '' : label
   const resolvedLight = (lightSrc || src || '').trim()
   const resolvedDark = (darkSrc || '').trim()
   const hasDualVariants = Boolean(resolvedLight && resolvedDark && resolvedLight !== resolvedDark)
@@ -73,12 +76,19 @@ export default function BrandLogo({
   const scaledMaxHeight = typeof maxHeight === 'number' ? Math.round(maxHeight * scale) : null
 
   const imgStyle = (scaledMaxWidth || scaledMaxHeight)
-    ? {
-        width: '100%',
-        height: '100%',
-        maxWidth: scaledMaxWidth ? `min(100%, ${scaledMaxWidth}px)` : '100%',
-        maxHeight: scaledMaxHeight ? `min(100%, ${scaledMaxHeight}px)` : '100%',
-      }
+    ? size === 'showcase'
+      ? {
+          width: 'auto',
+          height: scaledMaxHeight ? `min(100%, ${scaledMaxHeight}px)` : '100%',
+          maxWidth: scaledMaxWidth ? `min(100%, ${scaledMaxWidth}px)` : '100%',
+          maxHeight: scaledMaxHeight ? `min(100%, ${scaledMaxHeight}px)` : '100%',
+        }
+      : {
+          width: '100%',
+          height: '100%',
+          maxWidth: scaledMaxWidth ? `min(100%, ${scaledMaxWidth}px)` : '100%',
+          maxHeight: scaledMaxHeight ? `min(100%, ${scaledMaxHeight}px)` : '100%',
+        }
     : scale !== 1
       ? { transform: `scale(${scale})` }
       : undefined
@@ -103,12 +113,13 @@ export default function BrandLogo({
     return (
       <span
         className={`inline-flex items-center justify-center ${boxClasses} ${surfaceClasses} ${className}`.trim()}
+        data-logo-surface={resolvedSurface}
         data-testid={dataTestId}
       >
         {lightAvailable && (
           <img
             src={resolvedLight}
-            alt={label}
+            alt={imgAlt}
             loading={loading}
             decoding="async"
             style={imgStyle}
@@ -119,7 +130,7 @@ export default function BrandLogo({
         {darkAvailable && (
           <img
             src={resolvedDark}
-            alt={label}
+            alt={imgAlt}
             loading={loading}
             decoding="async"
             style={imgStyle}
@@ -148,7 +159,7 @@ export default function BrandLogo({
       {singleSrc ? (
         <img
           src={singleSrc}
-          alt={label}
+          alt={imgAlt}
           loading={loading}
           decoding="async"
           style={imgStyle}

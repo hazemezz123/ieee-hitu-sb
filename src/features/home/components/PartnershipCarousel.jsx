@@ -5,29 +5,38 @@ import BrandLogo from '@/components/ui/BrandLogo'
 import { resolvePartnerLogoConfig } from '@/features/home/data/partners'
 import { fetchPartnersResult } from '@/features/home/hooks/usePartners'
 
-function PartnerLogoCard({ partner }) {
-  const config = resolvePartnerLogoConfig(partner)
-
+function PartnerLogoRow({ partners, isClone = false }) {
   return (
-    <li
-      aria-label={partner.name}
-      className="w-full sm:w-[calc((100%-1rem)/2)] md:w-[calc((100%-2.5rem)/3)] lg:w-[calc((100%-3.75rem)/4)]"
+    <ul
+      aria-hidden={isClone ? 'true' : undefined}
+      className={`partners-marquee-row flex shrink-0 items-center gap-12 pr-12 sm:gap-16 sm:pr-16 md:gap-20 md:pr-20${isClone ? ' partners-marquee-clone' : ''}`}
     >
-      <BrandLogo
-        src={config.src}
-        lightSrc={partner.lightLogo}
-        darkSrc={partner.darkLogo}
-        name={partner.name}
-        alt={config.alt}
-        logoDark={config.logoDark}
-        surface={config.surface}
-        opticalScale={config.opticalScale}
-        maxWidth={config.maxWidth}
-        maxHeight={config.maxHeight}
-        size="card"
-        className="transition-transform duration-300 hover:-translate-y-0.5"
-      />
-    </li>
+      {partners.map(partner => {
+        const config = resolvePartnerLogoConfig(partner)
+        return (
+          <li
+            key={`${isClone ? 'clone-' : ''}${partner._id || partner.name}`}
+            aria-label={isClone ? undefined : partner.name}
+            className="flex shrink-0 items-center justify-center opacity-85 transition-[opacity,transform] duration-200 hover:-translate-y-0.5 hover:opacity-100 motion-reduce:transform-none"
+          >
+            <BrandLogo
+              src={config.src}
+              lightSrc={config.lightSrc}
+              darkSrc={config.darkSrc}
+              name={partner.name}
+              alt={config.alt}
+              decorative={isClone}
+              logoDark={config.logoDark}
+              surface="none"
+              opticalScale={config.opticalScale}
+              maxWidth={config.maxWidth}
+              maxHeight={config.maxHeight}
+              size="showcase"
+            />
+          </li>
+        )
+      })}
+    </ul>
   )
 }
 
@@ -48,25 +57,28 @@ export default function PartnershipCarousel() {
 
   return (
     <section
-      className="border-y border-outline-variant/25 bg-surface-container-low py-14 md:py-20"
+      className="border-y border-outline-variant/25 bg-surface-container-low py-14 md:py-16"
       aria-labelledby="partnerships-heading"
     >
       <div className="container mx-auto max-w-6xl px-6 md:px-12">
         <h2
           id="partnerships-heading"
-          className="text-center text-xs font-bold uppercase tracking-widest text-on-surface-variant"
+          className="text-center text-lg font-bold tracking-tight text-on-surface sm:text-xl"
         >
           Partners we build with
         </h2>
 
-        <ul className="mt-8 flex flex-wrap justify-center gap-4 md:mt-10 md:gap-5">
-          {result.partners.map(partner => (
-            <PartnerLogoCard
-              key={partner._id || partner.name}
-              partner={partner}
-            />
-          ))}
-        </ul>
+        <div
+          tabIndex={0}
+          role="region"
+          aria-label="Partner logos showcase"
+          className="partners-marquee-viewport mt-10 rounded-md py-2 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+        >
+          <div className="partners-marquee-track">
+            <PartnerLogoRow partners={result.partners} />
+            <PartnerLogoRow partners={result.partners} isClone />
+          </div>
+        </div>
       </div>
     </section>
   )

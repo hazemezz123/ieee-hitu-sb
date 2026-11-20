@@ -109,7 +109,7 @@ describe('recruitment pages', () => {
     expect(screen.getByRole('heading', { name: 'Partners we build with' })).toBeTruthy()
   })
 
-  it('renders dedicated contrasting surfaces and authentic brand assets without CSS filters', async () => {
+  it('renders borderless theme-aware partner logos without individual cards or CSS filters', async () => {
     fetchPartnersResult.mockResolvedValue({
       partners: [{ name: 'Make X', logo: '/logos/partners/make-x.svg', logoDark: true }],
       source: 'remote',
@@ -117,11 +117,11 @@ describe('recruitment pages', () => {
     renderPage(<Home />)
 
     const tile = await screen.findByLabelText('Make X')
-    const img = tile.querySelector('img')
-    expect(img.getAttribute('src')).toBe('/logos/partners/make-x.svg')
-    expect(img.parentElement.getAttribute('data-logo-surface')).toBe('dark')
-    expect(img.parentElement.className).toContain('bg-[#101820]')
-    expect(img.className).not.toMatch(/invert|grayscale|brightness-0|hue-rotate/)
+    const [lightImg, darkImg] = tile.querySelectorAll('img')
+    expect(lightImg.getAttribute('src')).toBe('/logos/partners/make-x-light.svg')
+    expect(darkImg.getAttribute('src')).toBe('/logos/partners/make-x.svg')
+    expect(lightImg.parentElement.getAttribute('data-logo-surface')).toBe('none')
+    expect(lightImg.className).not.toMatch(/invert|grayscale|brightness-0|hue-rotate/)
   })
 
   it('orders Home bands as identity, partners, featured, next, and recent', async () => {
