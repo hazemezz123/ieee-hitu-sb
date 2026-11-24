@@ -62,3 +62,14 @@ export const officers = [
     },
   },
 ];
+
+// The branch counselor is not part of the student officer roster.
+export const counselor = {
+  name: "Anwer Sayed",
+  role: "Branch Counselor",
+  img: "/officers/Anwer-Sayed.webp",
+  alt: "Portrait of Anwer Sayed, Branch Counselor",
+  socials: {
+    facebook: "https://www.facebook.com/anwer.sayed.358903",
+  },
+};

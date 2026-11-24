@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { ArrowRight, Mail } from 'lucide-react'
 import Reveal from '@/components/ui/Reveal'
 import { initialsOf } from '@/features/about/components/MemberCard'
-import { officers } from '../data/officers'
+import { officers, counselor } from '../data/officers'
 
 // The installed lucide-react no longer ships brand icons, so the brand glyphs
 // are small inline SVGs (simple-icons path data, CC0). Only Mail comes from lucide.
@@ -203,6 +203,35 @@ export function ChairwomanCard({ officer }) {
   )
 }
 
+// Featured counselor card: the branch counselor is distinct from the student officers.
+export function CounselorCard({ person }) {
+  return (
+    <li data-reveal="officer" className="mx-auto w-full max-w-2xl sm:col-span-2 lg:col-span-4">
+      <article className="card group relative h-full overflow-hidden">
+        <div className="flex h-full flex-col md:flex-row">
+          <div className="mx-auto aspect-[4/5] w-48 shrink-0 md:mx-0 md:w-56 lg:w-64">
+            <OfficerPortrait officer={person} framed={false} />
+          </div>
+          <div className="flex flex-1 flex-col justify-center p-6 text-center md:px-8 md:py-6 md:text-left">
+            <h3 className="text-3xl font-bold tracking-tight text-on-surface">{person.name}</h3>
+            <p className="mt-2 text-xs font-bold uppercase tracking-widest text-primary">
+              {person.role}
+            </p>
+            <SocialLinks
+              name={person.name}
+              socials={person.socials}
+              size="lg"
+              align="justify-center md:justify-start"
+              className="mt-4"
+            />
+          </div>
+        </div>
+        <span aria-hidden="true" className="wedge-notch absolute right-0 top-0 h-6 w-6 bg-primary" />
+      </article>
+    </li>
+  )
+}
+
 export default function OfficersSection() {
   // The roster's first entry is the Chairwoman (see ../data/officers.js).
   const [chairwoman, ...rest] = officers
@@ -247,6 +276,7 @@ export default function OfficersSection() {
             {rest.map((officer) => (
               <OfficerCard key={officer.name} officer={officer} />
             ))}
+            <CounselorCard person={counselor} />
           </ul>
         </Reveal>
       </div>

@@ -24,7 +24,19 @@ describe('officers section', () => {
     render(<OfficersSection />)
 
     expect(officers.map(officer => officer.role).sort()).toEqual(['Chairwoman', 'Secretary', 'Treasurer', 'Vice Chair', 'Webmaster'])
-    expect(screen.getAllByRole('img')).toHaveLength(officers.length)
+    expect(screen.getAllByRole('img')).toHaveLength(officers.length + 1)
+  })
+
+  it('renders the branch counselor with name, role, and portrait', () => {
+    render(<OfficersSection />)
+
+    expect(screen.getByRole('heading', { level: 3, name: 'Anwer Sayed' })).toBeTruthy()
+    expect(screen.getByText('Branch Counselor')).toBeTruthy()
+    const img = screen.getByRole('img', { name: 'Portrait of Anwer Sayed, Branch Counselor' })
+    expect(img.getAttribute('src')).toBe('/officers/Anwer-Sayed.webp')
+    const facebook = screen.getByRole('link', { name: 'Facebook - Anwer Sayed' })
+    expect(facebook.getAttribute('href')).toBe('https://www.facebook.com/anwer.sayed.358903')
+    expect(facebook.getAttribute('target')).toBe('_blank')
   })
 
   it('replaces a failed portrait with initials instead of a broken image', () => {
